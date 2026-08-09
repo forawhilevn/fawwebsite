@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="<%= locale %>">
+<head>
+<%- include('partials/head') %>
+</head>
+<body class="<%= bodyClass %>" data-barba="wrapper">
+<%- include('partials/preloader') %>
+<%- include('partials/header') %>
+
+<main data-barba="container" data-barba-namespace="cart">
+  <div class="page-shell page-shell--light">
+    <div class="container">
+      <h1 class="page-title"><%= t('cart.title') %></h1>
+
+      <% if (cart.items.length === 0) { %>
+        <p><%= t('cart.empty') %></p>
+        <a href="<%= locale === 'en' ? '/en/shop' : '/shop' %>" class="btn btn-outline-dark"><%= t('cart.continueShopping') %></a>
+      <% } else { %>
+        <table class="cart-table">
+          <thead>
+            <tr>
+              <th><%= t('cart.product') %></th>
+              <th><%= t('cart.price') %></th>
+              <th><%= t('cart.quantity') %></th>
+              <th><%= t('cart.total') %></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% cart.items.forEach(function(item) { %>
+              <tr>
+                <td>
+                  <div class="cart-item">
+                    <img src="<%= item.image || '/images/logo/logo-mark.png' %>" alt="" />
+                    <div>
+                      <div><%= item.productName %></div>
+                      <% if (item.variantLabel) { %><div class="cart-item__meta"><%= item.variantLabel %></div><% } %>
+                    </div>
+                  </div>
+                </td>
+                <td><%= formatVND(item.unitPrice) %></td>
+                <td>
+                  <form action="<%= locale === 'en' ? '/en/cart/update' : '/cart/update' %>" method="post" style="display:flex; gap:6px;">
+                    <input type="hidden" name="variantId" value="<%= item.variant.id %>" />
+                    <input type="number" name="quantity" min="0" value="<%= item.quantity %>" class="qty-input" />
+                    <button type="submit" class="btn btn-outline-dark" style="padding: 6px 10px; font-size: 11px;"><%= t('cart.update') %></button>
+                  </form>
+                </td>
+                <td><%= formatVND(item.lineTotal) %></td>
+                <td>
+                  <form action="<%= locale === 'en' ? '/en/cart/remove' : '/cart/remove' %>" method="post">
+                    <input type="hidden" name="variantId" value="<%= item.variant.id %>" />
+                    <button type="submit" class="btn btn-outline-dark" style="padding: 6px 10px; font-size: 11px;"><%= t('cart.remove') %></button>
+                  </form>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+
+        <div class="cart-summary">
+          <div class="cart-summary__row cart-summary__row--total">
+            <span><%= t('cart.subtotal') %></span>
+            <span><%= formatVND(cart.subtotal) %></span>
+          </div>
+          <a href="<%= locale === 'en' ? '/en/checkout' : '/checkout' %>" class="btn btn-primary btn-block" style="margin-top: 16px;">
+            <%= t('cart.checkout') %>
+          </a>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>
+<%- include('partials/scripts') %>
+</body>
+</html>

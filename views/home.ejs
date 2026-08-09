@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="<%= locale %>">
+<head>
+<%- include('partials/head') %>
+</head>
+<body class="<%= bodyClass %>" data-barba="wrapper">
+<%- include('partials/preloader') %>
+<%- include('partials/header') %>
+
+<main data-barba="container" data-barba-namespace="home">
+  <% if (heroBanners.length > 0) { %>
+  <section class="hero">
+    <img class="hero__bg" data-parallax="12" src="<%= heroBanners[0].image_url %>" alt="" />
+    <div class="hero__content">
+      <h1 class="hero__title" data-reveal><%= heroBanners[0].title || t('home.taglineLine1') %></h1>
+      <div class="hero__cta" data-reveal>
+        <a href="<%= locale === 'en' ? '/en/shop' : '/shop' %>" class="btn btn-primary"><%= t('home.shopNow') %></a>
+      </div>
+    </div>
+  </section>
+  <% } %>
+
+  <% if (newArrivals.length > 0) { %>
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section__heading">
+        <h2 class="section__title"><%= t('home.newArrivals') %></h2>
+        <a href="<%= locale === 'en' ? '/en/shop' : '/shop' %>" class="section__viewall"><%= t('home.viewAll') %></a>
+      </div>
+      <div class="product-grid">
+        <% newArrivals.forEach(function(product) { %>
+          <%- include('partials/product-card', { product: product }) %>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+  <% } %>
+
+  <% if (featuredBanner) { %>
+  <section class="section">
+    <div class="container">
+      <a href="<%= featuredBanner.link_url || '/shop' %>" style="display:block; overflow:hidden;" data-reveal>
+        <img src="<%= featuredBanner.image_url %>" alt="" loading="lazy" data-parallax="8" />
+      </a>
+    </div>
+  </section>
+  <% } %>
+
+  <% if (featuredProducts.length > 0) { %>
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section__heading">
+        <h2 class="section__title"><%= t('home.featured') %></h2>
+      </div>
+      <div class="product-grid">
+        <% featuredProducts.forEach(function(product) { %>
+          <%- include('partials/product-card', { product: product }) %>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+  <% } %>
+</main>
+
+<%- include('partials/footer') %>
+<%- include('partials/scripts') %>
+</body>
+</html>

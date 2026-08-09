@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="<%= locale %>">
+<head>
+<%- include('partials/head') %>
+</head>
+<body class="<%= bodyClass %>" data-barba="wrapper">
+<%- include('partials/preloader') %>
+<%- include('partials/header') %>
+
+<main data-barba="container" data-barba-namespace="order-confirmation">
+  <div class="page-shell page-shell--light">
+    <div class="container order-confirmation">
+      <h1 class="page-title"><%= t('order.confirmationTitle') %></h1>
+      <p><%= t('order.code') %>: <strong><%= order.order_code %></strong></p>
+
+      <% if (instructions.method === 'vietqr') { %>
+        <p style="margin-top: 24px; font-weight: 600;"><%= t('order.scanToPay') %></p>
+        <img class="order-confirmation__qr" src="<%= instructions.qrImageUrl %>" alt="VietQR" />
+        <div class="order-confirmation__details">
+          <div><span><%= t('order.bankName') %></span><span><%= instructions.bankName %></span></div>
+          <div><span><%= t('order.accountName') %></span><span><%= instructions.accountName %></span></div>
+          <div><span><%= t('order.accountNumber') %></span><span><%= instructions.accountNumber %></span></div>
+          <div><span><%= t('order.transferNote') %></span><span><%= instructions.note %></span></div>
+          <div><span><%= t('cart.total') %></span><span><%= formatVND(order.total) %></span></div>
+        </div>
+      <% } else { %>
+        <div class="order-confirmation__details">
+          <% instructions.lines.forEach(function(line) { %>
+            <div><span><%= line %></span></div>
+          <% }); %>
+          <div><span><%= t('cart.total') %></span><span><%= formatVND(order.total) %></span></div>
+        </div>
+      <% } %>
+
+      <a href="<%= locale === 'en' ? '/en' : '/' %>" class="btn btn-outline-dark" style="margin-top: 32px;"><%= t('order.backToHome') %></a>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>
+<%- include('partials/scripts') %>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="<%= typeof locale !== 'undefined' ? locale : 'vi' %>">
+<head>
+<%- include('partials/head') %>
+</head>
+<body class="page-error">
+<main class="page-shell" style="text-align:center;">
+  <div class="container">
+    <h1 class="page-title"><%= statusCode %></h1>
+    <p><%= message %></p>
+    <a href="/" class="btn btn-primary" style="margin-top: 24px;">Home</a>
+  </div>
+</main>
+</body>
+</html>

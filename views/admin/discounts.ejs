@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title><%= title %></title>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+  <%- include('../partials/admin-sidebar') %>
+  <main class="admin-main">
+    <h1>Mã giảm giá</h1>
+    <% if (errors.length > 0) { %><p class="admin-error"><%= errors[0].msg %></p><% } %>
+
+    <div class="admin-card">
+      <h2 style="margin-top:0; font-size:16px;">Tạo mã mới</h2>
+      <form action="/admin/ma-giam-gia/moi" method="post" class="admin-form" style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+        <div><label>Mã</label><input type="text" name="code" required style="width:140px;" /></div>
+        <div>
+          <label>Loại</label>
+          <select name="type">
+            <option value="percent">% giảm</option>
+            <option value="fixed">Số tiền cố định</option>
+          </select>
+        </div>
+        <div><label>Giá trị</label><input type="number" name="value" required style="width:100px;" /></div>
+        <div><label>Đơn tối thiểu</label><input type="number" name="minOrderTotal" style="width:120px;" /></div>
+        <div><label>Số lượt dùng tối đa</label><input type="number" name="maxUses" style="width:120px;" /></div>
+        <div><label>Hết hạn</label><input type="date" name="expiresAt" /></div>
+        <button type="submit" class="admin-btn">Tạo mã</button>
+      </form>
+    </div>
+
+    <div class="admin-card">
+      <table class="admin-table">
+        <thead><tr><th>Mã</th><th>Loại</th><th>Giá trị</th><th>Đã dùng</th><th>Trạng thái</th><th></th></tr></thead>
+        <tbody>
+          <% codes.forEach(function(c) { %>
+            <tr>
+              <td><%= c.code %></td>
+              <td><%= c.type === 'percent' ? '%' : 'VND' %></td>
+              <td><%= c.value %></td>
+              <td><%= c.used_count %><% if (c.max_uses) { %> / <%= c.max_uses %><% } %></td>
+              <td><%= c.is_active ? 'Đang bật' : 'Đã tắt' %></td>
+              <td>
+                <form action="/admin/ma-giam-gia/<%= c.id %>/an-hien" method="post" style="display:inline;">
+                  <button type="submit" class="admin-btn admin-btn--outline"><%= c.is_active ? 'Tắt' : 'Bật' %></button>
+                </form>
+                <form action="/admin/ma-giam-gia/<%= c.id %>/xoa" method="post" style="display:inline;">
+                  <button type="submit" class="admin-btn admin-btn--danger">Xoá</button>
+                </form>
+              </td>
+            </tr>
+          <% }); %>
+          <% if (codes.length === 0) { %>
+            <tr><td colspan="6">Chưa có mã giảm giá nào.</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+</body>
+</html>

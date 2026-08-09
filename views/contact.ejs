@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="<%= locale %>">
+<head>
+<%- include('partials/head') %>
+</head>
+<body class="<%= bodyClass %>" data-barba="wrapper">
+<%- include('partials/preloader') %>
+<%- include('partials/header') %>
+
+<main data-barba="container" data-barba-namespace="contact">
+  <div class="page-shell page-shell--light">
+    <div class="container" style="max-width: 600px;">
+      <h1 class="page-title"><%= t('nav.contact') %></h1>
+      <p><strong>Hotline:</strong> <%= hotline %></p>
+      <p><strong>Instagram:</strong> <a href="https://instagram.com/forawhile.iwd" target="_blank" rel="noopener">@forawhile.iwd</a></p>
+      <p><strong>Email:</strong> forawhile.iwd@gmail.com</p>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>
+<%- include('partials/scripts') %>
+</body>
+</html>

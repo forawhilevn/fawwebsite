@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title><%= title %></title>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+  <%- include('../partials/admin-sidebar') %>
+  <main class="admin-main">
+    <h1>Danh mục</h1>
+
+    <div class="admin-card">
+      <h2 style="margin-top:0; font-size: 16px;">Thêm danh mục mới</h2>
+      <% if (errors.length > 0) { %><p class="admin-error"><%= errors[0].msg %></p><% } %>
+      <form action="/admin/danh-muc/moi" method="post" class="admin-form" style="display:flex; gap:12px; align-items:flex-end;">
+        <div style="flex:1;">
+          <label>Tên (VI)</label>
+          <input type="text" name="nameVi" required />
+        </div>
+        <div style="flex:1;">
+          <label>Tên (EN)</label>
+          <input type="text" name="nameEn" required />
+        </div>
+        <button type="submit" class="admin-btn">Thêm</button>
+      </form>
+    </div>
+
+    <div class="admin-card">
+      <table class="admin-table">
+        <thead><tr><th>Tên (VI)</th><th>Tên (EN)</th><th>Slug</th><th>Thứ tự</th><th></th></tr></thead>
+        <tbody>
+          <% categories.forEach(function(cat) { %>
+            <tr>
+              <form action="/admin/danh-muc/<%= cat.id %>/sua" method="post" style="display: contents;">
+                <td><input type="text" name="nameVi" value="<%= cat.name_vi %>" style="border:none; background:transparent;" /></td>
+                <td><input type="text" name="nameEn" value="<%= cat.name_en %>" style="border:none; background:transparent;" /></td>
+                <td><%= cat.slug %></td>
+                <td><input type="number" name="sortOrder" value="<%= cat.sort_order %>" style="width:60px; border:none; background:transparent;" /></td>
+                <td>
+                  <button type="submit" class="admin-btn admin-btn--outline">Lưu</button>
+              </form>
+                  <form action="/admin/danh-muc/<%= cat.id %>/xoa" method="post" style="display:inline;" onsubmit="return confirm('Xoá danh mục này? Sản phẩm thuộc danh mục cũng sẽ bị xoá.');">
+                    <button type="submit" class="admin-btn admin-btn--danger">Xoá</button>
+                  </form>
+                </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+</body>
+</html>

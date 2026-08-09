@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="<%= locale %>">
+<head>
+<%- include('partials/head') %>
+</head>
+<body class="<%= bodyClass %>" data-barba="wrapper">
+<%- include('partials/preloader') %>
+<%- include('partials/header') %>
+
+<main data-barba="container" data-barba-namespace="wishlist">
+  <div class="page-shell page-shell--light">
+    <div class="container">
+      <h1 class="page-title"><%= t('wishlist.title') %></h1>
+      <p id="wishlistEmpty" style="display:none;"><%= t('wishlist.empty') %></p>
+      <div class="product-grid" id="wishlistGrid"></div>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>
+<%- include('partials/scripts') %>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="<%= locale %>">
+<head>
+<%- include('partials/head') %>
+</head>
+<body class="<%= bodyClass %>" data-barba="wrapper">
+<%- include('partials/preloader') %>
+<%- include('partials/header') %>
+
+<main data-barba="container" data-barba-namespace="about">
+  <section class="section" style="min-height: 70vh; display:flex; align-items:center;">
+    <div class="container" style="max-width: 760px;">
+      <h1 class="hero__title" style="font-size: clamp(40px, 7vw, 88px); color: var(--color-red);" data-reveal>
+        <%= t('home.taglineLine1') %>
+      </h1>
+      <p style="font-size: 18px; color: var(--color-fg-muted); margin-top: 16px;" data-reveal>
+        <% if (locale === 'en') { %>
+          FOR A WHILE (FAW) is a streetwear label built on raw, hand-drawn graffiti art. Every piece carries a
+          character, a scribble, a small rebellion — clothing made for people who see the world from a different angle.
+          Where perspective is personal.
+        <% } else { %>
+          FOR A WHILE (FAW) là thương hiệu streetwear được xây dựng trên nền tảng graffiti thủ công, thô mộc.
+          Mỗi sản phẩm mang một nhân vật, một nét vẽ, một sự nổi loạn nhỏ — dành cho những người nhìn thế giới
+          theo một góc nhìn khác. Góc nhìn là điều rất riêng.
+        <% } %>
+      </p>
+    </div>
+  </section>
+</main>
+
+<%- include('partials/footer') %>
+<%- include('partials/scripts') %>
+</body>
+</html>

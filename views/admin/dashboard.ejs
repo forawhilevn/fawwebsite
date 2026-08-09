@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title><%= title %></title>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+  <%- include('../partials/admin-sidebar') %>
+  <main class="admin-main">
+    <h1>Bảng điều khiển</h1>
+    <div class="admin-stats">
+      <div class="admin-stat">
+        <div class="admin-stat__value"><%= stats.productCount %></div>
+        <div class="admin-stat__label">Sản phẩm</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat__value"><%= stats.orderCount %></div>
+        <div class="admin-stat__label">Tổng đơn hàng</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat__value"><%= stats.pendingCount %></div>
+        <div class="admin-stat__label">Đơn chờ xử lý</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat__value"><%= stats.unpaidCount %></div>
+        <div class="admin-stat__label">Chưa thanh toán</div>
+      </div>
+    </div>
+
+    <div class="admin-card">
+      <h2 style="margin-top:0; font-size: 16px;">Đơn hàng gần đây</h2>
+      <table class="admin-table">
+        <thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Tổng tiền</th><th>Trạng thái</th><th>Thanh toán</th><th></th></tr></thead>
+        <tbody>
+          <% recentOrders.forEach(function(order) { %>
+            <tr>
+              <td><%= order.order_code %></td>
+              <td><%= order.customer_name %></td>
+              <td><%= formatVND(order.total) %></td>
+              <td><span class="admin-badge admin-badge--<%= order.status %>"><%= order.status %></span></td>
+              <td><span class="admin-badge admin-badge--<%= order.payment_status %>"><%= order.payment_status %></span></td>
+              <td><a href="/admin/don-hang/<%= order.id %>">Chi tiết</a></td>
+            </tr>
+          <% }); %>
+          <% if (recentOrders.length === 0) { %>
+            <tr><td colspan="6">Chưa có đơn hàng nào.</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+</body>
+</html>

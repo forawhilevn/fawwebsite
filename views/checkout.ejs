@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="<%= locale %>">
+<head>
+<%- include('partials/head') %>
+</head>
+<body class="<%= bodyClass %>" data-barba="wrapper">
+<%- include('partials/preloader') %>
+<%- include('partials/header') %>
+
+<main data-barba="container" data-barba-namespace="checkout">
+  <div class="page-shell page-shell--light">
+    <div class="container">
+      <h1 class="page-title"><%= t('checkout.title') %></h1>
+
+      <form action="<%= locale === 'en' ? '/en/checkout' : '/checkout' %>" method="post" class="checkout-layout">
+        <div>
+          <h3 style="margin-bottom: 16px;"><%= t('checkout.customerInfo') %></h3>
+
+          <div class="form-field <%= errors.find(e => e.path === 'customerName') ? 'form-field--error' : '' %>">
+            <label><%= t('checkout.fullName') %></label>
+            <input type="text" name="customerName" value="<%= formData.customerName || '' %>" required />
+          </div>
+
+          <div class="form-field <%= errors.find(e => e.path === 'phone') ? 'form-field--error' : '' %>">
+            <label><%= t('checkout.phone') %></label>
+            <input type="tel" name="phone" value="<%= formData.phone || '' %>" required />
+          </div>
+
+          <div class="form-field">
+            <label><%= t('checkout.email') %></label>
+            <input type="email" name="email" value="<%= formData.email || '' %>" />
+          </div>
+
+          <div class="form-field <%= errors.find(e => e.path === 'address') ? 'form-field--error' : '' %>">
+            <label><%= t('checkout.address') %></label>
+            <textarea name="address" rows="3" required><%= formData.address || '' %></textarea>
+          </div>
+
+          <div class="form-field">
+            <label><%= t('checkout.note') %></label>
+            <textarea name="note" rows="2"><%= formData.note || '' %></textarea>
+          </div>
+
+          <h3 style="margin: 24px 0 16px;"><%= t('checkout.paymentMethod') %></h3>
+          <div class="payment-options">
+            <% methods.forEach(function(m, i) { %>
+              <label class="payment-option <%= (formData.paymentMethod === m.key) || (!formData.paymentMethod && i === 0) ? 'is-selected' : '' %>">
+                <input type="radio" name="paymentMethod" value="<%= m.key %>" <%= (formData.paymentMethod === m.key) || (!formData.paymentMethod && i === 0) ? 'checked' : '' %> />
+                <%= m.label %>
+              </label>
+            <% }); %>
+          </div>
+
+          <% if (errors.length > 0) { %>
+            <p class="form-error" style="margin-top: 12px;">
+              <% errors.forEach(function(err) { %><%= err.msg %><br/><% }); %>
+            </p>
+          <% } %>
+        </div>
+
+        <div>
+          <div class="order-summary-box">
+            <h3 style="margin-top:0;"><%= t('checkout.orderSummary') %></h3>
+            <% cart.items.forEach(function(item) { %>
+              <div class="order-line">
+                <span><%= item.productName %> <% if (item.variantLabel) { %>(<%= item.variantLabel %>)<% } %> &times; <%= item.quantity %></span>
+                <span><%= formatVND(item.lineTotal) %></span>
+              </div>
+            <% }); %>
+
+            <div class="discount-row">
+              <input type="text" name="discountCode" placeholder="<%= t('checkout.discountCode') %>" value="<%= discount ? discount.code : '' %>" style="flex:1; padding: 10px; border: 1px solid var(--color-fg-on-alt);" />
+            </div>
+
+            <div class="order-line" style="border-top: 1px solid #ddd; padding-top: 8px; font-weight:700;">
+              <span><%= t('cart.subtotal') %></span>
+              <span><%= formatVND(cart.subtotal) %></span>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block" style="margin-top: 16px;"><%= t('checkout.placeOrder') %></button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>
+<%- include('partials/scripts') %>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title><%= title %></title>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+  <%- include('../partials/admin-sidebar') %>
+  <main class="admin-main">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+      <h1 style="margin:0;">Sản phẩm</h1>
+      <a href="/admin/san-pham/moi" class="admin-btn">+ Thêm sản phẩm</a>
+    </div>
+
+    <div class="admin-card">
+      <table class="admin-table">
+        <thead><tr><th>Ảnh</th><th>Tên</th><th>Danh mục</th><th>Giá</th><th>Trạng thái</th><th></th></tr></thead>
+        <tbody>
+          <% products.forEach(function(p) { %>
+            <tr>
+              <td><img src="<%= p.cover_image_url || '/images/logo/logo-mark.png' %>" alt="" style="width:40px; height:50px; object-fit:cover;" /></td>
+              <td><%= p.name_vi %></td>
+              <td><%= p.category_name %></td>
+              <td><%= formatVND(p.price) %></td>
+              <td><%= p.is_active ? 'Đang bán' : 'Ẩn' %></td>
+              <td>
+                <a href="/admin/san-pham/<%= p.id %>/sua" class="admin-btn admin-btn--outline">Sửa</a>
+                <form action="/admin/san-pham/<%= p.id %>/xoa" method="post" style="display:inline;" onsubmit="return confirm('Xoá sản phẩm này?');">
+                  <button type="submit" class="admin-btn admin-btn--danger">Xoá</button>
+                </form>
+              </td>
+            </tr>
+          <% }); %>
+          <% if (products.length === 0) { %>
+            <tr><td colspan="6">Chưa có sản phẩm nào.</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+</body>
+</html>

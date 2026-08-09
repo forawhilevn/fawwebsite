@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="<%= locale %>">
+<head>
+<%- include('partials/head') %>
+</head>
+<body class="<%= bodyClass %>" data-barba="wrapper">
+<%- include('partials/preloader') %>
+<%- include('partials/header') %>
+
+<main data-barba="container" data-barba-namespace="archive">
+  <div class="page-shell page-shell--light">
+    <div class="container">
+      <h1 class="page-title"><%= t('nav.archive') %></h1>
+
+      <% if (banners.length === 0) { %>
+        <p style="color: var(--color-fg-muted-on-alt);">
+          <% if (locale === 'en') { %>Lookbook coming soon.<% } else { %>Lookbook sắp ra mắt.<% } %>
+        </p>
+      <% } else { %>
+        <div class="product-grid">
+          <% banners.forEach(function(banner) { %>
+            <div class="product-card" data-reveal>
+              <div class="product-card__media">
+                <img src="<%= banner.image_url %>" alt="<%= locale === 'en' ? (banner.title_en || '') : (banner.title_vi || '') %>" loading="lazy" data-parallax="6" />
+              </div>
+              <% if (banner.title_vi || banner.title_en) { %>
+              <div class="product-card__body">
+                <span class="product-card__name"><%= locale === 'en' ? banner.title_en : banner.title_vi %></span>
+              </div>
+              <% } %>
+            </div>
+          <% }); %>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>
+<%- include('partials/scripts') %>
+</body>
+</html>

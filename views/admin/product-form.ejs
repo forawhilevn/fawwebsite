@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title><%= title %></title>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+  <%- include('../partials/admin-sidebar') %>
+  <main class="admin-main">
+    <h1><%= isEdit ? 'Sửa sản phẩm' : 'Thêm sản phẩm' %></h1>
+
+    <% if (errors.length > 0) { %>
+      <div class="admin-card">
+        <% errors.forEach(function(e) { %><p class="admin-error"><%= e.msg %></p><% }); %>
+      </div>
+    <% } %>
+
+    <div class="admin-card">
+      <form
+        action="<%= isEdit ? '/admin/san-pham/' + product.id + '/sua' : '/admin/san-pham/moi' %>"
+        method="post"
+        enctype="multipart/form-data"
+        class="admin-form"
+      >
+        <div style="display:flex; gap:16px;">
+          <div style="flex:1;">
+            <label>Tên sản phẩm (VI)</label>
+            <input type="text" name="nameVi" value="<%= product.name_vi || '' %>" required />
+          </div>
+          <div style="flex:1;">
+            <label>Tên sản phẩm (EN)</label>
+            <input type="text" name="nameEn" value="<%= product.name_en || '' %>" required />
+          </div>
+        </div>
+
+        <label>Danh mục</label>
+        <select name="categoryId" required>
+          <% categories.forEach(function(cat) { %>
+            <option value="<%= cat.id %>" <%= product.category_id === cat.id ? 'selected' : '' %>><%= cat.name_vi %></option>
+          <% }); %>
+        </select>
+
+        <div style="display:flex; gap:16px;">
+          <div style="flex:1;">
+            <label>Giá (VND)</label>
+            <input type="number" name="price" value="<%= product.price || '' %>" min="0" required />
+          </div>
+          <div style="flex:1;">
+            <label>Giá khuyến mãi (không bắt buộc)</label>
+            <input type="number" name="salePrice" value="<%= product.sale_price || '' %>" min="0" />
+          </div>
+        </div>
+
+        <label>SKU (không bắt buộc)</label>
+        <input type="text" name="sku" value="<%= product.sku || '' %>" />
+
+        <label>Mô tả (VI)</label>
+        <textarea name="descriptionVi" rows="3"><%= product.description_vi || '' %></textarea>
+
+        <label>Mô tả (EN)</label>
+        <textarea name="descriptionEn" rows="3"><%= product.description_en || '' %></textarea>
+
+        <label>Ảnh bìa</label>
+        <input type="file" name="coverImage" accept="image/*" />
+        <% if (product.cover_image_url) { %>
+          <img src="<%= product.cover_image_url %>" alt="" style="width:80px; margin-top:8px;" />
+        <% } %>
+
+        <div style="margin-top: 12px; display:flex; gap:16px;">
+          <label style="display:flex; align-items:center; gap:6px; font-weight:400;">
+            <input type="checkbox" name="isFeatured" <%= product.is_featured ? 'checked' : '' %> style="width:auto;" /> Nổi bật
+          </label>
+          <label style="display:flex; align-items:center; gap:6px; font-weight:400;">
+            <input type="checkbox" name="isActive" <%= product.is_active !== false ? 'checked' : '' %> style="width:auto;" /> Đang bán
+          </label>
+        </div>
+
+        <button type="submit" class="admin-btn" style="margin-top: 16px;"><%= isEdit ? 'Lưu thay đổi' : 'Tạo sản phẩm' %></button>
+      </form>
+    </div>
+
+    <% if (isEdit) { %>
+      <div class="admin-card">
+        <h2 style="margin-top:0; font-size: 16px;">Biến thể (Size / Màu / Tồn kho)</h2>
+        <table class="admin-table">
+          <thead><tr><th>Size</th><th>Màu</th><th>Tồn kho</th><th></th></tr></thead>
+          <tbody>
+            <% variants.forEach(function(v) { %>
+              <tr>
+                <form action="/admin/san-pham/<%= product.id %>/bien-the/<%= v.id %>/sua" method="post" style="display:contents;">
+                  <td><input type="text" name="size" value="<%= v.size %>" style="width:70px;" /></td>
+                  <td><input type="text" name="color" value="<%= v.color || '' %>" style="width:100px;" /></td>
+                  <td><input type="number" name="stock" value="<%= v.stock %>" style="width:70px;" /></td>
+                  <td>
+                    <button type="submit" class="admin-btn admin-btn--outline">Lưu</button>
+                </form>
+                    <form action="/admin/san-pham/<%= product.id %>/bien-the/<%= v.id %>/xoa" method="post" style="display:inline;">
+                      <button type="submit" class="admin-btn admin-btn--danger">Xoá</button>
+                    </form>
+                  </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+        <form action="/admin/san-pham/<%= product.id %>/bien-the" method="post" style="display:flex; gap:8px; margin-top:12px; align-items:flex-end;">
+          <div><label>Size</label><input type="text" name="size" required style="width:70px;" /></div>
+          <div><label>Màu</label><input type="text" name="color" style="width:100px;" /></div>
+          <div><label>Tồn kho</label><input type="number" name="stock" value="0" style="width:70px;" /></div>
+          <button type="submit" class="admin-btn">+ Thêm biến thể</button>
+        </form>
+      </div>
+
+      <div class="admin-card">
+        <h2 style="margin-top:0; font-size: 16px;">Thư viện ảnh</h2>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom: 16px;">
+          <% galleryImages.forEach(function(img) { %>
+            <div style="position:relative;">
+              <img src="<%= img.image_url %>" alt="" style="width:90px; height:110px; object-fit:cover;" />
+              <form action="/admin/san-pham/<%= product.id %>/anh/<%= img.id %>/xoa" method="post" style="position:absolute; top:2px; right:2px;">
+                <button type="submit" class="admin-btn admin-btn--danger" style="padding:2px 6px; font-size:11px;">&times;</button>
+              </form>
+            </div>
+          <% }); %>
+        </div>
+        <form action="/admin/san-pham/<%= product.id %>/anh" method="post" enctype="multipart/form-data">
+          <input type="file" name="images" accept="image/*" multiple />
+          <button type="submit" class="admin-btn" style="margin-top:8px;">Tải ảnh lên</button>
+        </form>
+      </div>
+    <% } %>
+  </main>
+</div>
+</body>
+</html>

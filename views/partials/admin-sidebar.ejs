@@ -1,0 +1,14 @@
+<aside class="admin-sidebar">
+  <a href="/admin" class="admin-sidebar__logo">FAW ADMIN</a>
+  <nav>
+    <a href="/admin" class="<%= currentPath === '/admin/' || currentPath === '/admin' ? 'is-active' : '' %>">Dashboard</a>
+    <a href="/admin/san-pham" class="<%= currentPath.startsWith('/admin/san-pham') ? 'is-active' : '' %>">Sản phẩm</a>
+    <a href="/admin/danh-muc" class="<%= currentPath.startsWith('/admin/danh-muc') ? 'is-active' : '' %>">Danh mục</a>
+    <a href="/admin/don-hang" class="<%= currentPath.startsWith('/admin/don-hang') ? 'is-active' : '' %>">Đơn hàng</a>
+    <a href="/admin/banner" class="<%= currentPath.startsWith('/admin/banner') ? 'is-active' : '' %>">Banner</a>
+    <a href="/admin/ma-giam-gia" class="<%= currentPath.startsWith('/admin/ma-giam-gia') ? 'is-active' : '' %>">Mã giảm giá</a>
+    <form action="/admin/logout" method="post" style="margin-top: 24px;">
+      <button type="submit" class="admin-btn admin-btn--outline" style="width:100%;">Đăng xuất</button>
+    </form>
+  </nav>
+</aside>

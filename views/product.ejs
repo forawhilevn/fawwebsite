@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="<%= locale %>">
+<head>
+<%- include('partials/head') %>
+</head>
+<body class="<%= bodyClass %>" data-barba="wrapper">
+<%- include('partials/preloader') %>
+<%- include('partials/header') %>
+
+<main data-barba="container" data-barba-namespace="product">
+  <div class="page-shell page-shell--light">
+    <div class="container">
+      <div class="product-detail">
+        <div class="product-detail__gallery">
+          <div class="product-detail__gallery-main">
+            <img data-gallery-main src="<%= images[0].image_url %>" alt="<%= product.name %>" />
+          </div>
+          <% if (images.length > 1) { %>
+          <div class="product-detail__thumbs">
+            <% images.forEach(function(img, i) { %>
+              <img data-gallery-thumb="<%= img.image_url %>" src="<%= img.image_url %>" alt="" class="<%= i === 0 ? 'is-active' : '' %>" />
+            <% }); %>
+          </div>
+          <% } %>
+        </div>
+
+        <div class="product-detail__info">
+          <h1 class="product-detail__name"><%= product.name %></h1>
+          <div class="product-detail__price">
+            <% if (product.sale_price) { %>
+              <span class="product-card__price--sale"><%= formatVND(product.sale_price) %></span>
+              <span class="product-card__price--was"><%= formatVND(product.price) %></span>
+            <% } else { %>
+              <%= formatVND(product.price) %>
+            <% } %>
+          </div>
+
+          <form action="<%= locale === 'en' ? '/en/cart/add' : '/cart/add' %>" method="post">
+            <input type="hidden" name="redirectTo" value="<%= locale === 'en' ? '/en/cart' : '/cart' %>" />
+            <input type="hidden" name="variantId" value="<% if (sizes.length === 1 && colors.length <= 1) { %><%= variants[0] ? variants[0].id : '' %><% } %>" />
+
+            <% if (sizes.length > 0) { %>
+            <div class="variant-group">
+              <span class="variant-group__label">
+                <%= t('product.selectSize') %>
+                <span class="size-guide-link" data-open-size-guide><%= t('product.sizeGuide') %></span>
+              </span>
+              <div class="variant-options" data-role="size">
+                <% sizes.forEach(function(size) { %>
+                  <span class="variant-option" data-value="<%= size %>"><%= size %></span>
+                <% }); %>
+              </div>
+            </div>
+            <% } %>
+
+            <% if (colors.length > 0) { %>
+            <div class="variant-group">
+              <span class="variant-group__label"><%= t('product.selectColor') %></span>
+              <div class="variant-options" data-role="color">
+                <% colors.forEach(function(color) { %>
+                  <span class="variant-option" data-value="<%= color %>"><%= color %></span>
+                <% }); %>
+              </div>
+            </div>
+            <% } %>
+
+            <div style="display:flex; gap: 12px; align-items:center;">
+              <button type="submit" class="btn btn-primary js-add-to-cart" <%= sizes.length ? 'disabled' : '' %>>
+                <%= t('product.addToCart') %>
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline-dark"
+                data-wishlist-toggle
+                data-wishlist-slug="<%= product.slug %>"
+                data-wishlist-name="<%= product.name %>"
+                data-wishlist-image="<%= images[0].image_url %>"
+                data-wishlist-price="<%= formatVND(product.sale_price || product.price) %>"
+                data-wishlist-href="<%= (locale === 'en' ? '/en/product/' : '/product/') + product.slug %>"
+                aria-label="<%= t('product.addToWishlist') %>"
+              >&hearts;</button>
+            </div>
+            <p class="form-error" style="display:none;" id="variantHint"><%= t('product.pleaseSelectVariant') %></p>
+          </form>
+
+          <% if (product.description) { %>
+          <div class="product-detail__description"><%= product.description %></div>
+          <% } %>
+        </div>
+      </div>
+
+      <% if (relatedProducts.length > 0) { %>
+      <div style="margin-top: 64px;">
+        <div class="section__heading">
+          <h2 class="section__title" style="color: var(--color-fg-on-alt); font-size: 28px;"><%= t('product.relatedProducts') %></h2>
+        </div>
+        <div class="product-grid">
+          <% relatedProducts.forEach(function(p) { %>
+            <%- include('partials/product-card', { product: p }) %>
+          <% }); %>
+        </div>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</main>
+
+<div id="sizeGuideModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:150; align-items:center; justify-content:center;" data-close-size-guide>
+  <div style="background:#fff; color:#111; padding:24px; max-width:600px; width: 90%; max-height:80vh; overflow:auto;">
+    <button type="button" data-close-size-guide class="btn btn-outline-dark" style="float:right; padding: 6px 12px;">&times;</button>
+    <h3 style="margin-top:0;"><%= t('product.sizeGuide') %></h3>
+    <p style="font-size: 14px; color:#555;">
+      <% if (locale === 'en') { %>
+        Measurements in cm. If you're between sizes, we recommend sizing up for the FAW oversized fit.
+      <% } else { %>
+        Số đo tính bằng cm. Nếu bạn ở giữa 2 size, nên chọn size lớn hơn cho form rộng đặc trưng của FAW.
+      <% } %>
+    </p>
+  </div>
+</div>
+
+<%- include('partials/footer') %>
+<script>window.__FAW_VARIANTS__ = <%- JSON.stringify(variants) %>;</script>
+<%- include('partials/scripts') %>
+</body>
+</html>

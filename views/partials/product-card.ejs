@@ -1,0 +1,19 @@
+<a href="<%= locale === 'en' ? '/en/product/' + product.slug : '/product/' + product.slug %>" class="product-card" data-reveal>
+  <div class="product-card__media">
+    <img src="<%= product.cover_image_url || '/images/logo/logo-mark.png' %>" alt="<%= product.name %>" loading="lazy" />
+    <% if (typeof product.inStock !== 'undefined' && !product.inStock) { %>
+      <span class="badge badge-sold-out product-card__badge"><%= t('shop.soldOut') %></span>
+    <% } %>
+  </div>
+  <div class="product-card__body">
+    <span class="product-card__name"><%= product.name %></span>
+    <span class="product-card__price">
+      <% if (product.sale_price) { %>
+        <span class="product-card__price--sale"><%= formatVND(product.sale_price) %></span>
+        <span class="product-card__price--was"><%= formatVND(product.price) %></span>
+      <% } else { %>
+        <%= formatVND(product.price) %>
+      <% } %>
+    </span>
+  </div>
+</a>

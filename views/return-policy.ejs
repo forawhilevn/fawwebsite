@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="<%= locale %>">
+<head>
+<%- include('partials/head') %>
+</head>
+<body class="<%= bodyClass %>" data-barba="wrapper">
+<%- include('partials/preloader') %>
+<%- include('partials/header') %>
+
+<main data-barba="container" data-barba-namespace="return-policy">
+  <div class="page-shell page-shell--light">
+    <div class="container" style="max-width: 800px;">
+      <% if (locale === 'en') { %>
+        <h1 class="page-title">RETURN POLICY</h1>
+        <p>FAW wants to give you the best shopping experience. If there's an issue with your product, we're always here to help.</p>
+
+        <h3>1. Products eligible for return/exchange</h3>
+        <ul>
+          <li>The product has a manufacturing defect.</li>
+          <li>The product doesn't match the design, size, or quantity you ordered.</li>
+          <li>Size exchange for the same design/color is supported, up to <strong>1 time per order</strong>.</li>
+        </ul>
+        <p><strong>Return window:</strong> 10–15 days from successful delivery.</p>
+
+        <h3>2. Product condition for return</h3>
+        <ul>
+          <li>No stains, odors, or signs of wear.</li>
+          <li>Tags and labels must still be attached.</li>
+          <li>Proof of purchase (receipt or order confirmation) required.</li>
+        </ul>
+
+        <h3>3. Return shipping cost</h3>
+        <ul>
+          <li><strong>Manufacturer defect or wrong item shipped:</strong> FAW covers 100% of return shipping both ways.</li>
+          <li><strong>Size exchange by personal preference:</strong> customer covers shipping both ways.</li>
+        </ul>
+        <p><em>Please contact us via our fanpage before shipping the item back so we can guide you through the process.</em></p>
+      <% } else { %>
+        <h1 class="page-title">CHÍNH SÁCH ĐỔI TRẢ</h1>
+        <p>FAW luôn muốn mang đến trải nghiệm mua sắm tốt nhất. Nếu sản phẩm có vấn đề, chúng tôi luôn sẵn sàng hỗ trợ bạn.</p>
+
+        <h3>1. Sản phẩm được chấp nhận đổi trả trong các trường hợp sau</h3>
+        <ul>
+          <li>Sản phẩm bị lỗi từ phía nhà sản xuất.</li>
+          <li>Sản phẩm không đúng mẫu mã, kích thước hoặc số lượng so với đơn đặt hàng.</li>
+          <li>Hỗ trợ đổi kích thước (size) cho cùng mẫu và màu sắc: <strong>tối đa 1 lần / 1 đơn hàng.</strong></li>
+        </ul>
+        <p><strong>Thời gian thực hiện đổi trả:</strong> 10 – 15 ngày kể từ ngày giao hàng thành công.</p>
+
+        <h3>2. Điều kiện sản phẩm khi đổi trả</h3>
+        <ul>
+          <li>Sản phẩm không có dấu hiệu bị bẩn, mùi lạ hoặc đã qua sử dụng.</li>
+          <li>Còn nguyên tem, nhãn mác đính kèm.</li>
+          <li>Có hóa đơn mua hàng hoặc chứng từ chứng minh việc mua hàng.</li>
+        </ul>
+
+        <h3>3. Chi phí vận chuyển đổi trả</h3>
+        <ul>
+          <li><strong>Lỗi từ nhà sản xuất hoặc gửi sai đơn hàng:</strong> FAW thanh toán 100% chi phí vận chuyển hai chiều.</li>
+          <li><strong>Đổi size theo nguyện vọng cá nhân:</strong> Khách hàng tự thanh toán toàn bộ chi phí vận chuyển (cả chiều đi và chiều về).</li>
+        </ul>
+        <p><em>Vui lòng liên hệ qua fanpage trước khi gửi hàng về để được hướng dẫn cụ thể.</em></p>
+      <% } %>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>
+<%- include('partials/scripts') %>
+</body>
+</html>

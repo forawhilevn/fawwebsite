@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="<%= locale %>">
+<head>
+<%- include('partials/head') %>
+</head>
+<body class="<%= bodyClass %>" data-barba="wrapper">
+<%- include('partials/preloader') %>
+<%- include('partials/header') %>
+
+<main data-barba="container" data-barba-namespace="shop">
+  <div class="page-shell page-shell--light">
+    <div class="container">
+      <h1 class="page-title"><%= activeCategory ? activeCategory.name : t('shop.title') %></h1>
+
+      <div class="filters-bar">
+        <div class="filters-bar__group">
+          <a href="<%= locale === 'en' ? '/en/shop' : '/shop' %>" class="filter-chip <%= !activeCategory ? 'is-active' : '' %>">
+            <%= t('shop.filter.category') %>: <%= t('home.viewAll') %>
+          </a>
+          <% categories.forEach(function(cat) { %>
+            <a href="<%= (locale === 'en' ? '/en/shop/' : '/shop/') + cat.slug %>" class="filter-chip <%= activeCategory && activeCategory.slug === cat.slug ? 'is-active' : '' %>">
+              <%= cat.name %>
+            </a>
+          <% }); %>
+        </div>
+        <form method="get" class="filters-bar__group">
+          <select name="size" onchange="this.form.submit()">
+            <option value="">— <%= t('shop.filter.size') %> —</option>
+            <% allSizes.forEach(function(size) { %>
+              <option value="<%= size %>" <%= activeSize === size ? 'selected' : '' %>><%= size %></option>
+            <% }); %>
+          </select>
+          <select name="sort" onchange="this.form.submit()">
+            <option value="newest" <%= activeSort === 'newest' ? 'selected' : '' %>><%= t('shop.sort.newest') %></option>
+            <option value="price-asc" <%= activeSort === 'price-asc' ? 'selected' : '' %>><%= t('shop.sort.priceAsc') %></option>
+            <option value="price-desc" <%= activeSort === 'price-desc' ? 'selected' : '' %>><%= t('shop.sort.priceDesc') %></option>
+          </select>
+        </form>
+      </div>
+
+      <% if (products.length === 0) { %>
+        <p><%= t('shop.empty') %></p>
+      <% } else { %>
+        <div class="product-grid">
+          <% products.forEach(function(product) { %>
+            <%- include('partials/product-card', { product: product }) %>
+          <% }); %>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>
+<%- include('partials/scripts') %>
+</body>
+</html>

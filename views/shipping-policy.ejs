@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="<%= locale %>">
+<head>
+<%- include('partials/head') %>
+</head>
+<body class="<%= bodyClass %>" data-barba="wrapper">
+<%- include('partials/preloader') %>
+<%- include('partials/header') %>
+
+<main data-barba="container" data-barba-namespace="shipping-policy">
+  <div class="page-shell page-shell--light">
+    <div class="container" style="max-width: 800px;">
+      <% if (locale === 'en') { %>
+        <h1 class="page-title">SHIPPING POLICY</h1>
+        <p>FAW ships nationwide through trusted delivery partners.</p>
+
+        <h3>1. Delivery method</h3>
+        <p>Orders placed online through our website are shipped nationwide via our delivery partners — typically GHTK.</p>
+
+        <h3>2. Estimated delivery time</h3>
+        <table class="cart-table" style="margin: 16px 0;">
+          <thead><tr><th>Area</th><th>Time</th></tr></thead>
+          <tbody>
+            <tr><td>Inner Ho Chi Minh City</td><td>1–2 business days</td></tr>
+            <tr><td>Other provinces</td><td>3–5 business days</td></tr>
+            <tr><td>Remote / island areas</td><td>5–7 business days</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Shipping fee</h3>
+        <p>Shipping fee is calculated by the carrier's policy at the time of order and shown clearly at checkout.</p>
+
+        <h3>3. Responsibility for damage during transit</h3>
+        <p>If your order is damaged during shipping, FAW takes full responsibility for resolving the issue.</p>
+        <p>You may refuse the delivery and request a full return/refund. We'll work with our shipping partner to settle any related claim per our service agreement.</p>
+        <p><em>Note: if there's a delivery delay, FAW will notify you promptly.</em></p>
+      <% } else { %>
+        <h1 class="page-title">CHÍNH SÁCH VẬN CHUYỂN</h1>
+        <p>FAW giao hàng toàn quốc thông qua các đối tác vận chuyển uy tín.</p>
+
+        <h3>1. Phương thức giao hàng</h3>
+        <p>Khách hàng mua hàng trực tuyến tại website của chúng tôi. FAW sẽ vận chuyển hàng toàn quốc qua các đơn vị vận chuyển. Thường sẽ là GHTK.</p>
+
+        <h3>2. Thời hạn ước tính cho việc giao hàng</h3>
+        <table class="cart-table" style="margin: 16px 0;">
+          <thead><tr><th>Khu vực</th><th>Thời gian</th></tr></thead>
+          <tbody>
+            <tr><td>Nội thành Hồ Chí Minh</td><td>1 – 2 ngày làm việc</td></tr>
+            <tr><td>Các tỉnh thành khác</td><td>3 – 5 ngày làm việc</td></tr>
+            <tr><td>Vùng sâu, vùng xa, hải đảo</td><td>5 – 7 ngày làm việc</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Phí vận chuyển</h3>
+        <p>Phí vận chuyển được tính theo chính sách của đơn vị vận chuyển tại thời điểm đặt hàng và hiển thị rõ ràng khi bạn xác nhận thanh toán.</p>
+
+        <h3>3. Trách nhiệm về trường hợp hàng bị hư hỏng do quá trình vận chuyển</h3>
+        <p>Đối với hàng hóa bị hư hỏng do quá trình vận chuyển thì FAW sẽ là bên đứng ra chịu trách nhiệm giải quyết vấn đề cho khách hàng.</p>
+        <p>Khách hàng có quyền từ chối nhận sản phẩm và yêu cầu đổi trả hoàn phí; mọi vấn đề phát sinh chúng tôi sẽ làm việc với đối tác vận chuyển để giải quyết đền bù theo thỏa thuận hợp tác.</p>
+        <p><em>Lưu ý: Trường hợp phát sinh chậm trễ trong việc giao hàng, FAW sẽ thông tin kịp thời cho khách.</em></p>
+      <% } %>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>
+<%- include('partials/scripts') %>
+</body>
+</html>

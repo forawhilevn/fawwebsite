@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title><%= title %></title>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+  <%- include('../partials/admin-sidebar') %>
+  <main class="admin-main">
+    <h1>Đơn hàng <%= order.order_code %></h1>
+
+    <div class="admin-card">
+      <p><strong>Khách hàng:</strong> <%= order.customer_name %> — <%= order.phone %> <% if (order.email) { %> — <%= order.email %><% } %></p>
+      <p><strong>Địa chỉ:</strong> <%= order.address %></p>
+      <% if (order.note) { %><p><strong>Ghi chú:</strong> <%= order.note %></p><% } %>
+      <p><strong>Phương thức thanh toán:</strong> <%= order.payment_method %></p>
+      <p><strong>Trạng thái thanh toán:</strong> <span class="admin-badge admin-badge--<%= order.payment_status %>"><%= order.payment_status %></span></p>
+    </div>
+
+    <div class="admin-card">
+      <table class="admin-table">
+        <thead><tr><th>Sản phẩm</th><th>Phân loại</th><th>Đơn giá</th><th>SL</th><th>Thành tiền</th></tr></thead>
+        <tbody>
+          <% items.forEach(function(item) { %>
+            <tr>
+              <td><%= item.product_name %></td>
+              <td><%= item.variant_label || '' %></td>
+              <td><%= formatVND(item.price) %></td>
+              <td><%= item.quantity %></td>
+              <td><%= formatVND(item.price * item.quantity) %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+      <p style="text-align:right; margin-top:12px;">
+        <strong>Tạm tính: <%= formatVND(order.subtotal) %></strong><br/>
+        <% if (order.discount_amount > 0) { %>Giảm giá: -<%= formatVND(order.discount_amount) %><br/><% } %>
+        <strong style="font-size: 18px;">Tổng cộng: <%= formatVND(order.total) %></strong>
+      </p>
+    </div>
+
+    <div class="admin-card" style="display:flex; gap:24px; flex-wrap: wrap;">
+      <form action="/admin/don-hang/<%= order.id %>/trang-thai" method="post" style="display:flex; gap:8px; align-items:flex-end;">
+        <div>
+          <label style="display:block; font-size:12px; margin-bottom:4px;">Trạng thái đơn hàng</label>
+          <select name="status">
+            <% statuses.forEach(function(s) { %>
+              <option value="<%= s %>" <%= order.status === s ? 'selected' : '' %>><%= s %></option>
+            <% }); %>
+          </select>
+        </div>
+        <button type="submit" class="admin-btn">Cập nhật</button>
+      </form>
+
+      <% if (order.payment_status === 'unpaid') { %>
+        <form action="/admin/don-hang/<%= order.id %>/thanh-toan" method="post">
+          <button type="submit" class="admin-btn" style="background:#166534; border-color:#166534;">Đánh dấu đã thanh toán</button>
+        </form>
+      <% } else { %>
+        <form action="/admin/don-hang/<%= order.id %>/huy-thanh-toan" method="post">
+          <button type="submit" class="admin-btn admin-btn--outline">Huỷ trạng thái đã thanh toán</button>
+        </form>
+      <% } %>
+    </div>
+  </main>
+</div>
+</body>
+</html>

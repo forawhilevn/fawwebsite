@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title><%= title %></title>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="admin-body admin-login">
+  <div class="admin-login__box">
+    <h1 style="font-family: var(--font-display); color: var(--color-red); font-size: 24px; margin-bottom: 4px;">FAW</h1>
+    <p style="color:#71717a; font-size: 13px; margin-bottom: 16px;">Đăng nhập quản trị</p>
+    <% if (error) { %><p class="admin-error"><%= error %></p><% } %>
+    <form action="/admin/login" method="post" class="admin-form">
+      <label for="username">Tên đăng nhập</label>
+      <input type="text" id="username" name="username" required autofocus />
+      <label for="password">Mật khẩu</label>
+      <input type="password" id="password" name="password" required />
+      <button type="submit" class="admin-btn" style="width:100%; margin-top: 16px; justify-content:center;">Đăng nhập</button>
+    </form>
+  </div>
+</body>
+</html>
