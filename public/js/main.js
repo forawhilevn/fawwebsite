@@ -67,16 +67,101 @@
     input.value = decBtn ? Math.max(1, current - 1) : current + 1;
   });
 
-  // Gallery thumbnail swap on the product detail page
+  // Product gallery: thumbnail paging (4 at a time), main-image arrows, swipe
+  var THUMBS_PER_PAGE = 4;
+  var THUMB_STEP = 92; // 84px thumb + 8px gap, matches CSS
+
+  function selectGalleryImage(gallery, index) {
+    if (!gallery) return;
+    var thumbs = gallery.querySelectorAll('[data-gallery-thumb]');
+    var target = thumbs[index];
+    if (!target) return;
+    var mainImg = gallery.querySelector('[data-gallery-main]');
+    if (mainImg) mainImg.src = target.getAttribute('data-gallery-thumb');
+    thumbs.forEach(function (t) { t.classList.remove('is-active'); });
+    target.classList.add('is-active');
+    setThumbPage(gallery, Math.floor(index / THUMBS_PER_PAGE));
+  }
+
+  function setThumbPage(gallery, page) {
+    var track = gallery.querySelector('[data-thumbs-track]');
+    var thumbs = gallery.querySelectorAll('[data-gallery-thumb]');
+    if (!track || !thumbs.length) return;
+    var totalPages = Math.ceil(thumbs.length / THUMBS_PER_PAGE);
+    var clamped = Math.max(0, Math.min(page, totalPages - 1));
+    track.style.transform = 'translateY(-' + clamped * THUMBS_PER_PAGE * THUMB_STEP + 'px)';
+    gallery.setAttribute('data-thumb-page', clamped);
+
+    var prevBtn = gallery.querySelector('[data-thumbs-prev]');
+    var nextBtn = gallery.querySelector('[data-thumbs-next]');
+    if (prevBtn) prevBtn.disabled = clamped <= 0;
+    if (nextBtn) nextBtn.disabled = clamped >= totalPages - 1;
+  }
+
+  function activeIndex(gallery) {
+    var thumbs = gallery.querySelectorAll('[data-gallery-thumb]');
+    return Array.from(thumbs).findIndex(function (t) { return t.classList.contains('is-active'); });
+  }
+
   document.addEventListener('click', function (e) {
-    const thumb = e.target.closest('[data-gallery-thumb]');
-    if (!thumb) return;
-    const main = document.querySelector('[data-gallery-main]');
-    if (!main) return;
-    main.src = thumb.getAttribute('data-gallery-thumb');
-    document.querySelectorAll('[data-gallery-thumb]').forEach((t) => t.classList.remove('is-active'));
-    thumb.classList.add('is-active');
+    var thumb = e.target.closest('[data-gallery-thumb]');
+    if (thumb) {
+      selectGalleryImage(thumb.closest('[data-gallery]'), Number(thumb.getAttribute('data-index')));
+      return;
+    }
+
+    var prevImg = e.target.closest('[data-gallery-prev]');
+    var nextImg = e.target.closest('[data-gallery-next]');
+    if (prevImg || nextImg) {
+      var g1 = (prevImg || nextImg).closest('[data-gallery]');
+      var thumbs1 = g1.querySelectorAll('[data-gallery-thumb]');
+      var idx1 = activeIndex(g1);
+      var next1 = prevImg ? idx1 - 1 : idx1 + 1;
+      if (next1 < 0) next1 = thumbs1.length - 1;
+      if (next1 >= thumbs1.length) next1 = 0;
+      selectGalleryImage(g1, next1);
+      return;
+    }
+
+    var prevPage = e.target.closest('[data-thumbs-prev]');
+    var nextPage = e.target.closest('[data-thumbs-next]');
+    if (prevPage || nextPage) {
+      var g2 = (prevPage || nextPage).closest('[data-gallery]');
+      var current = Number(g2.getAttribute('data-thumb-page') || 0);
+      setThumbPage(g2, prevPage ? current - 1 : current + 1);
+    }
   });
+
+  // Swipe on the main product image (mobile)
+  (function () {
+    var touchGallery = null;
+    var startX = 0;
+    var startY = 0;
+
+    document.addEventListener('touchstart', function (e) {
+      var mainEl = e.target.closest('.product-detail__gallery-main');
+      touchGallery = mainEl ? mainEl.closest('[data-gallery]') : null;
+      if (!touchGallery) return;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    }, { passive: true });
+
+    document.addEventListener('touchend', function (e) {
+      if (!touchGallery) return;
+      var touch = e.changedTouches[0];
+      var dx = touch.clientX - startX;
+      var dy = touch.clientY - startY;
+      var gallery = touchGallery;
+      touchGallery = null;
+      if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return;
+      var thumbs = gallery.querySelectorAll('[data-gallery-thumb]');
+      var idx = activeIndex(gallery);
+      var next = dx > 0 ? idx - 1 : idx + 1;
+      if (next < 0) next = thumbs.length - 1;
+      if (next >= thumbs.length) next = 0;
+      selectGalleryImage(gallery, next);
+    }, { passive: true });
+  })();
 
   // Size guide modal
   document.addEventListener('click', function (e) {

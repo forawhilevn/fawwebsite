@@ -4,32 +4,34 @@ window.FAWMotion.initPageTransitions = function initPageTransitions(reduced) {
   if (!window.barba) return;
 
   const overlay = document.getElementById('pageTransitionOverlay');
-  const durationMs = reduced ? 200 : 550;
-  const ease = 'power2.inOut';
+  const durationMs = reduced ? 0 : 550;
+
+  if (overlay && reduced) {
+    overlay.classList.add('is-instant');
+  }
 
   function wait(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  function animate(target, vars) {
-    if (window.gsap && target) {
-      try {
-        gsap.to(target, vars);
-      } catch (err) {
-        /* ignore visual animation failures, timing below still resolves */
-      }
-    }
+  function resetOverlay() {
+    if (!overlay) return;
+    overlay.classList.add('is-instant');
+    overlay.classList.remove('is-covering', 'is-revealed');
+    // Force a reflow so the next transition re-enables the CSS transition cleanly.
+    void overlay.offsetHeight;
+    if (!reduced) overlay.classList.remove('is-instant');
   }
 
   barba.init({
     preventRunning: true,
-    timeout: 4000,
+    timeout: 5000,
     transitions: [
       {
         name: 'overlay-wipe',
         leave() {
           window.scrollTo(0, 0);
-          animate(overlay, { yPercent: 0, duration: durationMs / 1000, ease });
+          if (overlay) overlay.classList.add('is-covering');
           return wait(durationMs);
         },
         enter(data) {
@@ -38,14 +40,11 @@ window.FAWMotion.initPageTransitions = function initPageTransitions(reduced) {
           if (data && data.next && data.next.container) {
             data.next.container.style.opacity = '1';
           }
-          animate(overlay, { yPercent: -101, duration: durationMs / 1000, ease, delay: 0.05 });
+          if (overlay) overlay.classList.add('is-revealed');
           return wait(durationMs + 50);
         },
         after() {
-          if (overlay) {
-            if (window.gsap) gsap.set(overlay, { yPercent: 101 });
-            else overlay.style.transform = 'translateY(101%)';
-          }
+          resetOverlay();
         }
       }
     ]
