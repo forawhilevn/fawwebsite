@@ -55,7 +55,7 @@
 
   --border-width: 2px;
 
-  --font-display: 'Anton', 'Archivo Black', sans-serif;
+  --font-display: 'Be Vietnam Pro', 'Inter', sans-serif;
   --font-body: 'Be Vietnam Pro', 'Inter', sans-serif;
 
   --space-1: 4px;
@@ -82,6 +82,11 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+}
+
+html:lang(en) {
+  --font-display: 'Poppins', 'Inter', sans-serif;
+  --font-body: 'Poppins', 'Inter', sans-serif;
 }
 
 body {
@@ -158,13 +163,23 @@ h1, h2, h3, h4 {
 }
 
 .preloader__mark {
-  width: 96px;
+  width: min(280px, 45vw);
   height: auto;
 }
 
 .preloader__mark img {
   width: 100%;
   filter: none;
+}
+
+.page-transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 190;
+  background: var(--color-bg);
+  transform: translateY(101%);
+  pointer-events: none;
+  will-change: transform;
 }
 
 /* ==========================================================================
@@ -180,16 +195,38 @@ h1, h2, h3, h4 {
 }
 
 .site-header__inner {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   height: 64px;
+  gap: var(--space-4);
 }
 
 .site-header__nav {
   display: flex;
   align-items: center;
   gap: var(--space-5);
+  justify-self: start;
+}
+
+.site-header__logo {
+  justify-self: center;
+}
+
+.site-header__actions {
+  justify-self: end;
+}
+
+@media (max-width: 640px) {
+  .site-header__inner {
+    grid-template-columns: auto 1fr auto;
+  }
+  .site-header__nav {
+    gap: var(--space-3);
+  }
+  .site-header__nav a {
+    font-size: 12px;
+  }
 }
 
 .site-header__nav a {
@@ -267,45 +304,75 @@ h1, h2, h3, h4 {
 }
 
 .site-footer__top {
-  padding: var(--space-8) 0 var(--space-6);
-  text-align: center;
+  padding: var(--space-8) var(--space-5) var(--space-6);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-5);
+  flex-wrap: wrap;
 }
 
 .site-footer__tagline {
   color: var(--color-red);
-  font-size: clamp(32px, 6vw, 64px);
-  margin-bottom: var(--space-2);
+  font-size: clamp(36px, 7vw, 88px);
+  line-height: 0.95;
+  text-align: left;
 }
 
-.site-footer__subtagline {
-  color: var(--color-fg-muted);
-  font-size: 14px;
-  margin-bottom: var(--space-5);
+.site-footer__tagline span {
+  display: block;
 }
 
 .site-footer__links {
   display: flex;
-  justify-content: center;
-  gap: var(--space-6);
-  flex-wrap: wrap;
-  font-size: 13px;
-  color: var(--color-fg-muted);
-  padding-bottom: var(--space-6);
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-red);
+  text-align: right;
+  flex-shrink: 0;
+  padding-top: var(--space-2);
+}
+
+.site-footer__links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .site-footer__links a:hover {
   color: var(--color-fg);
 }
 
+.site-footer__handle::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--color-red);
+}
+
 .site-footer__pattern {
   width: 100%;
-  height: auto;
-  display: block;
+  line-height: 0;
 }
 
 .site-footer__pattern img {
   width: 100%;
   display: block;
+}
+
+@media (max-width: 640px) {
+  .site-footer__top {
+    flex-direction: column;
+  }
+  .site-footer__links {
+    align-items: flex-start;
+    text-align: left;
+  }
 }
 
 /* ==========================================================================
@@ -477,28 +544,10 @@ h1, h2, h3, h4 {
 
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--border-width);
   background: var(--color-border);
   border: var(--border-width) solid var(--color-border);
-}
-
-@media (max-width: 1024px) {
-  .product-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .product-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 480px) {
-  .product-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 .product-card {
@@ -964,6 +1013,208 @@ h1, h2, h3, h4 {
   height: 100%;
   object-fit: cover;
   opacity: 0.6;
+}
+
+/* ==========================================================================
+   Wishlist button state
+   ========================================================================== */
+
+[data-wishlist-toggle] {
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+[data-wishlist-toggle].is-saved {
+  background: var(--color-red);
+  border-color: var(--color-red);
+  color: #fff;
+}
+
+/* ==========================================================================
+   Quantity selector
+   ========================================================================== */
+
+.qty-selector {
+  display: inline-flex;
+  align-items: center;
+  border: 2px solid var(--color-fg-on-alt);
+  height: 44px;
+}
+
+.qty-selector button {
+  width: 40px;
+  height: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.qty-selector input {
+  width: 44px;
+  height: 100%;
+  border: none;
+  border-left: 2px solid var(--color-fg-on-alt);
+  border-right: 2px solid var(--color-fg-on-alt);
+  text-align: center;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   Size guide modal (image)
+   ========================================================================== */
+
+.size-guide-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 150;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+}
+
+.size-guide-modal__box {
+  background: #000;
+  max-width: 520px;
+  width: 100%;
+  max-height: 88vh;
+  overflow: auto;
+  position: relative;
+}
+
+.size-guide-modal__close {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  background: #fff;
+  border: none;
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.size-guide-modal__box img {
+  width: 100%;
+  display: block;
+}
+
+/* ==========================================================================
+   Policy pages (left-aligned, mascot art)
+   ========================================================================== */
+
+.policy-layout {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: var(--space-7);
+  align-items: start;
+  padding: var(--space-8) var(--space-5);
+}
+
+@media (max-width: 900px) {
+  .policy-layout {
+    grid-template-columns: 1fr;
+    padding: var(--space-6) var(--space-4);
+  }
+}
+
+.policy-content {
+  text-align: left;
+}
+
+.policy-title {
+  color: var(--color-red);
+  font-size: clamp(32px, 6vw, 64px);
+  margin-bottom: var(--space-2);
+}
+
+.policy-subtitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-red);
+  margin-bottom: var(--space-5);
+}
+
+.policy-content h3 {
+  font-size: 17px;
+  text-transform: none;
+  font-family: var(--font-body);
+  font-weight: 700;
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-2);
+}
+
+.policy-content p,
+.policy-content li {
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.policy-content ul {
+  margin: 0 0 var(--space-3);
+  padding-left: 20px;
+}
+
+.policy-mascot {
+  justify-self: center;
+}
+
+.policy-mascot img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ==========================================================================
+   Lookbook
+   ========================================================================== */
+
+.lookbook-strip {
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid #ddd;
+}
+
+.lookbook-strip__heading {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-4);
+  color: var(--color-fg-muted-on-alt);
+}
+
+.lookbook-strip__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-2);
+}
+
+.lookbook-strip__grid img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+}
+
+.lookbook-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--border-width);
+}
+
+@media (max-width: 900px) {
+  .lookbook-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.lookbook-grid img {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
 }
 
 /* ==========================================================================

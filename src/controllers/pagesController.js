@@ -1,12 +1,25 @@
 const db = require('../db');
+const { localizeProduct } = require('../utils/i18n');
+const { getLookbookImages } = require('../utils/assets');
 
 async function showArchive(req, res, next) {
   try {
+    const locale = res.locals.locale;
     const banners = await db('banners').where({ type: 'archive', is_active: true }).orderBy('sort_order');
+    const products = await db('products').where({ is_active: true }).orderBy('created_at', 'desc');
+
+    const lookbookSections = products
+      .map((p) => ({
+        product: localizeProduct(p, locale),
+        images: getLookbookImages(p.slug)
+      }))
+      .filter((section) => section.images.length > 0);
+
     res.render('archive', {
       title: `Archive — FOR A WHILE`,
       bodyClass: 'page-archive',
-      banners
+      banners,
+      lookbookSections
     });
   } catch (err) {
     next(err);

@@ -35,7 +35,7 @@
             <% } %>
           </div>
 
-          <form action="<%= locale === 'en' ? '/en/cart/add' : '/cart/add' %>" method="post">
+          <form action="<%= locale === 'en' ? '/en/cart/add' : '/cart/add' %>" method="post" class="js-product-form" data-requires-variant="<%= variants.length > 1 ? '1' : '0' %>">
             <input type="hidden" name="redirectTo" value="<%= locale === 'en' ? '/en/cart' : '/cart' %>" />
             <input type="hidden" name="variantId" value="<% if (sizes.length === 1 && colors.length <= 1) { %><%= variants[0] ? variants[0].id : '' %><% } %>" />
 
@@ -43,7 +43,9 @@
             <div class="variant-group">
               <span class="variant-group__label">
                 <%= t('product.selectSize') %>
-                <span class="size-guide-link" data-open-size-guide><%= t('product.sizeGuide') %></span>
+                <% if (sizeChartUrl) { %>
+                  <span class="size-guide-link" data-open-size-guide><%= t('product.sizeGuide') %></span>
+                <% } %>
               </span>
               <div class="variant-options" data-role="size">
                 <% sizes.forEach(function(size) { %>
@@ -64,8 +66,17 @@
             </div>
             <% } %>
 
+            <div class="variant-group">
+              <span class="variant-group__label"><%= t('cart.quantity') %></span>
+              <div class="qty-selector">
+                <button type="button" data-qty-decrease aria-label="-">&minus;</button>
+                <input type="number" name="quantity" value="1" min="1" data-qty-input />
+                <button type="button" data-qty-increase aria-label="+">&plus;</button>
+              </div>
+            </div>
+
             <div style="display:flex; gap: 12px; align-items:center;">
-              <button type="submit" class="btn btn-primary js-add-to-cart" <%= sizes.length ? 'disabled' : '' %>>
+              <button type="submit" class="btn btn-primary js-add-to-cart">
                 <%= t('product.addToCart') %>
               </button>
               <button
@@ -89,6 +100,17 @@
         </div>
       </div>
 
+      <% if (lookbookImages.length > 0) { %>
+      <div class="lookbook-strip">
+        <div class="lookbook-strip__heading"><%= locale === 'en' ? 'Lookbook' : 'Lookbook' %></div>
+        <div class="lookbook-strip__grid">
+          <% lookbookImages.forEach(function(img) { %>
+            <img src="<%= img %>" alt="<%= product.name %> lookbook" loading="lazy" data-reveal />
+          <% }); %>
+        </div>
+      </div>
+      <% } %>
+
       <% if (relatedProducts.length > 0) { %>
       <div style="margin-top: 64px;">
         <div class="section__heading">
@@ -105,19 +127,14 @@
   </div>
 </main>
 
-<div id="sizeGuideModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:150; align-items:center; justify-content:center;" data-close-size-guide>
-  <div style="background:#fff; color:#111; padding:24px; max-width:600px; width: 90%; max-height:80vh; overflow:auto;">
-    <button type="button" data-close-size-guide class="btn btn-outline-dark" style="float:right; padding: 6px 12px;">&times;</button>
-    <h3 style="margin-top:0;"><%= t('product.sizeGuide') %></h3>
-    <p style="font-size: 14px; color:#555;">
-      <% if (locale === 'en') { %>
-        Measurements in cm. If you're between sizes, we recommend sizing up for the FAW oversized fit.
-      <% } else { %>
-        Số đo tính bằng cm. Nếu bạn ở giữa 2 size, nên chọn size lớn hơn cho form rộng đặc trưng của FAW.
-      <% } %>
-    </p>
+<% if (sizeChartUrl) { %>
+<div id="sizeGuideModal" class="size-guide-modal" data-close-size-guide>
+  <div class="size-guide-modal__box">
+    <button type="button" data-close-size-guide class="size-guide-modal__close">&times;</button>
+    <img src="<%= sizeChartUrl %>" alt="<%= t('product.sizeGuide') %>" />
   </div>
 </div>
+<% } %>
 
 <%- include('partials/footer') %>
 <script>window.__FAW_VARIANTS__ = <%- JSON.stringify(variants) %>;</script>

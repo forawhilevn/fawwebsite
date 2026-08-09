@@ -1,16 +1,18 @@
 <footer class="site-footer">
-  <div class="site-footer__top container">
-    <h2 class="site-footer__tagline"><%= t('home.taglineLine1') %></h2>
-    <p class="site-footer__subtagline"><%= t('home.taglineLine2') %></p>
-  </div>
-  <div class="site-footer__links container">
-    <a href="https://instagram.com/forawhile.iwd" target="_blank" rel="noopener">@forawhile.iwd</a>
-    <a href="<%= locale === 'en' ? '/en/shipping-policy' : '/shipping-policy' %>"><%= t('nav.shippingPolicy') %></a>
-    <a href="<%= locale === 'en' ? '/en/return-policy' : '/return-policy' %>"><%= t('nav.returnPolicy') %></a>
-    <a href="<%= locale === 'en' ? '/en/about' : '/about' %>"><%= t('nav.about') %></a>
-    <a href="<%= locale === 'en' ? '/en/contact' : '/contact' %>"><%= t('nav.contact') %></a>
+  <div class="site-footer__top">
+    <h2 class="site-footer__tagline">
+      <span>FOR A WHILE</span>
+      <span>FROM ANOTHER WORLD</span>
+    </h2>
+    <div class="site-footer__links">
+      <a href="https://instagram.com/forawhile.iwd" target="_blank" rel="noopener" class="site-footer__handle">@forawhile.iwd</a>
+      <a href="<%= locale === 'en' ? '/en/shipping-policy' : '/shipping-policy' %>"><%= t('nav.shippingPolicy') %></a>
+      <a href="<%= locale === 'en' ? '/en/return-policy' : '/return-policy' %>"><%= t('nav.returnPolicy') %></a>
+      <a href="<%= locale === 'en' ? '/en/about' : '/about' %>"><%= t('nav.about') %></a>
+      <a href="<%= locale === 'en' ? '/en/contact' : '/contact' %>"><%= t('nav.contact') %></a>
+    </div>
   </div>
   <div class="site-footer__pattern">
-    <img src="/images/decor/fstar.svg" alt="" loading="lazy" style="filter: invert(48%) sepia(89%) saturate(1749%) hue-rotate(345deg) brightness(97%) contrast(96%); width:64px; opacity:.5; margin: 0 auto var(--space-4); display:block;" />
+    <img src="/images/brand/footer-pattern.png" alt="" loading="lazy" />
   </div>
 </footer>

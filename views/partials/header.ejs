@@ -1,13 +1,13 @@
 <header class="site-header">
   <div class="container site-header__inner">
-    <a href="<%= locale === 'en' ? '/en' : '/' %>" class="site-header__logo" data-barba-prevent="self">
-      <img src="/images/logo/logo-scribble.png" alt="FOR A WHILE" />
-    </a>
-
     <nav class="site-header__nav">
       <a href="<%= locale === 'en' ? '/en/shop' : '/shop' %>"><%= t('nav.shop') %></a>
       <a href="<%= locale === 'en' ? '/en/archive' : '/archive' %>"><%= t('nav.archive') %></a>
     </nav>
+
+    <a href="<%= locale === 'en' ? '/en' : '/' %>" class="site-header__logo" data-barba-prevent="self">
+      <img src="/images/logo/logo-scribble.png" alt="FOR A WHILE" />
+    </a>
 
     <div class="site-header__actions">
       <a href="<%= locale === 'en' ? '/en/wishlist' : '/wishlist' %>" aria-label="<%= t('nav.wishlist') %>">

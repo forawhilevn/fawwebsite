@@ -24,13 +24,14 @@ window.FAWMotion.initPreloader = function initPreloader(reduced) {
 
   const mark = el.querySelector('.preloader__mark');
   const tl = gsap.timeline({
+    defaults: { ease: 'power3.out' },
     onComplete: () => {
       el.style.display = 'none';
     }
   });
 
-  gsap.set(mark, { scale: 0.6, opacity: 0 });
-  tl.to(mark, { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(1.7)' })
-    .to(mark, { rotate: 8, duration: 0.35, ease: 'power1.inOut', yoyo: true, repeat: 1 })
-    .to(el, { yPercent: -100, duration: 0.6, ease: 'expo.inOut', delay: 0.15 });
+  gsap.set(mark, { scale: 0.7, opacity: 0 });
+  tl.to(mark, { scale: 1, opacity: 1, duration: 0.7 })
+    .to(mark, { scale: 1.04, duration: 0.5, ease: 'sine.inOut' }, '+=0.15')
+    .to(el, { yPercent: -100, duration: 0.7, ease: 'expo.inOut' }, '+=0.1');
 };

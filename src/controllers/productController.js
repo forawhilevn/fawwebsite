@@ -1,5 +1,6 @@
 const db = require('../db');
 const { localizeProduct, localizeCategory } = require('../utils/i18n');
+const { getLookbookImages, getSizeChartUrl } = require('../utils/assets');
 
 async function showProduct(req, res, next) {
   try {
@@ -38,7 +39,9 @@ async function showProduct(req, res, next) {
       colors,
       images: images.length ? images : [{ image_url: product.cover_image_url, sort_order: 0 }],
       category: category ? localizeCategory(category, locale) : null,
-      relatedProducts: related.map((p) => localizeProduct(p, locale))
+      relatedProducts: related.map((p) => localizeProduct(p, locale)),
+      lookbookImages: getLookbookImages(product.slug),
+      sizeChartUrl: getSizeChartUrl(product.slug)
     });
   } catch (err) {
     next(err);

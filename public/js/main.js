@@ -26,9 +26,40 @@
     );
 
     const variantInput = form.querySelector('input[name="variantId"]');
-    const addBtn = form.querySelector('.js-add-to-cart');
     if (variantInput) variantInput.value = match ? match.id : '';
-    if (addBtn) addBtn.disabled = !match || match.stock <= 0;
+
+    const hint = document.getElementById('variantHint');
+    if (match && hint) hint.style.display = 'none';
+  });
+
+  // Prevent adding to cart before a required variant is selected, with visible feedback
+  document.addEventListener('submit', function (e) {
+    const form = e.target.closest('.js-product-form');
+    if (!form) return;
+    if (form.getAttribute('data-requires-variant') !== '1') return;
+
+    const variantInput = form.querySelector('input[name="variantId"]');
+    if (!variantInput || variantInput.value) return;
+
+    e.preventDefault();
+    const hint = document.getElementById('variantHint');
+    if (hint) hint.style.display = 'block';
+    const firstGroup = form.querySelector('.variant-options');
+    if (firstGroup) firstGroup.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  });
+
+  // Quantity stepper on the product detail page
+  document.addEventListener('click', function (e) {
+    const decBtn = e.target.closest('[data-qty-decrease]');
+    const incBtn = e.target.closest('[data-qty-increase]');
+    if (!decBtn && !incBtn) return;
+
+    const selector = (decBtn || incBtn).closest('.qty-selector');
+    const input = selector && selector.querySelector('[data-qty-input]');
+    if (!input) return;
+
+    const current = Math.max(1, parseInt(input.value, 10) || 1);
+    input.value = decBtn ? Math.max(1, current - 1) : current + 1;
   });
 
   // Gallery thumbnail swap on the product detail page

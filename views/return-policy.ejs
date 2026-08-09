@@ -8,10 +8,12 @@
 <%- include('partials/header') %>
 
 <main data-barba="container" data-barba-namespace="return-policy">
-  <div class="page-shell page-shell--light">
-    <div class="container" style="max-width: 800px;">
+  <div class="page-shell--light">
+    <div class="policy-layout">
+      <div class="policy-content" data-reveal>
       <% if (locale === 'en') { %>
-        <h1 class="page-title">RETURN POLICY</h1>
+        <h1 class="policy-title">RETURN POLICY</h1>
+        <p class="policy-subtitle">Return &amp; exchange policy</p>
         <p>FAW wants to give you the best shopping experience. If there's an issue with your product, we're always here to help.</p>
 
         <h3>1. Products eligible for return/exchange</h3>
@@ -36,7 +38,8 @@
         </ul>
         <p><em>Please contact us via our fanpage before shipping the item back so we can guide you through the process.</em></p>
       <% } else { %>
-        <h1 class="page-title">CHÍNH SÁCH ĐỔI TRẢ</h1>
+        <h1 class="policy-title">REFUUND POLICY</h1>
+        <p class="policy-subtitle">Chính sách đổi trả:</p>
         <p>FAW luôn muốn mang đến trải nghiệm mua sắm tốt nhất. Nếu sản phẩm có vấn đề, chúng tôi luôn sẵn sàng hỗ trợ bạn.</p>
 
         <h3>1. Sản phẩm được chấp nhận đổi trả trong các trường hợp sau</h3>
@@ -61,6 +64,10 @@
         </ul>
         <p><em>Vui lòng liên hệ qua fanpage trước khi gửi hàng về để được hướng dẫn cụ thể.</em></p>
       <% } %>
+      </div>
+      <div class="policy-mascot" data-reveal>
+        <img src="/images/brand/mascot-return.png" alt="" loading="lazy" />
+      </div>
     </div>
   </div>
 </main>

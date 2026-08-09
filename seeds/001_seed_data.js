@@ -71,6 +71,20 @@ const PRODUCTS = [
       { size: 'XL', color: 'Grey', color_hex: '#6b6b63', stock: 5 }
     ],
     images: ['1.jpg', '2.jpg', '3.jpg']
+  },
+  {
+    category: 'phu-kien',
+    name_vi: 'TRUCKER HAT',
+    name_en: 'TRUCKER HAT',
+    description_vi:
+      'Nón trucker phối trắng/cam, in hoạ tiết FSTAR đặc trưng FAW. Lưới sau thoáng khí, chỉnh size snapback.',
+    description_en:
+      'White/orange trucker cap with the signature FAW FSTAR print. Breathable mesh back, adjustable snapback.',
+    price: 350000,
+    cover_image_url: '/images/seed/trucker-hat/1.jpg',
+    is_featured: false,
+    variants: [{ size: 'One Size', color: 'White/Orange', color_hex: '#f4791d', stock: 15 }],
+    images: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg']
   }
 ];
 

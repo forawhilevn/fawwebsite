@@ -1,5 +1,6 @@
 const db = require('../db');
 const { localizeProduct, localizeBanner } = require('../utils/i18n');
+const { getLookbookImages } = require('../utils/assets');
 
 async function showHome(req, res, next) {
   try {
@@ -23,13 +24,19 @@ async function showHome(req, res, next) {
       .orderBy('created_at', 'desc')
       .limit(8);
 
+    const lookbookImages = newArrivals
+      .map((p) => getLookbookImages(p.slug)[0])
+      .filter(Boolean)
+      .slice(0, 4);
+
     res.render('home', {
       title: 'FOR A WHILE — FROM ANOTHER WORLD',
       bodyClass: 'page-home',
       heroBanners: heroBanners.map((b) => localizeBanner(b, locale)),
       featuredBanner: featuredBanner ? localizeBanner(featuredBanner, locale) : null,
       featuredProducts: featuredProducts.map((p) => localizeProduct(p, locale)),
-      newArrivals: newArrivals.map((p) => localizeProduct(p, locale))
+      newArrivals: newArrivals.map((p) => localizeProduct(p, locale)),
+      lookbookImages
     });
   } catch (err) {
     next(err);

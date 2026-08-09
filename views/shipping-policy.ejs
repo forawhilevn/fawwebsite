@@ -8,10 +8,12 @@
 <%- include('partials/header') %>
 
 <main data-barba="container" data-barba-namespace="shipping-policy">
-  <div class="page-shell page-shell--light">
-    <div class="container" style="max-width: 800px;">
+  <div class="page-shell--light">
+    <div class="policy-layout">
+      <div class="policy-content" data-reveal>
       <% if (locale === 'en') { %>
-        <h1 class="page-title">SHIPPING POLICY</h1>
+        <h1 class="policy-title">SHIPPING POLICY</h1>
+        <p class="policy-subtitle">Shipping &amp; delivery policy</p>
         <p>FAW ships nationwide through trusted delivery partners.</p>
 
         <h3>1. Delivery method</h3>
@@ -35,7 +37,8 @@
         <p>You may refuse the delivery and request a full return/refund. We'll work with our shipping partner to settle any related claim per our service agreement.</p>
         <p><em>Note: if there's a delivery delay, FAW will notify you promptly.</em></p>
       <% } else { %>
-        <h1 class="page-title">CHÍNH SÁCH VẬN CHUYỂN</h1>
+        <h1 class="policy-title">SHIPPING POLICY</h1>
+        <p class="policy-subtitle">Chính sách vận chuyển:</p>
         <p>FAW giao hàng toàn quốc thông qua các đối tác vận chuyển uy tín.</p>
 
         <h3>1. Phương thức giao hàng</h3>
@@ -59,6 +62,10 @@
         <p>Khách hàng có quyền từ chối nhận sản phẩm và yêu cầu đổi trả hoàn phí; mọi vấn đề phát sinh chúng tôi sẽ làm việc với đối tác vận chuyển để giải quyết đền bù theo thỏa thuận hợp tác.</p>
         <p><em>Lưu ý: Trường hợp phát sinh chậm trễ trong việc giao hàng, FAW sẽ thông tin kịp thời cho khách.</em></p>
       <% } %>
+      </div>
+      <div class="policy-mascot" data-reveal>
+        <img src="/images/brand/mascot-shipping.png" alt="" loading="lazy" />
+      </div>
     </div>
   </div>
 </main>

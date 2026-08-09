@@ -12,16 +12,32 @@
     <div class="container">
       <h1 class="page-title"><%= t('nav.archive') %></h1>
 
-      <% if (banners.length === 0) { %>
+      <% if (lookbookSections.length === 0 && banners.length === 0) { %>
         <p style="color: var(--color-fg-muted-on-alt);">
           <% if (locale === 'en') { %>Lookbook coming soon.<% } else { %>Lookbook sắp ra mắt.<% } %>
         </p>
-      <% } else { %>
+      <% } %>
+
+      <% lookbookSections.forEach(function(section) { %>
+        <div style="margin-bottom: 64px;">
+          <div class="section__heading">
+            <h2 class="section__title" style="color: var(--color-fg-on-alt); font-size: 22px;"><%= section.product.name %></h2>
+            <a href="<%= (locale === 'en' ? '/en/product/' : '/product/') + section.product.slug %>" class="section__viewall"><%= t('home.shopNow') %></a>
+          </div>
+          <div class="lookbook-grid">
+            <% section.images.forEach(function(img) { %>
+              <img src="<%= img %>" alt="<%= section.product.name %>" loading="lazy" data-reveal />
+            <% }); %>
+          </div>
+        </div>
+      <% }); %>
+
+      <% if (banners.length > 0) { %>
         <div class="product-grid">
           <% banners.forEach(function(banner) { %>
             <div class="product-card" data-reveal>
               <div class="product-card__media">
-                <img src="<%= banner.image_url %>" alt="<%= locale === 'en' ? (banner.title_en || '') : (banner.title_vi || '') %>" loading="lazy" data-parallax="6" />
+                <img src="<%= banner.image_url %>" alt="<%= locale === 'en' ? (banner.title_en || '') : (banner.title_vi || '') %>" loading="lazy" />
               </div>
               <% if (banner.title_vi || banner.title_en) { %>
               <div class="product-card__body">

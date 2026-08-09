@@ -60,6 +60,22 @@
     </div>
   </section>
   <% } %>
+
+  <% if (lookbookImages.length > 0) { %>
+  <section class="section">
+    <div class="container">
+      <div class="section__heading">
+        <h2 class="section__title">Lookbook</h2>
+        <a href="<%= locale === 'en' ? '/en/archive' : '/archive' %>" class="section__viewall"><%= t('home.viewAll') %></a>
+      </div>
+    </div>
+    <div class="lookbook-grid">
+      <% lookbookImages.forEach(function(img) { %>
+        <img src="<%= img %>" alt="" loading="lazy" data-reveal data-parallax="4" />
+      <% }); %>
+    </div>
+  </section>
+  <% } %>
 </main>
 
 <%- include('partials/footer') %>
