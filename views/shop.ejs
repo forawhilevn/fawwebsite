@@ -5,9 +5,10 @@
 </head>
 <body class="<%= bodyClass %>" data-barba="wrapper">
 <%- include('partials/preloader') %>
+<div data-barba="container" data-barba-namespace="shop">
 <%- include('partials/header') %>
 
-<main data-barba="container" data-barba-namespace="shop">
+<main>
   <div class="page-shell page-shell--light">
     <div class="container">
       <h1 class="page-title"><%= activeCategory ? activeCategory.name : t('shop.title') %></h1>
@@ -52,6 +53,7 @@
 </main>
 
 <%- include('partials/footer') %>
+</div>
 <%- include('partials/scripts') %>
 </body>
 </html>

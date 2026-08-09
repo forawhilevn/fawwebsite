@@ -5,9 +5,10 @@
 </head>
 <body class="<%= bodyClass %>" data-barba="wrapper">
 <%- include('partials/preloader') %>
+<div data-barba="container" data-barba-namespace="order-confirmation">
 <%- include('partials/header') %>
 
-<main data-barba="container" data-barba-namespace="order-confirmation">
+<main>
   <div class="page-shell page-shell--light">
     <div class="container order-confirmation">
       <h1 class="page-title"><%= t('order.confirmationTitle') %></h1>
@@ -38,6 +39,7 @@
 </main>
 
 <%- include('partials/footer') %>
+</div>
 <%- include('partials/scripts') %>
 </body>
 </html>

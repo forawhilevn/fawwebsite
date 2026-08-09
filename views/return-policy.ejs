@@ -5,9 +5,10 @@
 </head>
 <body class="<%= bodyClass %>" data-barba="wrapper">
 <%- include('partials/preloader') %>
+<div data-barba="container" data-barba-namespace="return-policy">
 <%- include('partials/header') %>
 
-<main data-barba="container" data-barba-namespace="return-policy">
+<main>
   <div class="page-shell--light">
     <div class="policy-layout">
       <div class="policy-content" data-reveal>
@@ -73,6 +74,7 @@
 </main>
 
 <%- include('partials/footer') %>
+</div>
 <%- include('partials/scripts') %>
 </body>
 </html>

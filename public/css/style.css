@@ -120,11 +120,18 @@ textarea {
 
 h1, h2, h3, h4 {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 700;
   letter-spacing: 0.01em;
   text-transform: uppercase;
   margin: 0;
   line-height: 1.05;
+}
+
+html:lang(vi) h1,
+html:lang(vi) h2,
+html:lang(vi) h3,
+html:lang(vi) h4 {
+  font-weight: 900;
 }
 
 .container {
@@ -545,9 +552,13 @@ h1, h2, h3, h4 {
 .product-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: var(--border-width);
-  background: var(--color-border);
-  border: var(--border-width) solid var(--color-border);
+  gap: var(--space-5);
+}
+
+@media (max-width: 560px) {
+  .product-grid {
+    gap: var(--space-4);
+  }
 }
 
 .product-card {
@@ -555,6 +566,9 @@ h1, h2, h3, h4 {
   color: var(--color-fg-on-alt);
   display: flex;
   flex-direction: column;
+  border: 3px solid var(--color-border);
+  border-radius: 14px;
+  overflow: hidden;
 }
 
 .product-card__media {

@@ -5,9 +5,10 @@
 </head>
 <body class="<%= bodyClass %>" data-barba="wrapper">
 <%- include('partials/preloader') %>
+<div data-barba="container" data-barba-namespace="home">
 <%- include('partials/header') %>
 
-<main data-barba="container" data-barba-namespace="home">
+<main>
   <% if (heroBanners.length > 0) { %>
   <section class="hero">
     <img class="hero__bg" data-parallax="12" src="<%= heroBanners[0].image_url %>" alt="" />
@@ -79,6 +80,7 @@
 </main>
 
 <%- include('partials/footer') %>
+</div>
 <%- include('partials/scripts') %>
 </body>
 </html>

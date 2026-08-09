@@ -44,7 +44,7 @@ const PRODUCTS = [
     description_en:
       'Carpenter double-knee denim pants with the signature FAW scribble-face back pocket print. Heavyweight denim, holds shape.',
     price: 650000,
-    cover_image_url: '/images/seed/faw-double-knee/1.jpg',
+    cover_image_url: '/images/seed/faw-double-knee/5.jpg',
     is_featured: true,
     variants: [
       { size: '29', color: 'Black', color_hex: '#111111', stock: 5 },
@@ -52,7 +52,7 @@ const PRODUCTS = [
       { size: '31', color: 'Black', color_hex: '#111111', stock: 8 },
       { size: '32', color: 'Black', color_hex: '#111111', stock: 4 }
     ],
-    images: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg']
+    images: ['5.jpg', '6.jpg', '1.jpg', '2.jpg', '3.jpg', '4.jpg']
   },
   {
     category: 'ao',

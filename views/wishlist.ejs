@@ -5,9 +5,10 @@
 </head>
 <body class="<%= bodyClass %>" data-barba="wrapper">
 <%- include('partials/preloader') %>
+<div data-barba="container" data-barba-namespace="wishlist">
 <%- include('partials/header') %>
 
-<main data-barba="container" data-barba-namespace="wishlist">
+<main>
   <div class="page-shell page-shell--light">
     <div class="container">
       <h1 class="page-title"><%= t('wishlist.title') %></h1>
@@ -18,6 +19,7 @@
 </main>
 
 <%- include('partials/footer') %>
+</div>
 <%- include('partials/scripts') %>
 </body>
 </html>

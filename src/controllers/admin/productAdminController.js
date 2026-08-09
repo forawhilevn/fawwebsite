@@ -4,6 +4,7 @@ const { body, validationResult } = require('express-validator');
 const db = require('../../db');
 const { slugify } = require('../../utils/slug');
 const { cropToFixedSize } = require('../../utils/imageProcess');
+const { getLookbookImages } = require('../../utils/assets');
 
 const IMAGE_ERROR_MESSAGE = 'Ảnh không hợp lệ hoặc bị lỗi khi xử lý. Vui lòng thử lại với file JPG/PNG/GIF/WEBP khác.';
 
@@ -40,7 +41,8 @@ async function newProductForm(req, res, next) {
       errors: [],
       isEdit: false,
       galleryImages: [],
-      variants: []
+      variants: [],
+      lookbookImages: []
     });
   } catch (err) {
     next(err);
@@ -69,7 +71,8 @@ async function createProduct(req, res, next) {
         errors: errors.array(),
         isEdit: false,
         galleryImages: [],
-        variants: []
+        variants: [],
+        lookbookImages: []
       });
     }
 
@@ -94,7 +97,8 @@ async function createProduct(req, res, next) {
           errors: [{ msg: IMAGE_ERROR_MESSAGE }],
           isEdit: false,
           galleryImages: [],
-          variants: []
+          variants: [],
+          lookbookImages: []
         });
       }
       coverImageUrl = '/images/uploads/products/' + req.file.filename;
@@ -132,6 +136,7 @@ async function editProductForm(req, res, next) {
     const categories = await db('categories').orderBy('sort_order');
     const galleryImages = await db('product_images').where('product_id', product.id).orderBy('sort_order');
     const variants = await db('product_variants').where('product_id', product.id).orderBy('id');
+    const lookbookImages = getLookbookImages(product.slug);
 
     res.render('admin/product-form', {
       title: 'Sửa sản phẩm - FAW Admin',
@@ -140,7 +145,8 @@ async function editProductForm(req, res, next) {
       errors: [],
       isEdit: true,
       galleryImages,
-      variants
+      variants,
+      lookbookImages
     });
   } catch (err) {
     next(err);
@@ -156,6 +162,7 @@ async function updateProduct(req, res, next) {
     const categories = await db('categories').orderBy('sort_order');
     const galleryImages = await db('product_images').where('product_id', product.id).orderBy('sort_order');
     const variants = await db('product_variants').where('product_id', product.id).orderBy('id');
+    const lookbookImages = getLookbookImages(product.slug);
 
     if (!errors.isEmpty()) {
       if (req.file) removeUploadedFile('/images/uploads/products/' + req.file.filename);
@@ -166,7 +173,8 @@ async function updateProduct(req, res, next) {
         errors: errors.array(),
         isEdit: true,
         galleryImages,
-        variants
+        variants,
+        lookbookImages
       });
     }
 
@@ -184,7 +192,8 @@ async function updateProduct(req, res, next) {
           errors: [{ msg: IMAGE_ERROR_MESSAGE }],
           isEdit: true,
           galleryImages,
-          variants
+          variants,
+          lookbookImages
         });
       }
       removeUploadedFile(product.cover_image_url);

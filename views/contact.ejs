@@ -5,9 +5,10 @@
 </head>
 <body class="<%= bodyClass %>" data-barba="wrapper">
 <%- include('partials/preloader') %>
+<div data-barba="container" data-barba-namespace="contact">
 <%- include('partials/header') %>
 
-<main data-barba="container" data-barba-namespace="contact">
+<main>
   <div class="page-shell page-shell--light">
     <div class="container" style="max-width: 600px;">
       <h1 class="page-title"><%= t('nav.contact') %></h1>
@@ -19,6 +20,7 @@
 </main>
 
 <%- include('partials/footer') %>
+</div>
 <%- include('partials/scripts') %>
 </body>
 </html>

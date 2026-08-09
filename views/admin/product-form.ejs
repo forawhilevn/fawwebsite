@@ -130,6 +130,29 @@
           <button type="submit" class="admin-btn" style="margin-top:8px;">Tải ảnh lên</button>
         </form>
       </div>
+
+      <div class="admin-card">
+        <h2 style="margin-top:0; font-size: 16px;">Lookbook</h2>
+        <p style="font-size:12px; color:#71717a; margin-top:-8px;">Ảnh lookbook hiển thị ở cuối trang chi tiết sản phẩm, trang Archive và trang chủ.</p>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom: 16px;">
+          <% lookbookImages.forEach(function(imgUrl) { %>
+            <% const filename = imgUrl.split('/').pop(); %>
+            <div style="position:relative;">
+              <img src="<%= imgUrl %>" alt="" style="width:90px; height:110px; object-fit:cover;" />
+              <form action="/admin/san-pham/<%= product.id %>/lookbook/<%= filename %>/xoa" method="post" style="position:absolute; top:2px; right:2px;">
+                <button type="submit" class="admin-btn admin-btn--danger" style="padding:2px 6px; font-size:11px;">&times;</button>
+              </form>
+            </div>
+          <% }); %>
+          <% if (lookbookImages.length === 0) { %>
+            <p style="font-size:13px; color:#71717a;">Chưa có ảnh lookbook.</p>
+          <% } %>
+        </div>
+        <form action="/admin/san-pham/<%= product.id %>/lookbook" method="post" enctype="multipart/form-data">
+          <input type="file" name="lookbookImages" accept="image/*" multiple />
+          <button type="submit" class="admin-btn" style="margin-top:8px;">Tải ảnh lookbook lên</button>
+        </form>
+      </div>
     <% } %>
   </main>
 </div>

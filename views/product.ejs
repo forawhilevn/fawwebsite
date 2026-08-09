@@ -5,9 +5,10 @@
 </head>
 <body class="<%= bodyClass %>" data-barba="wrapper">
 <%- include('partials/preloader') %>
+<div data-barba="container" data-barba-namespace="product">
 <%- include('partials/header') %>
 
-<main data-barba="container" data-barba-namespace="product">
+<main>
   <div class="page-shell page-shell--light">
     <div class="container">
       <div class="product-detail">
@@ -35,7 +36,7 @@
             <% } %>
           </div>
 
-          <form action="<%= locale === 'en' ? '/en/cart/add' : '/cart/add' %>" method="post" class="js-product-form" data-requires-variant="<%= variants.length > 1 ? '1' : '0' %>">
+          <form action="<%= locale === 'en' ? '/en/cart/add' : '/cart/add' %>" method="post" class="js-product-form" data-requires-variant="<%= variants.length > 1 ? '1' : '0' %>" data-variants='<%- JSON.stringify(variants) %>'>
             <input type="hidden" name="redirectTo" value="<%= locale === 'en' ? '/en/cart' : '/cart' %>" />
             <input type="hidden" name="variantId" value="<% if (sizes.length === 1 && colors.length <= 1) { %><%= variants[0] ? variants[0].id : '' %><% } %>" />
 
@@ -125,19 +126,19 @@
       <% } %>
     </div>
   </div>
+
+  <% if (sizeChartUrl) { %>
+  <div id="sizeGuideModal" class="size-guide-modal" data-close-size-guide>
+    <div class="size-guide-modal__box">
+      <button type="button" data-close-size-guide class="size-guide-modal__close">&times;</button>
+      <img src="<%= sizeChartUrl %>" alt="<%= t('product.sizeGuide') %>" />
+    </div>
+  </div>
+  <% } %>
 </main>
 
-<% if (sizeChartUrl) { %>
-<div id="sizeGuideModal" class="size-guide-modal" data-close-size-guide>
-  <div class="size-guide-modal__box">
-    <button type="button" data-close-size-guide class="size-guide-modal__close">&times;</button>
-    <img src="<%= sizeChartUrl %>" alt="<%= t('product.sizeGuide') %>" />
-  </div>
-</div>
-<% } %>
-
 <%- include('partials/footer') %>
-<script>window.__FAW_VARIANTS__ = <%- JSON.stringify(variants) %>;</script>
+</div>
 <%- include('partials/scripts') %>
 </body>
 </html>

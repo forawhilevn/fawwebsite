@@ -2,19 +2,21 @@ const express = require('express');
 const router = express.Router();
 
 const { requireAdmin, redirectIfAdmin } = require('../middleware/auth');
-const { makeUploader } = require('../middleware/upload');
+const { makeUploader, makeSlugUploader } = require('../middleware/upload');
 const authController = require('../controllers/admin/authController');
 const dashboardController = require('../controllers/admin/dashboardController');
 const categoryAdminController = require('../controllers/admin/categoryAdminController');
 const productAdminController = require('../controllers/admin/productAdminController');
 const productVariantController = require('../controllers/admin/productVariantController');
 const productGalleryController = require('../controllers/admin/productGalleryController');
+const lookbookController = require('../controllers/admin/lookbookController');
 const orderAdminController = require('../controllers/admin/orderAdminController');
 const bannerController = require('../controllers/admin/bannerController');
 const discountAdminController = require('../controllers/admin/discountAdminController');
 
 const uploadProductImage = makeUploader('products');
 const uploadBannerImage = makeUploader('banners');
+const uploadLookbookImage = makeSlugUploader('lookbook');
 
 router.get('/login', redirectIfAdmin, authController.showLogin);
 router.post('/login', redirectIfAdmin, authController.login);
@@ -52,6 +54,9 @@ router.post('/san-pham/:id/bien-the/:variantId/xoa', productVariantController.de
 
 router.post('/san-pham/:id/anh', uploadProductImage.array('images', 10), productGalleryController.uploadImages);
 router.post('/san-pham/:id/anh/:imageId/xoa', productGalleryController.deleteImage);
+
+router.post('/san-pham/:id/lookbook', uploadLookbookImage.array('lookbookImages', 10), lookbookController.uploadImages);
+router.post('/san-pham/:id/lookbook/:filename/xoa', lookbookController.deleteImage);
 
 router.get('/don-hang', orderAdminController.listOrders);
 router.get('/don-hang/:id', orderAdminController.showOrder);

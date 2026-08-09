@@ -20,7 +20,12 @@
     const sizeVal = size ? size.getAttribute('data-value') : null;
     const colorVal = color ? color.getAttribute('data-value') : '';
 
-    const variants = window.__FAW_VARIANTS__ || [];
+    let variants = [];
+    try {
+      variants = JSON.parse(form.getAttribute('data-variants') || '[]');
+    } catch (err) {
+      variants = [];
+    }
     const match = variants.find(
       (v) => v.size === sizeVal && (colorVal === '' || v.color === colorVal)
     );
