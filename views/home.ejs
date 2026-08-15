@@ -41,16 +41,6 @@
   </section>
   <% } %>
 
-  <% if (featuredBanner) { %>
-  <section class="section">
-    <div class="container">
-      <a href="<%= featuredBanner.link_url || '/shop' %>" style="display:block; overflow:hidden;" data-reveal>
-        <img src="<%= featuredBanner.image_url %>" alt="" loading="lazy" data-parallax="8" />
-      </a>
-    </div>
-  </section>
-  <% } %>
-
   <% if (lookbookImages.length > 0) { %>
   <section class="section">
     <div class="container">

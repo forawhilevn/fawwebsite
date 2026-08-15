@@ -9,7 +9,6 @@ async function showHome(req, res, next) {
     const heroBanners = await db('banners')
       .where({ type: 'hero', is_active: true })
       .orderBy('sort_order');
-    const featuredBanner = await db('banners').where({ type: 'featured', is_active: true }).first();
 
     const newArrivals = await db('products')
       .where({ is_active: true })
@@ -25,7 +24,6 @@ async function showHome(req, res, next) {
       title: 'FOR A WHILE — FROM ANOTHER WORLD',
       bodyClass: 'page-home',
       heroBanners: heroBanners.map((b) => localizeBanner(b, locale)),
-      featuredBanner: featuredBanner ? localizeBanner(featuredBanner, locale) : null,
       newArrivals: newArrivals.map((p) => localizeProduct(p, locale)),
       lookbookImages
     });

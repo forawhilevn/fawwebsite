@@ -15,7 +15,7 @@
 
       <% if (cart.items.length === 0) { %>
         <p><%= t('cart.empty') %></p>
-        <a href="<%= locale === 'en' ? '/en/shop' : '/shop' %>" class="btn btn-outline-dark"><%= t('cart.continueShopping') %></a>
+        <a href="<%= locale === 'en' ? '/en/shop' : '/shop' %>" class="btn btn-outline"><%= t('cart.continueShopping') %></a>
       <% } else { %>
         <table class="cart-table">
           <thead>
@@ -44,14 +44,14 @@
                   <form action="<%= locale === 'en' ? '/en/cart/update' : '/cart/update' %>" method="post" style="display:flex; gap:6px;">
                     <input type="hidden" name="variantId" value="<%= item.variant.id %>" />
                     <input type="number" name="quantity" min="0" value="<%= item.quantity %>" class="qty-input" />
-                    <button type="submit" class="btn btn-outline-dark" style="padding: 6px 10px; font-size: 11px;"><%= t('cart.update') %></button>
+                    <button type="submit" class="btn btn-outline" style="padding: 6px 10px; font-size: 11px;"><%= t('cart.update') %></button>
                   </form>
                 </td>
                 <td><%= formatVND(item.lineTotal) %></td>
                 <td>
                   <form action="<%= locale === 'en' ? '/en/cart/remove' : '/cart/remove' %>" method="post">
                     <input type="hidden" name="variantId" value="<%= item.variant.id %>" />
-                    <button type="submit" class="btn btn-outline-dark" style="padding: 6px 10px; font-size: 11px;"><%= t('cart.remove') %></button>
+                    <button type="submit" class="btn btn-outline" style="padding: 6px 10px; font-size: 11px;"><%= t('cart.remove') %></button>
                   </form>
                 </td>
               </tr>
