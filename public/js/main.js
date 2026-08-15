@@ -76,16 +76,30 @@
     var thumbs = gallery.querySelectorAll('[data-gallery-thumb]');
     var target = thumbs[index];
     if (!target) return;
-    var mainImg = gallery.querySelector('[data-gallery-main]');
-    if (mainImg) {
-      mainImg.src = target.getAttribute('data-gallery-thumb');
-      mainImg.classList.remove('is-transitioning');
-      void mainImg.offsetWidth; // force reflow so the animation replays
-      mainImg.classList.add('is-transitioning');
-    }
     thumbs.forEach(function (t) { t.classList.remove('is-active'); });
     target.classList.add('is-active');
     setThumbPage(gallery, Math.floor(index / THUMBS_PER_PAGE));
+
+    var mainImg = gallery.querySelector('[data-gallery-main]');
+    if (!mainImg) return;
+    var newSrc = target.getAttribute('data-gallery-thumb');
+    if (mainImg.getAttribute('src') === newSrc) return;
+
+    // Mirrors an AnimatePresence mode="wait" crossfade: exit (fade + slide
+    // up) fully finishes, then the new frame enters (fade + slide up into
+    // place) — done here with two chained CSS transition classes since this
+    // is plain JS/CSS, not React/framer-motion.
+    mainImg.classList.remove('is-entering');
+    mainImg.classList.add('is-exiting');
+    setTimeout(function () {
+      mainImg.src = newSrc;
+      mainImg.classList.remove('is-exiting');
+      void mainImg.offsetWidth; // force reflow so the enter animation replays
+      mainImg.classList.add('is-entering');
+      setTimeout(function () {
+        mainImg.classList.remove('is-entering');
+      }, 320);
+    }, 160);
   }
 
   function setThumbPage(gallery, page) {
@@ -177,6 +191,25 @@
     if (e.target.closest('[data-close-size-guide]') || e.target.id === 'sizeGuideModal') {
       const modal = document.getElementById('sizeGuideModal');
       if (modal) modal.style.display = 'none';
+    }
+  });
+
+  // Mobile header hamburger menu
+  document.addEventListener('click', function (e) {
+    const toggle = e.target.closest('[data-menu-toggle]');
+    if (toggle) {
+      const nav = document.querySelector('[data-mobile-nav]');
+      const isOpen = toggle.classList.toggle('is-open');
+      toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      if (nav) nav.classList.toggle('is-open', isOpen);
+      return;
+    }
+    if (e.target.closest('[data-mobile-nav] a')) {
+      const openToggle = document.querySelector('[data-menu-toggle].is-open');
+      const nav = document.querySelector('[data-mobile-nav]');
+      if (openToggle) openToggle.classList.remove('is-open');
+      if (openToggle) openToggle.setAttribute('aria-expanded', 'false');
+      if (nav) nav.classList.remove('is-open');
     }
   });
 

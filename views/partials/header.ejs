@@ -1,6 +1,10 @@
 <header class="site-header">
   <div class="container site-header__inner">
     <div class="site-header__left">
+      <button type="button" class="site-header__menu-toggle" data-menu-toggle aria-label="<%= t('nav.menu') %>" aria-expanded="false" aria-controls="mobileNav">
+        <span></span><span></span><span></span>
+      </button>
+
       <a href="<%= locale === 'en' ? '/en' : '/' %>" class="site-header__logo" data-barba-prevent="self">
         <img src="/images/logo/logo-mark.png" alt="FOR A WHILE" />
       </a>
@@ -23,4 +27,10 @@
       <%- include('language-switcher') %>
     </div>
   </div>
+
+  <nav class="site-header__mobile-nav" id="mobileNav" data-mobile-nav>
+    <a href="<%= locale === 'en' ? '/en/shop' : '/shop' %>"><%= t('nav.shop') %></a>
+    <a href="<%= locale === 'en' ? '/en/archive' : '/archive' %>"><%= t('nav.lookbook') %></a>
+    <a href="<%= locale === 'en' ? '/en/about' : '/about' %>"><%= t('nav.about') %></a>
+  </nav>
 </header>
