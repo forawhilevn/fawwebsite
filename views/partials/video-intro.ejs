@@ -1,0 +1,31 @@
+<div class="video-intro" id="videoIntro" aria-hidden="true">
+  <video
+    id="videoIntroOne"
+    class="video-intro__video is-active"
+    src="/video/1_HERO.mp4"
+    autoplay
+    muted
+    loop
+    playsinline
+    webkit-playsinline
+    preload="auto"
+  ></video>
+  <video
+    id="videoIntroTwo"
+    class="video-intro__video"
+    src="/video/2_HERO.mp4"
+    muted
+    playsinline
+    webkit-playsinline
+    preload="auto"
+  ></video>
+
+  <button type="button" class="video-intro__enter" id="videoIntroEnter" aria-label="<%= t('home.videoIntroEnter') %>">
+    <svg class="video-intro__enter-oval" viewBox="0 0 260 150" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M30,45 C30,20 70,7 130,8 C191,9 230,21 229,46 C228,69 191,83 130,82 C69,81 30,68 30,45 Z" stroke="#E8232A" stroke-width="5" stroke-linejoin="round"/>
+      <path d="M31,46 L27,101 C27,125 67,141 130,140 C193,139 233,124 232,100 L229,46" stroke="#E8232A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="video-intro__enter-label"><%= t('home.videoIntroEnter') %></span>
+  </button>
+</div>
+<div class="page-transition-overlay" id="pageTransitionOverlay" aria-hidden="true"></div>

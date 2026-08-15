@@ -26,6 +26,7 @@
   };
 
   if (window.FAWMotion.initPreloader) window.FAWMotion.initPreloader(reduced);
+  if (window.FAWMotion.initVideoIntro) window.FAWMotion.initVideoIntro();
 
   if (!reduced && window.FAWMotion.initSmoothScroll) {
     window.FAWMotion.initSmoothScroll();
