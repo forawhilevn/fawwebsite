@@ -9,7 +9,7 @@ window.FAWMotion.initVideoIntro = function initVideoIntro() {
   var hotspot = document.getElementById('videoIntroEnter');
   var label = document.getElementById('videoIntroLabel');
   var STORAGE_KEY = 'faw_video_intro_shown';
-  var storage = window.localStorage;
+  var storage = window.sessionStorage;
 
   // Intrinsic pixel bounds (within the 3840x2160 source frame) of the flat
   // top face of the hand-drawn "press here" button/pedestal that's drawn

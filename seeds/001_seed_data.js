@@ -45,7 +45,7 @@ const PRODUCTS = [
     description_en:
       'Black baggy carpenter/workwear-style denim jeans with reinforced double-knee construction, contrast white stitching, a hammer loop pocket, and a small embroidered logo on the front pocket. Heavyweight, durable denim built for streetwear.',
     price: 700000,
-    cover_image_url: '/images/seed/faw-double-knee/5.jpg',
+    cover_image_url: '/images/seed/faw-double-knee/1.jpg',
     is_featured: true,
     variants: [
       { size: '29', color: 'Black', color_hex: '#111111', stock: 5 },
@@ -53,7 +53,7 @@ const PRODUCTS = [
       { size: '31', color: 'Black', color_hex: '#111111', stock: 8 },
       { size: '32', color: 'Black', color_hex: '#111111', stock: 4 }
     ],
-    images: ['5.jpg', '6.jpg', '1.jpg', '2.jpg', '3.jpg', '4.jpg']
+    images: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg']
   },
   {
     category: 'ao',

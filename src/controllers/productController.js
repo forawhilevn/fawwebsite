@@ -26,8 +26,9 @@ async function showProduct(req, res, next) {
     const colors = [...new Set(variants.map((v) => v.color).filter(Boolean))];
 
     const related = await db('products')
-      .where({ category_id: product.category_id, is_active: true })
+      .where({ is_active: true })
       .andWhereNot({ id: product.id })
+      .orderBy('created_at', 'desc')
       .limit(4);
 
     res.render('product', {

@@ -138,9 +138,9 @@
       <% if (relatedProducts.length > 0) { %>
       <div style="margin-top: 64px;">
         <div class="section__heading">
-          <h2 class="section__title" style="font-size: 28px;"><%= t('product.relatedProducts') %></h2>
+          <h2 class="section__title" style="font-size: 22px;"><%= t('product.relatedProducts') %></h2>
         </div>
-        <div class="product-grid">
+        <div class="product-grid product-grid--compact">
           <% relatedProducts.forEach(function(p) { %>
             <%- include('partials/product-card', { product: p }) %>
           <% }); %>
@@ -152,8 +152,8 @@
 
   <% if (sizeChartUrl) { %>
   <div id="sizeGuideModal" class="size-guide-modal" data-close-size-guide>
-    <button type="button" data-close-size-guide class="size-guide-modal__close">&times;</button>
     <div class="size-guide-modal__box">
+      <button type="button" data-close-size-guide class="size-guide-modal__close">&times;</button>
       <img src="<%= sizeChartUrl %>" alt="<%= t('product.sizeGuide') %>" />
     </div>
   </div>

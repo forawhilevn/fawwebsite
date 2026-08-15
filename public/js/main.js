@@ -77,7 +77,12 @@
     var target = thumbs[index];
     if (!target) return;
     var mainImg = gallery.querySelector('[data-gallery-main]');
-    if (mainImg) mainImg.src = target.getAttribute('data-gallery-thumb');
+    if (mainImg) {
+      mainImg.src = target.getAttribute('data-gallery-thumb');
+      mainImg.classList.remove('is-transitioning');
+      void mainImg.offsetWidth; // force reflow so the animation replays
+      mainImg.classList.add('is-transitioning');
+    }
     thumbs.forEach(function (t) { t.classList.remove('is-active'); });
     target.classList.add('is-active');
     setThumbPage(gallery, Math.floor(index / THUMBS_PER_PAGE));
