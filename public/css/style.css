@@ -597,22 +597,16 @@ h1, h2, h3, h4 {
    Product grid / card
    ========================================================================== */
 
+.product-grid-wrap {
+  background: #0a0a0a url('/images/brand/pattern-bg.jpg') no-repeat center center;
+  background-size: cover;
+  padding: var(--space-6) var(--space-5);
+}
+
 .product-grid {
-  position: relative;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: var(--space-4);
-}
-
-.product-grid::before {
-  content: '';
-  position: absolute;
-  inset: -5%;
-  z-index: -1;
-  background: url('/images/brand/pattern-bg.jpg') no-repeat center center;
-  background-size: 1400px 1400px;
-  opacity: 0.55;
-  pointer-events: none;
 }
 
 @media (max-width: 560px) {

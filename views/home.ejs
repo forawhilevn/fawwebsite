@@ -28,10 +28,14 @@
         <h2 class="section__title"><%= t('home.newArrivals') %></h2>
         <a href="<%= locale === 'en' ? '/en/shop' : '/shop' %>" class="section__viewall"><%= t('home.viewAll') %></a>
       </div>
-      <div class="product-grid">
-        <% newArrivals.forEach(function(product) { %>
-          <%- include('partials/product-card', { product: product }) %>
-        <% }); %>
+    </div>
+    <div class="product-grid-wrap">
+      <div class="container">
+        <div class="product-grid">
+          <% newArrivals.forEach(function(product) { %>
+            <%- include('partials/product-card', { product: product }) %>
+          <% }); %>
+        </div>
       </div>
     </div>
   </section>
