@@ -46,7 +46,7 @@
   --color-fg-muted: #b3b3b3;
   --color-fg-muted-on-alt: #5a5a5a;
 
-  --color-red: #e8232a;
+  --color-red: #eb252a;
   --color-red-dark: #b81820;
   --color-orange: #f4791d;
   --color-orange-soft: #fbb040;
@@ -55,8 +55,8 @@
 
   --border-width: 2px;
 
-  --font-display: 'Be Vietnam Pro', 'Inter', sans-serif;
-  --font-body: 'Be Vietnam Pro', 'Inter', sans-serif;
+  --font-display: 'Poppins', 'Inter', sans-serif;
+  --font-body: 'Poppins', 'Inter', sans-serif;
 
   --space-1: 4px;
   --space-2: 8px;
@@ -82,11 +82,6 @@
 
 html {
   -webkit-text-size-adjust: 100%;
-}
-
-html:lang(en) {
-  --font-display: 'Poppins', 'Inter', sans-serif;
-  --font-body: 'Poppins', 'Inter', sans-serif;
 }
 
 body {
@@ -125,13 +120,6 @@ h1, h2, h3, h4 {
   text-transform: uppercase;
   margin: 0;
   line-height: 1.05;
-}
-
-html:lang(vi) h1,
-html:lang(vi) h2,
-html:lang(vi) h3,
-html:lang(vi) h4 {
-  font-weight: 900;
 }
 
 .container {
@@ -177,17 +165,6 @@ html:lang(vi) h4 {
 .preloader__mark img {
   width: 100%;
   filter: none;
-}
-
-.page-transition-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 190;
-  background: var(--color-bg);
-  transform: translateY(101%);
-  pointer-events: none;
-  will-change: transform;
-  transition: transform 550ms cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 /* ==========================================================================
@@ -259,18 +236,6 @@ html:lang(vi) h4 {
   opacity: 0;
 }
 
-.page-transition-overlay.is-instant {
-  transition: none;
-}
-
-.page-transition-overlay.is-covering {
-  transform: translateY(0);
-}
-
-.page-transition-overlay.is-revealed {
-  transform: translateY(-101%);
-}
-
 /* ==========================================================================
    Header
    ========================================================================== */
@@ -284,31 +249,33 @@ html:lang(vi) h4 {
 }
 
 .site-header__inner {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   height: 64px;
   gap: var(--space-4);
+}
+
+.site-header__left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
 }
 
 .site-header__nav {
   display: flex;
   align-items: center;
   gap: var(--space-5);
-  justify-self: start;
 }
 
 .site-header__logo {
-  justify-self: center;
-}
-
-.site-header__actions {
-  justify-self: end;
+  display: inline-flex;
+  align-items: center;
 }
 
 @media (max-width: 640px) {
-  .site-header__inner {
-    grid-template-columns: auto 1fr auto;
+  .site-header__left {
+    gap: var(--space-3);
   }
   .site-header__nav {
     gap: var(--space-3);
@@ -1138,8 +1105,11 @@ html:lang(vi) h4 {
 }
 
 .order-confirmation__qr {
+  /* VietQR's compact2 template renders at 540x640 (not square) - constrain
+     by width only and let height follow so the QR isn't stretched. */
   width: 240px;
-  height: 240px;
+  height: auto;
+  aspect-ratio: 540 / 640;
   margin: var(--space-5) auto;
   border: var(--border-width) solid var(--color-fg-on-alt);
 }

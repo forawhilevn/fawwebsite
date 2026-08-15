@@ -1,11 +1,12 @@
 {
   "nav.shop": "Shop",
   "nav.archive": "Archive",
+  "nav.lookbook": "Lookbook",
   "nav.wishlist": "Wishlist",
   "nav.cart": "Cart",
   "nav.search": "Search",
   "nav.account": "Account",
-  "nav.about": "About",
+  "nav.about": "About us",
   "nav.contact": "Contact",
   "nav.shippingPolicy": "Shipping Policy",
   "nav.returnPolicy": "Return Policy",

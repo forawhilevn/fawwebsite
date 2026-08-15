@@ -1,13 +1,16 @@
 <header class="site-header">
   <div class="container site-header__inner">
-    <nav class="site-header__nav">
-      <a href="<%= locale === 'en' ? '/en/shop' : '/shop' %>"><%= t('nav.shop') %></a>
-      <a href="<%= locale === 'en' ? '/en/archive' : '/archive' %>"><%= t('nav.archive') %></a>
-    </nav>
+    <div class="site-header__left">
+      <a href="<%= locale === 'en' ? '/en' : '/' %>" class="site-header__logo" data-barba-prevent="self">
+        <img src="/images/logo/logo-mark.png" alt="FOR A WHILE" />
+      </a>
 
-    <a href="<%= locale === 'en' ? '/en' : '/' %>" class="site-header__logo" data-barba-prevent="self">
-      <img src="/images/logo/logo-mark.png" alt="FOR A WHILE" />
-    </a>
+      <nav class="site-header__nav">
+        <a href="<%= locale === 'en' ? '/en/shop' : '/shop' %>"><%= t('nav.shop') %></a>
+        <a href="<%= locale === 'en' ? '/en/archive' : '/archive' %>"><%= t('nav.lookbook') %></a>
+        <a href="<%= locale === 'en' ? '/en/about' : '/about' %>"><%= t('nav.about') %></a>
+      </nav>
+    </div>
 
     <div class="site-header__actions">
       <a href="<%= locale === 'en' ? '/en/wishlist' : '/wishlist' %>" aria-label="<%= t('nav.wishlist') %>">

@@ -1,38 +1,16 @@
 window.FAWMotion = window.FAWMotion || {};
 
-window.FAWMotion.initPageTransitions = function initPageTransitions(reduced) {
+window.FAWMotion.initPageTransitions = function initPageTransitions() {
   if (!window.barba) return;
-
-  const overlay = document.getElementById('pageTransitionOverlay');
-  const durationMs = reduced ? 0 : 550;
-
-  if (overlay && reduced) {
-    overlay.classList.add('is-instant');
-  }
-
-  function wait(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
-  function resetOverlay() {
-    if (!overlay) return;
-    overlay.classList.add('is-instant');
-    overlay.classList.remove('is-covering', 'is-revealed');
-    // Force a reflow so the next transition re-enables the CSS transition cleanly.
-    void overlay.offsetHeight;
-    if (!reduced) overlay.classList.remove('is-instant');
-  }
 
   barba.init({
     preventRunning: true,
     timeout: 5000,
     transitions: [
       {
-        name: 'overlay-wipe',
+        name: 'instant-swap',
         leave() {
           window.scrollTo(0, 0);
-          if (overlay) overlay.classList.add('is-covering');
-          return wait(durationMs);
         },
         enter(data) {
           if (window.ScrollTrigger) ScrollTrigger.getAll().forEach((st) => st.kill());
@@ -40,11 +18,6 @@ window.FAWMotion.initPageTransitions = function initPageTransitions(reduced) {
           if (data && data.next && data.next.container) {
             data.next.container.style.opacity = '1';
           }
-          if (overlay) overlay.classList.add('is-revealed');
-          return wait(durationMs + 50);
-        },
-        after() {
-          resetOverlay();
         }
       }
     ]

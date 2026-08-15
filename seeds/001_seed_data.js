@@ -22,9 +22,9 @@ const PRODUCTS = [
     name_vi: '"CRANKY BOY" LONG SLEEVE',
     name_en: '"CRANKY BOY" LONG SLEEVE',
     description_vi:
-      'Áo tay dài chất liệu ribbed, in hoạ tiết Cranky Boy độc quyền FAW. Form suông rộng, phối được cả nam và nữ.',
+      '▪ Hình in \'\' CRANKY BOY \'\' lớn ở phía trước.\n▪ Phía sau in ở hông trái cụm \'\' everything is a copy of a copy... \'\'\n▪ Trên cổ tay phải thêu hình logo ngôi sao F★',
     description_en:
-      'Ribbed long sleeve tee with the exclusive FAW "Cranky Boy" print. Relaxed unisex fit.',
+      '▪ Large "CRANKY BOY" print on the front.\n▪ "everything is a copy of a copy..." printed on the left hip at the back.\n▪ F★ star logo embroidered on the right cuff.',
     price: 480000,
     cover_image_url: '/images/seed/cranky-boy-long-sleeve/1.jpg',
     is_featured: true,
@@ -37,13 +37,14 @@ const PRODUCTS = [
   },
   {
     category: 'quan',
-    name_vi: 'FAW DOUBLE KNEE',
-    name_en: 'FAW DOUBLE KNEE',
+    slug: 'faw-double-knee',
+    name_vi: 'DOUBLE KNEE DENIM PANT',
+    name_en: 'DOUBLE KNEE DENIM PANT',
     description_vi:
-      'Quần denim carpenter double-knee, túi sau in hoạ tiết mặt cười scribble đặc trưng FAW. Vải dày dặn, bền form.',
+      'Quần jeans denim đen dáng rộng (baggy) phong cách carpenter/workwear, với thiết kế double-knee gia cố đầu gối, đường chỉ may tương phản trắng nổi bật, túi hammer loop và logo thêu nhỏ ở túi trước. Chất liệu denim dày dặn, bền chắc, phù hợp phong cách streetwear cá tính.',
     description_en:
-      'Carpenter double-knee denim pants with the signature FAW scribble-face back pocket print. Heavyweight denim, holds shape.',
-    price: 650000,
+      'Black baggy carpenter/workwear-style denim jeans with reinforced double-knee construction, contrast white stitching, a hammer loop pocket, and a small embroidered logo on the front pocket. Heavyweight, durable denim built for streetwear.',
+    price: 700000,
     cover_image_url: '/images/seed/faw-double-knee/5.jpg',
     is_featured: true,
     variants: [
@@ -58,11 +59,9 @@ const PRODUCTS = [
     category: 'ao',
     name_vi: '"LOVE AGAIN" TSHIRT',
     name_en: '"LOVE AGAIN" TSHIRT',
-    description_vi:
-      'Áo thun form rộng màu xám khói, in hoạ tiết Love Again vẽ tay. Vải cotton dày, cảm giác vintage.',
-    description_en:
-      'Oversized smoke-grey tee with the hand-drawn "Love Again" print. Heavyweight cotton, vintage-washed feel.',
-    price: 420000,
+    description_vi: '▪️LOVE\n▪️FAIL\n▪️LOVE AGAIN',
+    description_en: '▪️LOVE\n▪️FAIL\n▪️LOVE AGAIN',
+    price: 350000,
     cover_image_url: '/images/seed/love-again-tshirt/1.jpg',
     is_featured: false,
     variants: [
@@ -74,16 +73,18 @@ const PRODUCTS = [
   },
   {
     category: 'phu-kien',
-    name_vi: 'TRUCKER HAT',
-    name_en: 'TRUCKER HAT',
-    description_vi:
-      'Nón trucker phối trắng/cam, in hoạ tiết FSTAR đặc trưng FAW. Lưới sau thoáng khí, chỉnh size snapback.',
-    description_en:
-      'White/orange trucker cap with the signature FAW FSTAR print. Breathable mesh back, adjustable snapback.',
-    price: 350000,
+    slug: 'trucker-hat',
+    name_vi: 'F★ TRUCKER HAT',
+    name_en: 'F★ TRUCKER HAT',
+    description_vi: 'ONE SIZE FOR ALL\n2 MÀU: CAM & ĐEN',
+    description_en: 'ONE SIZE FOR ALL\n2 COLORS: ORANGE & BLACK',
+    price: 380000,
     cover_image_url: '/images/seed/trucker-hat/1.jpg',
     is_featured: false,
-    variants: [{ size: 'One Size', color: 'White/Orange', color_hex: '#f4791d', stock: 15 }],
+    variants: [
+      { size: 'One Size', color: 'Orange', color_hex: '#f4791d', stock: 15 },
+      { size: 'One Size', color: 'Black', color_hex: '#111111', stock: 12 }
+    ],
     images: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg']
   }
 ];
@@ -106,12 +107,13 @@ exports.seed = async function (knex) {
   }
 
   for (const p of PRODUCTS) {
+    const slug = p.slug || slugify(p.name_en);
     const [productId] = await knex('products')
       .insert({
         category_id: categoryIds[p.category],
         name_vi: p.name_vi,
         name_en: p.name_en,
-        slug: slugify(p.name_en),
+        slug,
         description_vi: p.description_vi,
         description_en: p.description_en,
         price: p.price,
@@ -132,7 +134,7 @@ exports.seed = async function (knex) {
       });
     }
 
-    const folder = slugify(p.name_en);
+    const folder = slug;
     let sortOrder = 0;
     for (const img of p.images) {
       await knex('product_images').insert({
