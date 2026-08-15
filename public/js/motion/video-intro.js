@@ -9,6 +9,7 @@ window.FAWMotion.initVideoIntro = function initVideoIntro() {
   var hotspot = document.getElementById('videoIntroEnter');
   var label = document.getElementById('videoIntroLabel');
   var STORAGE_KEY = 'faw_video_intro_shown';
+  var storage = window.localStorage;
 
   // Intrinsic pixel bounds (within the 3840x2160 source frame) of the flat
   // top face of the hand-drawn "press here" button/pedestal that's drawn
@@ -51,7 +52,7 @@ window.FAWMotion.initVideoIntro = function initVideoIntro() {
     }, 650);
   }
 
-  if (sessionStorage.getItem(STORAGE_KEY)) {
+  if (storage.getItem(STORAGE_KEY)) {
     intro.style.display = 'none';
     return;
   }
@@ -77,7 +78,7 @@ window.FAWMotion.initVideoIntro = function initVideoIntro() {
 
   if (hotspot) {
     hotspot.addEventListener('click', function () {
-      sessionStorage.setItem(STORAGE_KEY, '1');
+      storage.setItem(STORAGE_KEY, '1');
       intro.classList.add('is-transitioning');
       if (label) label.classList.add('is-hidden');
 

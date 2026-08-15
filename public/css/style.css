@@ -610,7 +610,7 @@ h1, h2, h3, h4 {
   inset: -5%;
   z-index: -1;
   background: url('/images/brand/pattern-bg.jpg') no-repeat center center;
-  background-size: cover;
+  background-size: 1400px 1400px;
   opacity: 0.55;
   pointer-events: none;
 }
@@ -636,13 +636,12 @@ h1, h2, h3, h4 {
   aspect-ratio: 4 / 5;
   overflow: hidden;
   background: #f2f2f2;
-  padding: var(--space-4);
 }
 
 .product-card__media img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   transition: transform 400ms var(--ease-out);
 }
 

@@ -11,14 +11,6 @@ async function showHome(req, res, next) {
       .orderBy('sort_order');
     const featuredBanner = await db('banners').where({ type: 'featured', is_active: true }).first();
 
-    let featuredProducts = await db('products')
-      .where({ is_featured: true, is_active: true })
-      .orderBy('created_at', 'desc')
-      .limit(8);
-    if (featuredProducts.length === 0) {
-      featuredProducts = await db('products').where({ is_active: true }).orderBy('created_at', 'desc').limit(8);
-    }
-
     const newArrivals = await db('products')
       .where({ is_active: true })
       .orderBy('created_at', 'desc')
@@ -34,7 +26,6 @@ async function showHome(req, res, next) {
       bodyClass: 'page-home',
       heroBanners: heroBanners.map((b) => localizeBanner(b, locale)),
       featuredBanner: featuredBanner ? localizeBanner(featuredBanner, locale) : null,
-      featuredProducts: featuredProducts.map((p) => localizeProduct(p, locale)),
       newArrivals: newArrivals.map((p) => localizeProduct(p, locale)),
       lookbookImages
     });
