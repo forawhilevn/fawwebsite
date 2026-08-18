@@ -154,7 +154,9 @@
   <div id="sizeGuideModal" class="size-guide-modal" data-close-size-guide>
     <div class="size-guide-modal__box">
       <button type="button" data-close-size-guide class="size-guide-modal__close">&times;</button>
-      <img src="<%= sizeChartUrl %>" alt="<%= t('product.sizeGuide') %>" />
+      <div class="size-guide-modal__scroll">
+        <img src="<%= sizeChartUrl %>" alt="<%= t('product.sizeGuide') %>" />
+      </div>
     </div>
   </div>
   <% } %>
