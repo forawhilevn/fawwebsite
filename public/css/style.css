@@ -204,10 +204,10 @@ h1, h2, h3, h4 {
 
 .video-intro__enter-btn {
   position: absolute;
-  transform: translate(-50%, 0);
   background: var(--color-red);
   color: #fff;
   border: none;
+  border-radius: 10px;
   padding: 12px 32px;
   font-family: var(--font-display);
   font-weight: 700;
@@ -215,11 +215,20 @@ h1, h2, h3, h4 {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: opacity 300ms ease, background 150ms ease, transform 150ms ease;
+  opacity: 0;
+  transform: translate(-50%, 28px);
+  pointer-events: none;
+  transition: opacity 500ms ease, transform 500ms cubic-bezier(0.16, 1, 0.3, 1), background 150ms ease;
   z-index: 2;
 }
 
-.video-intro__enter-btn:hover {
+.video-intro__enter-btn.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+
+.video-intro__enter-btn.is-visible:hover {
   background: var(--color-red-dark);
   transform: translate(-50%, -2px);
 }

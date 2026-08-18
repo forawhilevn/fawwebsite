@@ -9,19 +9,25 @@ window.FAWMotion.initVideoIntro = function initVideoIntro() {
   var STORAGE_KEY = 'faw_video_intro_shown';
   var storage = window.sessionStorage;
 
-  // The video plays its intro animation once, then settles on a held red
-  // logo frame around this timestamp and stays there until the end. Once it
-  // ends, loop back to this point instead of replaying the whole intro.
-  var LOOP_START = 5.6;
+  // The video plays its intro animation once (street scene -> paint-splash
+  // transition), then holds a completely static red-logo-on-black frame from
+  // ~7.0s to ~10.9s before a quick fade-to-black right at the very end. We
+  // loop only the static hold (both ends look identical, so the loop is
+  // invisible) and never let the fade-out play.
+  var LOOP_START = 7.0;
+  var LOOP_END = 10.8;
 
-  // Intrinsic frame size and the approximate point just below the drawn
-  // logo (centered horizontally, ~2/3 down the frame) where the button
-  // should sit. Computed the same way as object-fit: contain, so the button
-  // stays lined up with the logo regardless of viewport aspect ratio.
+  // Intrinsic frame size and the point just below the drawn logo's mouth
+  // (centered horizontally, ~85% down the frame) where the button should
+  // sit. Computed the same way as object-fit: contain, so the button stays
+  // lined up with the logo and clear of the artwork regardless of viewport
+  // aspect ratio.
   var VIDEO_W = 3840;
   var VIDEO_H = 2160;
   var ANCHOR_X = 0.5;
-  var ANCHOR_Y = 0.66;
+  var ANCHOR_Y = 0.85;
+
+  var buttonRevealed = false;
 
   function positionButton() {
     if (!enterBtn) return;
@@ -65,6 +71,18 @@ window.FAWMotion.initVideoIntro = function initVideoIntro() {
   window.addEventListener('orientationchange', positionButton);
 
   if (video) {
+    video.addEventListener('timeupdate', function () {
+      if (!buttonRevealed && video.currentTime >= LOOP_START) {
+        buttonRevealed = true;
+        if (enterBtn) enterBtn.classList.add('is-visible');
+      }
+      if (video.currentTime >= LOOP_END) {
+        video.currentTime = LOOP_START;
+      }
+    });
+    // Safety net in case timeupdate granularity ever misses the LOOP_END
+    // check and the video reaches its natural end (which briefly fades to
+    // black) — jump back into the hold instead of showing that fade.
     video.addEventListener('ended', function () {
       video.currentTime = LOOP_START;
       video.play().catch(function () {});
