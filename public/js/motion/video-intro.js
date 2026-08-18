@@ -4,52 +4,49 @@ window.FAWMotion.initVideoIntro = function initVideoIntro() {
   var intro = document.getElementById('videoIntro');
   if (!intro) return;
 
-  var video1 = document.getElementById('videoIntroOne');
-  var video2 = document.getElementById('videoIntroTwo');
-  var hotspot = document.getElementById('videoIntroEnter');
-  var label = document.getElementById('videoIntroLabel');
+  var video = document.getElementById('videoIntroMain');
+  var enterBtn = document.getElementById('videoIntroEnter');
   var STORAGE_KEY = 'faw_video_intro_shown';
   var storage = window.sessionStorage;
 
-  // Intrinsic pixel bounds (within the 3840x2160 source frame) of the flat
-  // top face of the hand-drawn "press here" button/pedestal that's drawn
-  // into both videos at the same spot. Used to line the invisible hotspot
-  // and label up with the artwork regardless of viewport aspect ratio.
+  // The video plays its intro animation once, then settles on a held red
+  // logo frame around this timestamp and stays there until the end. Once it
+  // ends, loop back to this point instead of replaying the whole intro.
+  var LOOP_START = 5.6;
+
+  // Intrinsic frame size and the approximate point just below the drawn
+  // logo (centered horizontally, ~2/3 down the frame) where the button
+  // should sit. Computed the same way as object-fit: contain, so the button
+  // stays lined up with the logo regardless of viewport aspect ratio.
   var VIDEO_W = 3840;
   var VIDEO_H = 2160;
-  var BUTTON_BOUNDS = { left: 1180, top: 1110, right: 2020, bottom: 1500 };
+  var ANCHOR_X = 0.5;
+  var ANCHOR_Y = 0.66;
 
-  function positionHotspot() {
-    if (!hotspot) return;
+  function positionButton() {
+    if (!enterBtn) return;
     var rect = intro.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
 
-    // object-fit: contain uses the smaller ratio (letterbox), the opposite
-    // of cover's Math.max.
     var scale = Math.min(rect.width / VIDEO_W, rect.height / VIDEO_H);
     var dispW = VIDEO_W * scale;
     var dispH = VIDEO_H * scale;
-    var offsetX = (dispW - rect.width) / 2;
-    var offsetY = (dispH - rect.height) / 2;
+    var offsetX = (rect.width - dispW) / 2;
+    var offsetY = (rect.height - dispH) / 2;
 
-    var left = BUTTON_BOUNDS.left * scale - offsetX;
-    var top = BUTTON_BOUNDS.top * scale - offsetY;
-    var width = (BUTTON_BOUNDS.right - BUTTON_BOUNDS.left) * scale;
-    var height = (BUTTON_BOUNDS.bottom - BUTTON_BOUNDS.top) * scale;
-
-    hotspot.style.left = left + 'px';
-    hotspot.style.top = top + 'px';
-    hotspot.style.width = width + 'px';
-    hotspot.style.height = height + 'px';
+    enterBtn.style.left = offsetX + ANCHOR_X * dispW + 'px';
+    enterBtn.style.top = offsetY + ANCHOR_Y * dispH + 'px';
   }
 
   function dismiss() {
-    intro.classList.add('is-hidden');
+    intro.classList.add('is-transitioning');
     setTimeout(function () {
-      intro.style.display = 'none';
-      if (video1) video1.pause();
-      if (video2) video2.pause();
-    }, 650);
+      intro.classList.add('is-hidden');
+      setTimeout(function () {
+        intro.style.display = 'none';
+        if (video) video.pause();
+      }, 700);
+    }, 50);
   }
 
   if (storage.getItem(STORAGE_KEY)) {
@@ -57,43 +54,30 @@ window.FAWMotion.initVideoIntro = function initVideoIntro() {
     return;
   }
 
-  positionHotspot();
-  // The very first call(s) can land before the fixed-position container has
-  // completed its initial layout pass (or before viewport chrome such as a
-  // scrollbar settles), so keep re-checking for a bit after load.
+  positionButton();
   requestAnimationFrame(function () {
-    requestAnimationFrame(positionHotspot);
+    requestAnimationFrame(positionButton);
   });
   [0, 50, 150, 400, 900].forEach(function (delay) {
-    setTimeout(positionHotspot, delay);
+    setTimeout(positionButton, delay);
   });
-  window.addEventListener('resize', positionHotspot);
-  window.addEventListener('orientationchange', positionHotspot);
+  window.addEventListener('resize', positionButton);
+  window.addEventListener('orientationchange', positionButton);
 
-  if (video1) {
-    video1.play().catch(function () {
-      /* Autoplay was blocked; the hotspot still lets the visitor continue. */
+  if (video) {
+    video.addEventListener('ended', function () {
+      video.currentTime = LOOP_START;
+      video.play().catch(function () {});
+    });
+    video.play().catch(function () {
+      /* Autoplay was blocked; the Enter button still lets the visitor continue. */
     });
   }
 
-  if (hotspot) {
-    hotspot.addEventListener('click', function () {
+  if (enterBtn) {
+    enterBtn.addEventListener('click', function () {
       storage.setItem(STORAGE_KEY, '1');
-      intro.classList.add('is-transitioning');
-      if (label) label.classList.add('is-hidden');
-
-      if (video1) video1.classList.remove('is-active');
-      if (video2) {
-        video2.classList.add('is-active');
-        video2.currentTime = 0;
-        video2.play().catch(function () {});
-      }
-
-      if (video1) video1.pause();
+      dismiss();
     });
-  }
-
-  if (video2) {
-    video2.addEventListener('ended', dismiss);
   }
 };

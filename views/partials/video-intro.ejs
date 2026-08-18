@@ -1,26 +1,14 @@
 <div class="video-intro" id="videoIntro" aria-hidden="true">
   <video
-    id="videoIntroOne"
-    class="video-intro__video is-active"
-    src="/video/1_HERO.mp4"
-    autoplay
-    muted
-    loop
-    playsinline
-    webkit-playsinline
-    preload="auto"
-  ></video>
-  <video
-    id="videoIntroTwo"
+    id="videoIntroMain"
     class="video-intro__video"
-    src="/video/2_HERO.mp4"
+    src="/video/Video Hero.mp4"
+    autoplay
     muted
     playsinline
     webkit-playsinline
     preload="auto"
   ></video>
 
-  <button type="button" class="video-intro__hotspot" id="videoIntroEnter" aria-label="<%= t('home.videoIntroEnter') %>">
-    <span class="video-intro__hotspot-label" id="videoIntroLabel"><%= t('home.videoIntroEnter') %></span>
-  </button>
+  <button type="button" class="video-intro__enter-btn" id="videoIntroEnter"><%= t('home.videoIntroEnter') %></button>
 </div>
