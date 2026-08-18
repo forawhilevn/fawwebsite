@@ -11,9 +11,9 @@
 <main>
   <% if (heroBanners.length > 0) { %>
   <section class="hero">
-    <img class="hero__bg" data-parallax="12" data-reveal src="<%= heroBanners[0].image_url %>" alt="" />
+    <img class="hero__bg" data-parallax="12" data-reveal data-reveal-slow src="<%= heroBanners[0].image_url %>" alt="" />
     <div class="hero__content">
-      <h1 class="hero__title" data-reveal><%= heroBanners[0].title || t('home.taglineLine1') %></h1>
+      <h1 class="hero__title" data-reveal data-reveal-slow><%= heroBanners[0].title || t('home.taglineLine1') %></h1>
     </div>
   </section>
   <% } %>
