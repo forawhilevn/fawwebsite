@@ -14,7 +14,7 @@ window.FAWMotion.initVideoIntro = function initVideoIntro() {
   // ~7.0s to ~10.9s before a quick fade-to-black right at the very end. We
   // loop only the static hold (both ends look identical, so the loop is
   // invisible) and never let the fade-out play.
-  var LOOP_START = 7.0;
+  var LOOP_START = 6.5;
   var LOOP_END = 10.8;
 
   // Intrinsic frame size and the point just below the drawn logo's mouth
@@ -74,7 +74,14 @@ window.FAWMotion.initVideoIntro = function initVideoIntro() {
     video.addEventListener('timeupdate', function () {
       if (!buttonRevealed && video.currentTime >= LOOP_START) {
         buttonRevealed = true;
-        if (enterBtn) enterBtn.classList.add('is-visible');
+        if (enterBtn) {
+          enterBtn.classList.add('is-visible');
+          // Wait for the fade/slide-in transition to finish before layering
+          // the continuous wobble on top, so they don't fight over transform.
+          setTimeout(function () {
+            enterBtn.classList.add('is-shaking');
+          }, 520);
+        }
       }
       if (video.currentTime >= LOOP_END) {
         video.currentTime = LOOP_START;

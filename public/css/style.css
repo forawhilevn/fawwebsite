@@ -228,8 +228,35 @@ h1, h2, h3, h4 {
   pointer-events: auto;
 }
 
+/* Small hand-drawn-style wobble, echoing the jittery scribble lines in the
+   video's own logo artwork. Starts once the entrance transition has
+   finished so the two never fight over `transform`. */
+html:not(.reduced-motion) .video-intro__enter-btn.is-shaking {
+  animation: enterBtnShake 2.6s ease-in-out infinite;
+}
+
+@keyframes enterBtnShake {
+  0%,
+  100% {
+    transform: translate(-50%, 0) rotate(0deg);
+  }
+  20% {
+    transform: translate(calc(-50% - 1.5px), 0.5px) rotate(-1.2deg);
+  }
+  40% {
+    transform: translate(calc(-50% + 1px), -0.5px) rotate(1deg);
+  }
+  60% {
+    transform: translate(calc(-50% - 1px), 0.5px) rotate(-0.8deg);
+  }
+  80% {
+    transform: translate(calc(-50% + 1.5px), -0.5px) rotate(1.2deg);
+  }
+}
+
 .video-intro__enter-btn.is-visible:hover {
   background: var(--color-red-dark);
+  animation-play-state: paused;
   transform: translate(-50%, -2px);
 }
 
