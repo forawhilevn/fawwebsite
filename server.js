@@ -7,6 +7,7 @@ const KnexSessionStore = require('connect-session-knex')(session);
 
 const db = require('./src/db');
 const attachLocals = require('./src/middleware/locals');
+const siteGate = require('./src/middleware/siteGate');
 const { setLocale } = require('./src/middleware/locale');
 const { notFoundHandler, errorHandler } = require('./src/middleware/errorHandler');
 const indexRoutes = require('./src/routes/index');
@@ -20,7 +21,14 @@ app.set('trust proxy', 1);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(
+  express.static(path.join(__dirname, 'public'), {
+    // CSS / JS are always revalidated (cheap 304 when unchanged) so edits show up right away
+    setHeaders(res, filePath) {
+      if (/\.(css|js)$/.test(filePath)) res.setHeader('Cache-Control', 'no-cache');
+    }
+  })
+);
 
 const sessionStore = new KnexSessionStore({
   knex: db,
@@ -43,8 +51,8 @@ app.use(
 );
 
 app.use('/admin', setLocale('vi'), attachLocals, adminRoutes);
-app.use('/en', setLocale('en'), attachLocals, indexRoutes);
-app.use('/', setLocale(process.env.DEFAULT_LOCALE || 'vi'), attachLocals, indexRoutes);
+app.use('/en', setLocale('en'), attachLocals, siteGate, indexRoutes);
+app.use('/', setLocale(process.env.DEFAULT_LOCALE || 'vi'), attachLocals, siteGate, indexRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

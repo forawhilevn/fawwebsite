@@ -1,0 +1,17 @@
+<%
+  var cpPresets = [
+    ['Black', '#111111'], ['Grey', '#8A8A8A'], ['White', '#F5F5F5'], ['Navy', '#31394A'],
+    ['Red', '#EB252A'], ['Green', '#2F7D4F'], ['Brown', '#6B4A32'], ['Beige', '#D9C7A3']
+  ];
+  var cpValue = /^#[0-9a-fA-F]{6}$/.test(cpValue || '') ? cpValue : '#111111';
+%>
+<div class="cp" data-color-picker>
+  <input type="hidden" name="colorHex" value="<%= cpValue %>"<% if (typeof cpForm !== 'undefined' && cpForm) { %> form="<%= cpForm %>"<% } %> />
+  <button type="button" class="cp__toggle" aria-expanded="false"><span class="cp__current" style="--c: <%= cpValue %>;"></span><span class="cp__hex"><%= cpValue.toUpperCase() %></span><span class="cp__arrow">▾</span></button>
+  <div class="cp__grid" hidden>
+    <% cpPresets.forEach(function (p) { %>
+      <button type="button" class="cp__sw" data-color="<%= p[1] %>" title="<%= p[0] %>" aria-label="<%= p[0] %>" style="--c: <%= p[1] %>;"></button>
+    <% }); %>
+    <label class="cp__custom" title="Màu khác" style="--c: <%= cpValue %>;"><input type="color" value="<%= cpValue %>" /><span>+</span></label>
+  </div>
+</div>

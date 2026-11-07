@@ -2,13 +2,18 @@
   <video
     id="videoIntroMain"
     class="video-intro__video"
-    src="/video/Video Hero.mp4"
-    autoplay
     muted
     playsinline
     webkit-playsinline
     preload="auto"
   ></video>
-
-  <button type="button" class="video-intro__enter-btn" id="videoIntroEnter"><%= t('home.videoIntroEnter') %></button>
+  <button type="button" class="video-intro__skip" id="videoIntroSkip"><%= locale === 'en' ? 'Skip' : 'Bỏ qua' %></button>
 </div>
+<script>
+  // Seen already this session: never flash the intro again.
+  try {
+    if (sessionStorage.getItem('faw_video_intro_shown') && !/[?&]intro=1/.test(location.search)) {
+      document.getElementById('videoIntro').style.display = 'none';
+    }
+  } catch (e) {}
+</script>

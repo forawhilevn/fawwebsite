@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title><%= title %></title>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+  <%- include('../partials/admin-sidebar') %>
+  <main class="admin-main">
+    <h1>Cài đặt website</h1>
+    <% if (saved === 'closed') { %><p class="admin-error" style="background:#fee2e2;">Website đã ĐÓNG. Khách chỉ thấy trang bảo trì.</p><% } %>
+    <% if (saved === 'opened') { %><p style="background:#dcfce7; color:#166534; padding:10px 14px; border-radius:6px;">Website đã MỞ LẠI.</p><% } %>
+    <% if (saved === 'message') { %><p style="background:#dcfce7; color:#166534; padding:10px 14px; border-radius:6px;">Đã lưu nội dung thông báo.</p><% } %>
+
+    <% var closed = s.site_closed === '1'; %>
+    <div class="admin-card" style="border:2px solid <%= closed ? '#eb252a' : '#16a34a' %>;">
+      <h2 style="margin-top:0; font-size:16px;">Đóng / mở website</h2>
+      <p style="font-size:14px;">
+        Trạng thái hiện tại:
+        <strong style="color:<%= closed ? '#eb252a' : '#16a34a' %>;"><%= closed ? 'ĐANG ĐÓNG' : 'ĐANG MỞ' %></strong>
+        <% if (closed && s.closed_at) { %><span style="color:#71717a;"> · từ <%= new Date(s.closed_at).toLocaleString('vi-VN') %></span><% } %>
+      </p>
+      <p style="font-size:13px; color:#71717a;">
+        Khi đóng, khách truy cập mọi trang (trang chủ, shop, giỏ hàng, thanh toán…) sẽ chỉ thấy trang thông báo bên dưới.
+        Bạn đăng nhập admin vẫn xem được toàn bộ website bình thường (có thanh đỏ nhắc ở đầu trang) để chuẩn bị collection mới.
+        Trang admin không bị ảnh hưởng.
+      </p>
+      <form action="/admin/cai-dat/dong-mo-web" method="post" onsubmit="return confirm('<%= closed ? 'Mở lại website cho khách truy cập?' : 'Đóng website? Khách sẽ không vào được cho tới khi bạn mở lại.' %>');">
+        <% if (closed) { %>
+          <button type="submit" class="admin-btn" style="background:#16a34a; border-color:#16a34a; padding:12px 24px; font-size:14px;">MỞ LẠI WEBSITE</button>
+        <% } else { %>
+          <button type="submit" class="admin-btn admin-btn--danger" style="padding:12px 24px; font-size:14px;">ĐÓNG WEBSITE</button>
+        <% } %>
+      </form>
+    </div>
+
+    <div class="admin-card">
+      <h2 style="margin-top:0; font-size:16px;">Nội dung trang thông báo khi đóng</h2>
+      <form action="/admin/cai-dat/thong-bao" method="post" class="admin-form">
+        <label>Tiêu đề (VI)</label>
+        <input type="text" name="titleVi" value="<%= s.closed_title_vi %>" maxlength="120" />
+        <label>Nội dung (VI)</label>
+        <textarea name="messageVi" rows="3" maxlength="500"><%= s.closed_message_vi %></textarea>
+        <label>Tiêu đề (EN)</label>
+        <input type="text" name="titleEn" value="<%= s.closed_title_en %>" maxlength="120" />
+        <label>Nội dung (EN)</label>
+        <textarea name="messageEn" rows="3" maxlength="500"><%= s.closed_message_en %></textarea>
+        <button type="submit" class="admin-btn" style="margin-top:12px;">Lưu nội dung</button>
+      </form>
+    </div>
+  </main>
+</div>
+</body>
+</html>

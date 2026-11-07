@@ -8,46 +8,63 @@
 <div data-barba="container" data-barba-namespace="product">
 <%- include('partials/header') %>
 
+<%
+  var pfx = locale === 'en' ? '/en' : '';
+  var cartUrl = pfx + '/cart';
+  var shopUrl = pfx + '/shop';
+  var galleryImages = images.filter(function (img) { return img.image_url; });
+  if (!galleryImages.length) galleryImages = [{ image_url: '/images/logo/logo-mark.png' }];
+  var descLines = (product.description || '')
+    .split(/\r?\n/)
+    .map(function (line) { return line.trim(); })
+    .filter(Boolean);
+  var multiVariant = variantData.length > 1;
+%>
+
 <main>
-  <div class="page-shell page-shell--light">
-    <div class="container">
-      <% if (category) { %>
-      <nav class="product-detail__breadcrumb" aria-label="Breadcrumb">
-        <a href="<%= locale === 'en' ? '/en/shop' : '/shop' %>"><%= t('shop.title') %></a>
-        <span>/</span>
-        <a href="<%= (locale === 'en' ? '/en/shop/' : '/shop/') + category.slug %>"><%= category.name %></a>
-        <span>/</span>
-        <span><%= product.name %></span>
-      </nav>
-      <% } %>
+  <a href="<%= shopUrl %>" class="pdp-back" data-pdp-back>
+    <svg width="8" height="10" viewBox="0 0 8 10" fill="currentColor" aria-hidden="true"><path d="M7 0 1 5l6 5z"/></svg>
+    <%= t('product.back') %>
+  </a>
 
-      <div class="product-detail">
-        <div class="product-detail__gallery" data-gallery>
-          <div class="product-detail__main">
-            <div class="product-detail__gallery-main">
-              <img data-gallery-main src="<%= images[0].image_url %>" alt="<%= product.name %>" />
-            </div>
-          </div>
-          <% if (images.length > 1) { %>
-          <div class="product-detail__gallery-nav">
-            <button type="button" class="product-detail__arrow-btn" data-gallery-prev aria-label="Previous image">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <div class="product-detail__dots">
-              <% images.forEach(function(img, i) { %>
-                <button type="button" class="product-detail__dot <%= i === 0 ? 'is-active' : '' %>" data-gallery-thumb="<%= img.image_url %>" data-index="<%= i %>" aria-label="Xem ảnh <%= i + 1 %>"></button>
-              <% }); %>
-            </div>
-            <button type="button" class="product-detail__arrow-btn" data-gallery-next aria-label="Next image">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-          </div>
-          <% } %>
-        </div>
+  <form
+    class="pdp"
+    data-pdp
+    action="<%= pfx %>/cart/add"
+    method="post"
+    data-add-url="<%= pfx %>/cart/add"
+    data-remove-url="<%= pfx %>/cart/remove"
+    data-has-colors="<%= hasColors ? '1' : '0' %>"
+    data-selected="<%= defaultVariant ? defaultVariant.id : '' %>"
+    data-variants="<%= JSON.stringify(variantData) %>"
+    data-l-add="<%= t('product.addToCart') %>"
+    data-l-incart="<%= t('product.inCart') %>"
+    data-l-soldout="<%= t('product.outOfStock') %>"
+    data-l-error="<%= t('cart.addError') %>"
+  >
+    <input type="hidden" name="variantId" value="<%= defaultVariant ? defaultVariant.id : '' %>" />
+    <input type="hidden" name="redirectTo" value="<%= cartUrl %>" />
 
-        <div class="product-detail__info">
-          <h1 class="product-detail__name"><%= product.name %></h1>
-          <div class="product-detail__price">
+    <div class="pdp__gallery-wrap">
+    <div class="pdp__gallery" data-pdp-gallery>
+      <% galleryImages.forEach(function (img, i) { %>
+        <button type="button" class="pdp__image" data-zoom-open data-index="<%= i %>" aria-label="<%= t('product.zoom') %>">
+          <img src="<%= img.image_url %>" alt="<%= product.name %>"<%- i === 0 ? '' : ' loading="lazy"' %> draggable="false" />
+        </button>
+      <% }); %>
+    </div>
+    <% if (galleryImages.length > 1) { %>
+    <div class="pdp__dots" aria-hidden="true">
+      <% galleryImages.forEach(function (img, i) { %><button type="button" class="pdp__dot<%= i === 0 ? ' is-active' : '' %>" data-pdp-dot data-index="<%= i %>" tabindex="-1"></button><% }); %>
+    </div>
+    <% } %>
+    </div>
+
+    <div class="pdp__info">
+      <div class="pdp__head">
+        <div>
+          <h1 class="pdp__name"><%= product.name %></h1>
+          <div class="pdp__price" data-pdp-price>
             <% if (product.sale_price) { %>
               <span class="product-card__price--sale"><%= formatVND(product.sale_price) %></span>
               <span class="product-card__price--was"><%= formatVND(product.price) %></span>
@@ -55,111 +72,152 @@
               <%= formatVND(product.price) %>
             <% } %>
           </div>
-
-          <%
-            const defaultVariant = variants.find(function(v) { return v.stock > 0; }) || variants[0] || null;
-          %>
-          <form action="<%= locale === 'en' ? '/en/cart/add' : '/cart/add' %>" method="post" class="js-product-form" data-requires-variant="<%= variants.length > 1 ? '1' : '0' %>" data-variants='<%- JSON.stringify(variants) %>'>
-            <input type="hidden" name="redirectTo" value="<%= locale === 'en' ? '/en/cart' : '/cart' %>" />
-            <input type="hidden" name="variantId" value="<%= defaultVariant ? defaultVariant.id : '' %>" />
-
-            <% if (sizes.length > 0) { %>
-            <div class="variant-group">
-              <span class="variant-group__label">
-                <%= t('product.selectSize') %>
-                <% if (sizeChartUrl) { %>
-                  <span class="size-guide-link" data-open-size-guide><%= t('product.sizeGuide') %></span>
-                <% } %>
-              </span>
-              <div class="variant-options" data-role="size">
-                <% sizes.forEach(function(size) { %>
-                  <span class="variant-option <%= defaultVariant && defaultVariant.size === size ? 'is-selected' : '' %>" data-value="<%= size %>"><%= size %></span>
-                <% }); %>
-              </div>
-            </div>
-            <% } %>
-
-            <% if (colors.length > 0) { %>
-            <div class="variant-group">
-              <span class="variant-group__label"><%= t('product.selectColor') %></span>
-              <div class="variant-options" data-role="color">
-                <% colors.forEach(function(color) { %>
-                  <span class="variant-option <%= defaultVariant && defaultVariant.color === color ? 'is-selected' : '' %>" data-value="<%= color %>"><%= color %></span>
-                <% }); %>
-              </div>
-            </div>
-            <% } %>
-
-            <div class="variant-group">
-              <span class="variant-group__label"><%= t('cart.quantity') %></span>
-              <div class="qty-selector">
-                <button type="button" data-qty-decrease aria-label="-">&minus;</button>
-                <input type="number" name="quantity" value="1" min="1" data-qty-input />
-                <button type="button" data-qty-increase aria-label="+">&plus;</button>
-              </div>
-            </div>
-
-            <div class="product-detail__actions">
-              <button type="submit" class="btn btn-primary js-add-to-cart">
-                <%= t('product.addToCart') %>
-              </button>
-              <button
-                type="button"
-                class="btn btn-outline"
-                data-wishlist-toggle
-                data-wishlist-slug="<%= product.slug %>"
-                data-wishlist-name="<%= product.name %>"
-                data-wishlist-image="<%= images[0].image_url %>"
-                data-wishlist-price="<%= formatVND(product.sale_price || product.price) %>"
-                data-wishlist-href="<%= (locale === 'en' ? '/en/product/' : '/product/') + product.slug %>"
-                aria-label="<%= t('product.addToWishlist') %>"
-              >&hearts;</button>
-            </div>
-            <p class="form-error" style="display:none;" id="variantHint"><%= t('product.pleaseSelectVariant') %></p>
-          </form>
-
-          <% if (product.description) { %>
-          <div class="product-detail__description"><%= product.description %></div>
-          <% } %>
         </div>
       </div>
 
-      <% if (lookbookImages.length > 0) { %>
-      <div class="lookbook-strip">
-        <div class="lookbook-strip__heading"><%= locale === 'en' ? 'Lookbook' : 'Lookbook' %></div>
-        <div class="lookbook-strip__grid">
-          <% lookbookImages.forEach(function(img) { %>
-            <img src="<%= img %>" alt="<%= product.name %> lookbook" loading="lazy" data-reveal />
-          <% }); %>
+      <div class="pdp__desktop">
+        <% if (sizeOptions.length) { %>
+        <div class="pdp__group pdp__group--size">
+          <span class="pdp__label"><%= t('product.selectSize') %></span>
+          <div class="pdp__options" role="group" aria-label="<%= t('product.selectSize') %>">
+            <% sizeOptions.forEach(function (opt) { %>
+              <button type="button" class="pdp-size<%= opt.selected ? ' is-selected' : '' %><%= opt.soldOut ? ' is-soldout' : '' %>" data-size-option data-value="<%= opt.value %>" aria-pressed="<%= opt.selected ? 'true' : 'false' %>"><%= opt.value %></button>
+            <% }); %>
+          </div>
+        </div>
+        <% } %>
+
+        <% if (colorOptions.length) { %>
+        <div class="pdp__group">
+          <span class="pdp__label"><%= t('product.selectColor') %><span class="pdp__label-value" data-color-name><%= defaultVariant && defaultVariant.color ? defaultVariant.color : '' %></span></span>
+          <div class="pdp__options pdp__options--color" role="group" aria-label="<%= t('product.selectColor') %>">
+            <% colorOptions.forEach(function (opt) { %>
+              <button type="button" class="pdp-swatch<%= opt.selected ? ' is-selected' : '' %><%= opt.soldOut ? ' is-soldout' : '' %>" data-color-option data-value="<%= opt.value %>" style="--swatch: <%= opt.hex %>;" title="<%= opt.value %>" aria-label="<%= opt.value %>" aria-pressed="<%= opt.selected ? 'true' : 'false' %>"><span class="pdp-swatch__dot"></span></button>
+            <% }); %>
+          </div>
+        </div>
+        <% } %>
+
+        <div class="pdp__actions">
+          <button type="submit" class="pdp-btn" data-pdp-add><%= t('product.addToCart') %></button>
+          <button type="button" class="pdp__remove" data-pdp-remove hidden><%= t('cart.remove') %></button>
         </div>
       </div>
+
+      <p class="pdp__error" data-pdp-error role="alert" hidden></p>
+
+      <% if (descLines.length > 1) { %>
+      <ul class="pdp__bullets">
+        <% descLines.forEach(function (line) { %><li><%= line %></li><% }); %>
+      </ul>
+      <% } else if (descLines.length === 1) { %>
+      <p class="pdp__text"><%= descLines[0] %></p>
       <% } %>
 
-      <% if (relatedProducts.length > 0) { %>
-      <div style="margin-top: 64px;">
-        <div class="section__heading">
-          <h2 class="section__title" style="font-size: 22px;"><%= t('product.relatedProducts') %></h2>
-        </div>
-        <div class="product-grid product-grid--compact">
-          <% relatedProducts.forEach(function(p) { %>
-            <%- include('partials/product-card', { product: p }) %>
-          <% }); %>
-        </div>
-      </div>
+      <% if (sizeChartUrl) { %>
+      <button type="button" class="pdp__row" data-open-size-guide>
+        <span><%= t('product.sizeGuide') %></span>
+        <svg width="7" height="10" viewBox="0 0 7 10" fill="currentColor" aria-hidden="true"><path d="M0 0l7 5-7 5z"/></svg>
+      </button>
       <% } %>
     </div>
+
+    <%# Mobile: sticky bottom bar + bottom sheet (Palace-style size picker) %>
+    <div class="pdp-bar">
+      <% if (multiVariant) { %>
+        <button type="button" class="pdp-btn pdp-bar__main" data-pdp-open-sheet><%= t('product.selectSizeBtn') %></button>
+      <% } else { %>
+        <button type="submit" class="pdp-btn pdp-bar__main" data-pdp-add><%= t('product.addToCart') %></button>
+      <% } %>
+      <a href="<%= cartUrl %>" class="pdp-btn pdp-btn--ghost pdp-bar__cart" data-cart-link>
+        <%= t('nav.cart') %><span class="cart-count" data-cart-count <%= cartCount > 0 ? '' : 'hidden' %>><%= cartCount %></span>
+      </a>
+    </div>
+
+    <% if (multiVariant) { %>
+    <div class="pdp-sheet" data-pdp-sheet aria-hidden="true">
+      <div class="pdp-sheet__backdrop" data-pdp-sheet-close></div>
+      <div class="pdp-sheet__panel" role="dialog" aria-modal="true" aria-label="<%= t('product.selectSize') %>">
+        <span class="pdp-sheet__label"><%= t('product.selectSize') %></span>
+        <ul class="pdp-sheet__list" data-lenis-prevent>
+          <% variantData.forEach(function (v) { %>
+          <li>
+            <div class="pdp-sheet__row<%= defaultVariant && defaultVariant.id === v.id ? ' is-selected' : '' %><%= v.stock <= 0 ? ' is-soldout' : '' %>" role="option" tabindex="0" data-variant-row data-variant-id="<%= v.id %>">
+              <span class="pdp-sheet__name"><% if (hasColors && v.hex) { %><i class="pdp-sheet__dot" style="--swatch: <%= v.hex %>;"></i><% } %><%= v.size %><% if (hasColors && v.color) { %> / <%= v.color %><% } %></span>
+              <button type="button" class="pdp-sheet__rm" data-row-remove data-variant-id="<%= v.id %>"<%= v.inCart ? '' : ' hidden' %>><%= t('cart.remove') %></button>
+              <span class="pdp-sheet__meta">
+                <em class="pdp-sheet__tag" data-row-tag<%= (v.inCart || v.stock <= 0) ? '' : ' hidden' %>><%= v.stock <= 0 ? t('product.outOfStock') : t('product.inCart') %></em>
+                <span class="pdp-sheet__price"><%= v.priceLabel %></span>
+              </span>
+            </div>
+          </li>
+          <% }); %>
+        </ul>
+        <div class="pdp-sheet__actions">
+          <button type="submit" class="pdp-btn" data-pdp-add><%= t('product.addToCart') %></button>
+        </div>
+      </div>
+    </div>
+    <% } %>
+  </form>
+
+  <% if (lookbookImages.length > 0 || relatedProducts.length > 0) { %>
+  <div class="container pdp-extra">
+    <% if (lookbookImages.length > 0) { %>
+    <div class="lookbook-strip">
+      <div class="lookbook-strip__heading">Lookbook</div>
+      <div class="lookbook-strip__grid">
+        <% lookbookImages.forEach(function (img) { %>
+          <img src="<%= img %>" alt="<%= product.name %> lookbook" loading="lazy" data-reveal />
+        <% }); %>
+      </div>
+    </div>
+    <% } %>
+
+    <% if (relatedProducts.length > 0) { %>
+    <div class="pdp-related">
+      <div class="section__heading">
+        <h2 class="section__title" style="font-size: 22px;"><%= t('product.relatedProducts') %></h2>
+      </div>
+      <div class="product-grid product-grid--compact">
+        <% relatedProducts.forEach(function (p) { %>
+          <%- include('partials/product-card', { product: p }) %>
+        <% }); %>
+      </div>
+    </div>
+    <% } %>
   </div>
+  <% } %>
 
   <% if (sizeChartUrl) { %>
-  <div id="sizeGuideModal" class="size-guide-modal" data-close-size-guide>
-    <div class="size-guide-modal__box">
-      <button type="button" data-close-size-guide class="size-guide-modal__close">&times;</button>
-      <div class="size-guide-modal__scroll">
+  <div class="size-guide" id="sizeGuideModal" data-size-guide hidden>
+    <div class="size-guide__backdrop" data-size-guide-close></div>
+    <div class="size-guide__box" role="dialog" aria-modal="true" aria-labelledby="sizeGuideTitle">
+      <div class="size-guide__head">
+        <div>
+          <span class="size-guide__eyebrow"><%= t('product.sizeGuide') %></span>
+          <h2 class="size-guide__title" id="sizeGuideTitle"><%= product.name %></h2>
+        </div>
+        <button type="button" class="size-guide__close" data-size-guide-close><%= t('product.close') %></button>
+      </div>
+      <div class="size-guide__scroll" data-lenis-prevent>
         <img src="<%= sizeChartUrl %>" alt="<%= t('product.sizeGuide') %>" />
       </div>
     </div>
   </div>
   <% } %>
+
+  <div class="lightbox" data-lightbox data-images="<%= JSON.stringify(galleryImages.map(function (g) { return g.image_url; })) %>" hidden>
+    <button type="button" class="lightbox__btn lightbox__close" data-lightbox-close><%= t('product.close') %></button>
+    <% if (galleryImages.length > 1) { %>
+    <button type="button" class="lightbox__btn lightbox__nav lightbox__nav--prev" data-lightbox-prev aria-label="Prev">&lsaquo;</button>
+    <button type="button" class="lightbox__btn lightbox__nav lightbox__nav--next" data-lightbox-next aria-label="Next">&rsaquo;</button>
+    <span class="lightbox__count" data-lightbox-count></span>
+    <% } %>
+    <div class="lightbox__stage" data-lightbox-stage>
+      <img class="lightbox__img" data-lightbox-img alt="<%= product.name %>" draggable="false" />
+    </div>
+  </div>
 </main>
 
 <%- include('partials/footer') %>

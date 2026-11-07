@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const db = require('../../db');
 const { cropToFixedSize } = require('../../utils/imageProcess');
+const { ensureBannerSchema } = require('../../services/bannerSchema');
 
 const IMAGE_ERROR_MESSAGE = 'Ảnh không hợp lệ hoặc bị lỗi khi xử lý. Vui lòng thử lại với file JPG/PNG/GIF/WEBP khác.';
 
@@ -13,6 +14,7 @@ function removeUploadedFile(imageUrl) {
 }
 
 async function renderWithError(req, res, message) {
+  await ensureBannerSchema();
   const heroBanners = await db('banners').where('type', 'hero').orderBy('sort_order');
   const featuredBanner = await db('banners').where('type', 'featured').first();
   const archiveBanners = await db('banners').where('type', 'archive').orderBy('sort_order');
@@ -28,6 +30,7 @@ async function renderWithError(req, res, message) {
 
 async function listBanners(req, res, next) {
   try {
+    await ensureBannerSchema();
     const heroBanners = await db('banners').where('type', 'hero').orderBy('sort_order');
     const featuredBanner = await db('banners').where('type', 'featured').first();
     const archiveBanners = await db('banners').where('type', 'archive').orderBy('sort_order');
@@ -44,23 +47,55 @@ async function listBanners(req, res, next) {
   }
 }
 
-async function createHeroBanner(req, res, next) {
-  try {
-    if (!req.file) return res.redirect('/admin/banner');
+const BANNER_DIR = path.join(__dirname, '..', '..', '..', 'public', 'images', 'uploads', 'banners');
 
-    const destPath = path.join(__dirname, '..', '..', '..', 'public', 'images', 'uploads', 'banners', req.file.filename);
+// Crop one uploaded file and return its public URL (or null if there is no file).
+async function processHeroFile(file, sizeKey) {
+  if (!file) return null;
+  const destPath = path.join(BANNER_DIR, file.filename);
+  try {
+    await cropToFixedSize(destPath, sizeKey);
+  } catch (imgErr) {
+    removeUploadedFile('/images/uploads/banners/' + file.filename);
+    throw new Error('IMAGE');
+  }
+  return '/images/uploads/banners/' + file.filename;
+}
+
+function heroFiles(req) {
+  const f = req.files || {};
+  return { desktop: (f.imageDesktop || [])[0], mobile: (f.imageMobile || [])[0] };
+}
+
+function cleanupHeroFiles(files) {
+  [files.desktop, files.mobile].forEach((f) => {
+    if (f) removeUploadedFile('/images/uploads/banners/' + f.filename);
+  });
+}
+
+// A banner needs at least one image. Missing desktop image -> the mobile one
+// is used for both, missing mobile image -> desktop is used for both.
+async function createHeroBanner(req, res, next) {
+  const files = heroFiles(req);
+  try {
+    await ensureBannerSchema();
+    if (!files.desktop && !files.mobile) return res.redirect('/admin/banner');
+
+    let desktopUrl;
+    let mobileUrl;
     try {
-      await cropToFixedSize(destPath, 'hero');
-    } catch (imgErr) {
-      removeUploadedFile('/images/uploads/banners/' + req.file.filename);
+      desktopUrl = await processHeroFile(files.desktop, 'hero');
+      mobileUrl = await processHeroFile(files.mobile, 'heroMobile');
+    } catch (e) {
+      cleanupHeroFiles(files);
       return renderWithError(req, res, IMAGE_ERROR_MESSAGE);
     }
 
-    const imageUrl = '/images/uploads/banners/' + req.file.filename;
     const maxSort = await db('banners').where('type', 'hero').max('sort_order as max').first();
 
     await db('banners').insert({
-      image_url: imageUrl,
+      image_url: desktopUrl || mobileUrl,
+      image_mobile_url: mobileUrl || null,
       link_url: req.body.linkUrl || null,
       title_vi: req.body.titleVi || null,
       title_en: req.body.titleEn || null,
@@ -69,6 +104,78 @@ async function createHeroBanner(req, res, next) {
       type: 'hero'
     });
 
+    res.redirect('/admin/banner');
+  } catch (err) {
+    cleanupHeroFiles(files);
+    next(err);
+  }
+}
+
+// Replace the desktop image, the mobile image, or both - independently.
+async function updateHeroImages(req, res, next) {
+  const files = heroFiles(req);
+  try {
+    await ensureBannerSchema();
+    const banner = await db('banners').where('id', req.params.id).where('type', 'hero').first();
+    if (!banner || (!files.desktop && !files.mobile)) {
+      cleanupHeroFiles(files);
+      return res.redirect('/admin/banner');
+    }
+
+    let desktopUrl;
+    let mobileUrl;
+    try {
+      desktopUrl = await processHeroFile(files.desktop, 'hero');
+      mobileUrl = await processHeroFile(files.mobile, 'heroMobile');
+    } catch (e) {
+      cleanupHeroFiles(files);
+      return renderWithError(req, res, IMAGE_ERROR_MESSAGE);
+    }
+
+    const update = {};
+    const mobileOnly = banner.image_mobile_url && banner.image_mobile_url === banner.image_url;
+    if (desktopUrl) update.image_url = desktopUrl;
+    if (mobileUrl) {
+      update.image_mobile_url = mobileUrl;
+      // mobile-only banner: the shared file is replaced, so desktop follows it
+      if (mobileOnly && !desktopUrl) update.image_url = mobileUrl;
+    }
+    await db('banners').where('id', banner.id).update(update);
+
+    if (desktopUrl && banner.image_url !== banner.image_mobile_url) removeUploadedFile(banner.image_url);
+    if (mobileUrl && banner.image_mobile_url) removeUploadedFile(banner.image_mobile_url);
+
+    res.redirect('/admin/banner');
+  } catch (err) {
+    cleanupHeroFiles(files);
+    next(err);
+  }
+}
+
+// Delete the desktop image: desktop then falls back to the mobile image.
+async function removeHeroDesktop(req, res, next) {
+  try {
+    await ensureBannerSchema();
+    const banner = await db('banners').where('id', req.params.id).where('type', 'hero').first();
+    if (banner && banner.image_mobile_url && banner.image_mobile_url !== banner.image_url) {
+      await db('banners').where('id', banner.id).update({ image_url: banner.image_mobile_url });
+      removeUploadedFile(banner.image_url);
+    }
+    res.redirect('/admin/banner');
+  } catch (err) {
+    next(err);
+  }
+}
+
+// Go back to using the desktop image on mobile too.
+async function removeHeroMobile(req, res, next) {
+  try {
+    await ensureBannerSchema();
+    const banner = await db('banners').where('id', req.params.id).where('type', 'hero').first();
+    if (banner && banner.image_mobile_url) {
+      await db('banners').where('id', banner.id).update({ image_mobile_url: null });
+      if (banner.image_mobile_url !== banner.image_url) removeUploadedFile(banner.image_mobile_url);
+    }
     res.redirect('/admin/banner');
   } catch (err) {
     next(err);
@@ -87,12 +194,38 @@ async function toggleHeroBanner(req, res, next) {
   }
 }
 
+// Swap a hero banner with its neighbour. The first ACTIVE hero banner is the
+// one shown on the homepage, so order matters.
+function moveHeroBanner(direction) {
+  return async function (req, res, next) {
+    try {
+      const list = await db('banners').where('type', 'hero').orderBy('sort_order').orderBy('id');
+      const idx = list.findIndex((b) => String(b.id) === String(req.params.id));
+      const swapWith = direction === 'up' ? idx - 1 : idx + 1;
+      if (idx >= 0 && swapWith >= 0 && swapWith < list.length) {
+        // normalise to a clean 1..n sequence, then swap
+        const order = list.map((b) => b.id);
+        const tmp = order[idx];
+        order[idx] = order[swapWith];
+        order[swapWith] = tmp;
+        for (let i = 0; i < order.length; i += 1) {
+          await db('banners').where('id', order[i]).update({ sort_order: i + 1 });
+        }
+      }
+      res.redirect('/admin/banner');
+    } catch (err) {
+      next(err);
+    }
+  };
+}
+
 async function deleteHeroBanner(req, res, next) {
   try {
     const banner = await db('banners').where('id', req.params.id).where('type', 'hero').first();
     if (banner) {
       await db('banners').where('id', banner.id).del();
       removeUploadedFile(banner.image_url);
+      if (banner.image_mobile_url && banner.image_mobile_url !== banner.image_url) removeUploadedFile(banner.image_mobile_url);
     }
     res.redirect('/admin/banner');
   } catch (err) {
@@ -183,7 +316,11 @@ async function deleteArchiveBanner(req, res, next) {
 module.exports = {
   listBanners,
   createHeroBanner,
+  updateHeroImages,
+  removeHeroMobile,
+  removeHeroDesktop,
   toggleHeroBanner,
+  moveHeroBanner,
   deleteHeroBanner,
   uploadFeaturedBanner,
   createArchiveBanner,

@@ -24,9 +24,9 @@
             <option value="fixed">Số tiền cố định</option>
           </select>
         </div>
-        <div><label>Giá trị</label><input type="number" name="value" required style="width:100px;" /></div>
-        <div><label>Đơn tối thiểu</label><input type="number" name="minOrderTotal" style="width:120px;" /></div>
-        <div><label>Số lượt dùng tối đa</label><input type="number" name="maxUses" style="width:120px;" /></div>
+        <div><label>Giá trị</label><input type="text" inputmode="numeric" data-money autocomplete="off" name="value" required style="width:100px;" /></div>
+        <div><label>Đơn tối thiểu</label><input type="text" inputmode="numeric" data-money autocomplete="off" name="minOrderTotal" style="width:120px;" /></div>
+        <div><label>Số lượt dùng tối đa</label><input type="text" inputmode="numeric" data-money autocomplete="off" name="maxUses" style="width:120px;" /></div>
         <div><label>Hết hạn</label><input type="date" name="expiresAt" /></div>
         <button type="submit" class="admin-btn">Tạo mã</button>
       </form>

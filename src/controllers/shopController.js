@@ -5,8 +5,7 @@ async function showShop(req, res, next) {
   try {
     const locale = res.locals.locale;
     const { categorySlug } = req.params;
-    const { size, sort } = req.query;
-
+    
     let category = null;
     let query = db('products').where({ is_active: true });
 
@@ -22,17 +21,7 @@ async function showShop(req, res, next) {
       query = query.andWhere({ category_id: category.id });
     }
 
-    if (size) {
-      const variantProductIds = await db('product_variants').where({ size }).distinct('product_id');
-      query = query.whereIn(
-        'id',
-        variantProductIds.map((v) => v.product_id)
-      );
-    }
-
-    if (sort === 'price-asc') query = query.orderBy('price', 'asc');
-    else if (sort === 'price-desc') query = query.orderBy('price', 'desc');
-    else query = query.orderBy('created_at', 'desc');
+    query = query.orderBy('created_at', 'desc');
 
     const products = await query;
     const productIds = products.map((p) => p.id);
@@ -45,8 +34,6 @@ async function showShop(req, res, next) {
       stockByProduct.set(v.product_id, (stockByProduct.get(v.product_id) || 0) + v.stock);
     }
 
-    const categories = await db('categories').orderBy('sort_order');
-    const allSizes = [...new Set(variants.map((v) => v.size))];
 
     res.render('shop', {
       title: `${res.locals.t('shop.title')} — FOR A WHILE`,
@@ -55,11 +42,7 @@ async function showShop(req, res, next) {
         ...localizeProduct(p, locale),
         inStock: (stockByProduct.get(p.id) || 0) > 0
       })),
-      categories: categories.map((c) => localizeCategory(c, locale)),
-      activeCategory: category ? localizeCategory(category, locale) : null,
-      allSizes,
-      activeSize: size || '',
-      activeSort: sort || 'newest'
+      activeCategory: category ? localizeCategory(category, locale) : null
     });
   } catch (err) {
     next(err);

@@ -166,7 +166,10 @@ exports.seed = async function (knex) {
     }
   ]);
 
-  const passwordHash = bcrypt.hashSync(process.env.ADMIN_DEFAULT_PASSWORD || 'ForAWhile@2026', 10);
+  if (!process.env.ADMIN_DEFAULT_PASSWORD) {
+    throw new Error('Thieu ADMIN_DEFAULT_PASSWORD trong .env - khai bao mat khau admin truoc khi chay seed.');
+  }
+  const passwordHash = bcrypt.hashSync(process.env.ADMIN_DEFAULT_PASSWORD, 10);
   await knex('admin_users').insert({
     username: process.env.ADMIN_DEFAULT_USERNAME || 'admin',
     password_hash: passwordHash

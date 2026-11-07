@@ -1,36 +1,46 @@
+<%
+  var pfx = locale === 'en' ? '/en' : '';
+  var navPath = typeof currentPath === 'string' ? currentPath : '/';
+  function navActive(base) { return navPath === base || navPath.indexOf(base + '/') === 0; }
+  var shopActive = navActive('/shop') || navActive('/product');
+%>
+<% if (typeof siteClosedPreview !== 'undefined' && siteClosedPreview) { %>
+<div class="closed-bar">Website đang ĐÓNG với khách — chỉ admin xem được trang này · <a href="/admin/cai-dat">Mở lại</a></div>
+<% } %>
 <header class="site-header">
-  <div class="container site-header__inner">
-    <div class="site-header__left">
-      <button type="button" class="site-header__menu-toggle" data-menu-toggle aria-label="<%= t('nav.menu') %>" aria-expanded="false" aria-controls="mobileNav">
-        <span></span><span></span><span></span>
-      </button>
+  <div class="site-header__pill">
+    <button type="button" class="site-header__menu-toggle" data-menu-toggle aria-label="<%= t('nav.menu') %>" aria-expanded="false" aria-controls="mobileNav">
+      <span></span><span></span><span></span>
+    </button>
 
-      <a href="<%= locale === 'en' ? '/en' : '/' %>" class="site-header__logo" data-barba-prevent="self">
-        <img src="/images/logo/logo-mark.png" alt="FOR A WHILE" />
-      </a>
+    <a href="<%= pfx || '/' %>" class="site-header__logo" data-barba-prevent="self">
+      <img class="site-header__logo-img" src="/images/logo/logo-mark.png" alt="FOR A WHILE" />
+      <span class="site-header__wordmark">FOR A WHILE</span>
+    </a>
 
-      <nav class="site-header__nav">
-        <a href="<%= locale === 'en' ? '/en/shop' : '/shop' %>"><%= t('nav.shop') %></a>
-        <a href="<%= locale === 'en' ? '/en/archive' : '/archive' %>"><%= t('nav.lookbook') %></a>
-        <a href="<%= locale === 'en' ? '/en/about' : '/about' %>"><%= t('nav.about') %></a>
-      </nav>
-    </div>
+    <nav class="site-header__nav">
+      <a href="<%= pfx %>/shop" class="<%= shopActive ? 'is-active' : '' %>"><%= t('nav.shop') %></a>
+      <a href="<%= pfx %>/archive" class="<%= navActive('/archive') ? 'is-active' : '' %>"><%= t('nav.lookbook') %></a>
+      <a href="<%= pfx %>/about" class="<%= navActive('/about') ? 'is-active' : '' %>"><%= t('nav.about') %></a>
+    </nav>
 
     <div class="site-header__actions">
-      <a href="<%= locale === 'en' ? '/en/wishlist' : '/wishlist' %>" aria-label="<%= t('nav.wishlist') %>">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21s-7.5-4.7-10-9.2C.4 8.1 2 4.5 5.6 4c2-.3 3.9.6 5 2.2C11.7 4.6 13.6 3.7 15.6 4c3.6.5 5.2 4.1 3.6 7.8C21.5 16.3 12 21 12 21Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-      </a>
-      <a href="<%= locale === 'en' ? '/en/cart' : '/cart' %>" class="cart-badge" aria-label="<%= t('nav.cart') %>">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 4h2l2.4 12.4a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L21 8H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="21" r="1.4" fill="currentColor"/><circle cx="18" cy="21" r="1.4" fill="currentColor"/></svg>
-        <% if (cartCount > 0) { %><span class="cart-badge__count"><%= cartCount %></span><% } %>
+      <a href="<%= pfx %>/cart" class="site-header__cart cart-badge" data-cart-link aria-label="<%= t('nav.cart') %>" aria-expanded="false">
+        <span class="site-header__cart-text"><%= t('nav.cart') %><span class="cart-count" data-cart-count <%= cartCount > 0 ? '' : 'hidden' %>><%= cartCount %></span></span>
+        <span class="site-header__cart-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 4h2l2.4 12.4a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L21 8H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="21" r="1.4" fill="currentColor"/><circle cx="18" cy="21" r="1.4" fill="currentColor"/></svg>
+          <span class="cart-badge__count" data-cart-count <%= cartCount > 0 ? '' : 'hidden' %>><%= cartCount %></span>
+        </span>
       </a>
       <%- include('language-switcher') %>
     </div>
   </div>
 
   <nav class="site-header__mobile-nav" id="mobileNav" data-mobile-nav>
-    <a href="<%= locale === 'en' ? '/en/shop' : '/shop' %>"><%= t('nav.shop') %></a>
-    <a href="<%= locale === 'en' ? '/en/archive' : '/archive' %>"><%= t('nav.lookbook') %></a>
-    <a href="<%= locale === 'en' ? '/en/about' : '/about' %>"><%= t('nav.about') %></a>
+    <a href="<%= pfx %>/shop" class="<%= shopActive ? 'is-active' : '' %>"><%= t('nav.shop') %></a>
+    <a href="<%= pfx %>/archive" class="<%= navActive('/archive') ? 'is-active' : '' %>"><%= t('nav.lookbook') %></a>
+    <a href="<%= pfx %>/about" class="<%= navActive('/about') ? 'is-active' : '' %>"><%= t('nav.about') %></a>
   </nav>
+
+  <div class="mini-cart" data-mini-cart data-mini-url="<%= pfx %>/cart/mini" data-remove-url="<%= pfx %>/cart/remove" aria-hidden="true"></div>
 </header>

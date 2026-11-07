@@ -2,6 +2,7 @@ const { Jimp } = require('jimp');
 
 const IMAGE_SIZES = {
   hero: { w: 1920, h: 960 },
+  heroMobile: { w: 900, h: 1100 },
   featured: { w: 900, h: 1200 },
   thumb: { w: 800, h: 800 },
   product: { w: 1200, h: 1500 },

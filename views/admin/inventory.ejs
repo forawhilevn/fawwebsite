@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title><%= title %></title>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+  <%- include('../partials/admin-sidebar') %>
+  <main class="admin-main admin-main--wide" data-saveall>
+    <h1>Tồn kho</h1>
+
+    <div class="inv-stats">
+      <div class="inv-stat"><span><%= summary.products %></span>Sản phẩm</div>
+      <div class="inv-stat"><span><%= summary.totalUnits.toLocaleString('vi-VN') %></span>Tổng tồn kho</div>
+      <div class="inv-stat inv-stat--warn"><span><%= summary.low %></span>Sắp hết (≤ <%= lowStock %>)</div>
+      <div class="inv-stat inv-stat--bad"><span><%= summary.soldOut %></span>Hết hàng</div>
+    </div>
+
+    <div class="admin-card">
+      <div class="inv-toolbar">
+        <input type="search" placeholder="Tìm theo tên sản phẩm, màu, size…" data-inv-search />
+        <div class="inv-filters" data-inv-filters>
+          <button type="button" class="is-active" data-filter="all">Tất cả</button>
+          <button type="button" data-filter="low">Sắp hết</button>
+          <button type="button" data-filter="out">Hết hàng</button>
+        </div>
+      </div>
+
+      <form action="/admin/ton-kho/luu" method="post" data-inv>
+        <table class="admin-table inv-table">
+          <thead><tr><th>Sản phẩm</th><th>Màu</th><th>Size</th><th style="width:130px;">Tồn kho</th><th style="width:120px;">Trạng thái</th></tr></thead>
+          <tbody>
+          <% rows.forEach(function (p) { %>
+            <tr class="inv-group" data-inv-group="<%= p.id %>">
+              <td colspan="5">
+                <div class="inv-product">
+                  <img src="<%= p.cover_image_url || '/images/logo/logo-mark.png' %>" alt="" />
+                  <div class="inv-product__info">
+                    <strong><%= p.name_vi %></strong>
+                    <span><%= p.category_name %><%= p.is_active ? '' : ' · Đang ẩn' %> · Tổng tồn: <b data-inv-total="<%= p.id %>"><%= p.total %></b></span>
+                  </div>
+                  <a href="/admin/san-pham/<%= p.id %>/sua" class="admin-btn admin-btn--outline" style="margin-left:auto;">Sửa sản phẩm</a>
+                </div>
+              </td>
+            </tr>
+            <% if (p.variants.length === 0) { %>
+              <tr class="inv-empty" data-inv-of="<%= p.id %>"><td colspan="5" class="admin-hint" style="padding:8px 14px;">Sản phẩm chưa có biến thể.</td></tr>
+            <% } %>
+            <% p.variants.forEach(function (v) { %>
+              <tr class="inv-row" data-inv-of="<%= p.id %>" data-name="<%= (p.name_vi + ' ' + (v.color || '') + ' ' + v.size).toLowerCase() %>">
+                <td></td>
+                <td><% if (v.color_hex) { %><span class="vm__dot" style="background: <%= v.color_hex %>;"></span><% } %><%= v.color || '—' %></td>
+                <td><strong><%= v.size %></strong></td>
+                <td><input type="text" inputmode="numeric" data-money data-inv-input autocomplete="off" name="stock_<%= v.id %>" value="<%= v.stock %>" /></td>
+                <td><span class="inv-badge" data-inv-badge></span></td>
+              </tr>
+            <% }); %>
+          <% }); %>
+          <% if (rows.length === 0) { %><tr><td colspan="5">Chưa có sản phẩm nào.</td></tr><% } %>
+          </tbody>
+        </table>
+        <p class="admin-hint" data-inv-none hidden style="margin:14px;">Không có biến thể nào khớp bộ lọc.</p>
+      </form>
+    </div>
+
+    <div class="savebar" data-savebar>
+      <span class="savebar__msg" data-savebar-msg>Chưa có thay đổi</span>
+      <button type="button" class="admin-btn savebar__btn" data-saveall-btn>Lưu tồn kho</button>
+    </div>
+  </main>
+</div>
+</body>
+</html>

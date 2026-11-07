@@ -38,7 +38,7 @@
                 <td><input type="text" name="nameVi" value="<%= cat.name_vi %>" style="border:none; background:transparent;" /></td>
                 <td><input type="text" name="nameEn" value="<%= cat.name_en %>" style="border:none; background:transparent;" /></td>
                 <td><%= cat.slug %></td>
-                <td><input type="number" name="sortOrder" value="<%= cat.sort_order %>" style="width:60px; border:none; background:transparent;" /></td>
+                <td><input type="text" inputmode="numeric" data-money autocomplete="off" name="sortOrder" value="<%= cat.sort_order %>" style="width:60px; border:none; background:transparent;" /></td>
                 <td>
                   <button type="submit" class="admin-btn admin-btn--outline">Lưu</button>
               </form>

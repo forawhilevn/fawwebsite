@@ -5,6 +5,8 @@ window.FAWMotion.initPageTransitions = function initPageTransitions() {
 
   barba.init({
     preventRunning: true,
+    // never reuse a cached copy of a page: cart / product state changes between visits
+    cacheIgnore: true,
     timeout: 5000,
     transitions: [
       {
@@ -23,11 +25,20 @@ window.FAWMotion.initPageTransitions = function initPageTransitions() {
     ]
   });
 
+  // Barba only swaps the container: copy the new page's <body> class over, otherwise
+  // body keeps e.g. "page-home" and the page loses its top padding under the header.
+  barba.hooks.beforeEnter((data) => {
+    try {
+      var m = /<body[^>]*\sclass=["']([^"']*)["']/i.exec(data.next.html || '');
+      if (m) document.body.className = m[1];
+      document.documentElement.classList.remove('is-locked');
+    } catch (e) {}
+  });
+
   barba.hooks.after((data) => {
     if (window.FAWMotion.initScrollReveal) window.FAWMotion.initScrollReveal(data.next.container);
     if (window.FAWMotion.initParallax) window.FAWMotion.initParallax(data.next.container);
     if (window.FAWMotion.refreshOnImagesLoad) window.FAWMotion.refreshOnImagesLoad(data.next.container);
-    if (window.FAWWishlist && window.FAWWishlist.refreshButtons) window.FAWWishlist.refreshButtons();
     if (window.FAWApp && window.FAWApp.rebind) window.FAWApp.rebind();
   });
 };

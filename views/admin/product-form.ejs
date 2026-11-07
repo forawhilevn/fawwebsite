@@ -9,7 +9,7 @@
 <body class="admin-body">
 <div class="admin-shell">
   <%- include('../partials/admin-sidebar') %>
-  <main class="admin-main">
+  <main class="admin-main" data-saveall>
     <h1><%= isEdit ? 'Sửa sản phẩm' : 'Thêm sản phẩm' %></h1>
 
     <% if (errors.length > 0) { %>
@@ -46,11 +46,11 @@
         <div style="display:flex; gap:16px;">
           <div style="flex:1;">
             <label>Giá (VND)</label>
-            <input type="number" name="price" value="<%= product.price || '' %>" min="0" required />
+            <input type="text" inputmode="numeric" data-money autocomplete="off" name="price" value="<%= product.price || '' %>" required />
           </div>
           <div style="flex:1;">
             <label>Giá khuyến mãi (không bắt buộc)</label>
-            <input type="number" name="salePrice" value="<%= product.sale_price || '' %>" min="0" />
+            <input type="text" inputmode="numeric" data-money autocomplete="off" name="salePrice" value="<%= product.sale_price || '' %>" />
           </div>
         </div>
 
@@ -83,77 +83,104 @@
     </div>
 
     <% if (isEdit) { %>
+      <%
+        var vmColors = [], vmSizes = [], vmStock = {};
+        variants.forEach(function (v) {
+          var key = (v.color || '').toLowerCase();
+          var ci = -1;
+          vmColors.forEach(function (c, idx) { if (c.key === key) ci = idx; });
+          if (ci < 0) { vmColors.push({ key: key, name: v.color || '', hex: v.color_hex || '#1C1C1C' }); ci = vmColors.length - 1; }
+          var si = vmSizes.indexOf(v.size);
+          if (si < 0) { vmSizes.push(v.size); si = vmSizes.length - 1; }
+          vmStock[ci + '|' + si] = v.stock;
+        });
+        var vmInitial = { colors: vmColors.map(function (c) { return { name: c.name, hex: c.hex }; }), sizes: vmSizes, stock: vmStock };
+      %>
       <div class="admin-card">
-        <h2 style="margin-top:0; font-size: 16px;">Biến thể (Size / Màu / Tồn kho)</h2>
-        <table class="admin-table">
-          <thead><tr><th>Size</th><th>Màu</th><th>Tồn kho</th><th></th></tr></thead>
-          <tbody>
-            <% variants.forEach(function(v) { %>
-              <tr>
-                <form action="/admin/san-pham/<%= product.id %>/bien-the/<%= v.id %>/sua" method="post" style="display:contents;">
-                  <td><input type="text" name="size" value="<%= v.size %>" style="width:70px;" /></td>
-                  <td><input type="text" name="color" value="<%= v.color || '' %>" style="width:100px;" /></td>
-                  <td><input type="number" name="stock" value="<%= v.stock %>" style="width:70px;" /></td>
-                  <td>
-                    <button type="submit" class="admin-btn admin-btn--outline">Lưu</button>
-                </form>
-                    <form action="/admin/san-pham/<%= product.id %>/bien-the/<%= v.id %>/xoa" method="post" style="display:inline;">
-                      <button type="submit" class="admin-btn admin-btn--danger">Xoá</button>
-                    </form>
-                  </td>
-              </tr>
-            <% }); %>
-          </tbody>
-        </table>
-        <form action="/admin/san-pham/<%= product.id %>/bien-the" method="post" style="display:flex; gap:8px; margin-top:12px; align-items:flex-end;">
-          <div><label>Size</label><input type="text" name="size" required style="width:70px;" /></div>
-          <div><label>Màu</label><input type="text" name="color" style="width:100px;" /></div>
-          <div><label>Tồn kho</label><input type="number" name="stock" value="0" style="width:70px;" /></div>
-          <button type="submit" class="admin-btn">+ Thêm biến thể</button>
+        <h2 class="admin-card__title">Biến thể <span>Màu sắc · Size · Tồn kho</span></h2>
+        <p class="admin-hint">Một sản phẩm có thể có nhiều màu và nhiều size. Khai báo danh sách màu, danh sách size, rồi nhập tồn kho cho từng ô màu × size (để 0 nếu hết hàng).</p>
+        <form action="/admin/san-pham/<%= product.id %>/bien-the/luu" method="post" class="vm" data-vm data-initial="<%= JSON.stringify(vmInitial) %>">
+          <input type="hidden" name="matrix" data-vm-json value="" />
+
+          <div class="vm__block">
+            <h3 class="vm__title"><span class="vm__num">1</span> Màu sắc</h3>
+            <div class="vm__colors" data-vm-colors></div>
+            <button type="button" class="admin-btn admin-btn--outline" data-vm-addcolor>+ Thêm màu</button>
+          </div>
+
+          <div class="vm__block">
+            <h3 class="vm__title"><span class="vm__num">2</span> Size</h3>
+            <div class="vm__chips" data-vm-sizes></div>
+            <div class="vm__sizeadd">
+              <input type="text" data-vm-sizeinput placeholder="VD: M, XL, Free size" />
+              <button type="button" class="admin-btn admin-btn--outline" data-vm-addsize>+ Thêm size</button>
+              <span class="vm__quick">Thêm nhanh:
+                <button type="button" data-vm-quick="S,M,L,XL">S M L XL</button>
+                <button type="button" data-vm-quick="S,M,L,XL,XXL">S → XXL</button>
+              </span>
+            </div>
+          </div>
+
+          <div class="vm__block">
+            <h3 class="vm__title"><span class="vm__num">3</span> Tồn kho</h3>
+            <div class="vm__gridwrap" data-vm-grid></div>
+          </div>
+
+          <div class="variant__actions" style="border:0; padding-top:0;">
+            <button type="submit" class="admin-btn">Lưu biến thể</button>
+          </div>
         </form>
       </div>
 
       <div class="admin-card">
-        <h2 style="margin-top:0; font-size: 16px;">Thư viện ảnh</h2>
-        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom: 16px;">
-          <% galleryImages.forEach(function(img) { %>
-            <div style="position:relative;">
-              <img src="<%= img.image_url %>" alt="" style="width:90px; height:110px; object-fit:cover;" />
-              <form action="/admin/san-pham/<%= product.id %>/anh/<%= img.id %>/xoa" method="post" style="position:absolute; top:2px; right:2px;">
-                <button type="submit" class="admin-btn admin-btn--danger" style="padding:2px 6px; font-size:11px;">&times;</button>
+        <h2 class="admin-card__title">Thư viện ảnh <span><%= galleryImages.length %> ảnh</span></h2>
+        <p class="admin-hint">Ảnh hiện ở trang sản phẩm theo đúng thứ tự dưới đây (ảnh đầu tiên là ảnh chính).</p>
+        <div class="thumbs__grid">
+          <% galleryImages.forEach(function(img, i) { %>
+            <div class="thumb">
+              <img src="<%= img.image_url %>" alt="" />
+              <span class="thumb__badge"><%= i + 1 %></span>
+              <form action="/admin/san-pham/<%= product.id %>/anh/<%= img.id %>/xoa" method="post" class="thumb__del" onsubmit="return confirm('Xoá ảnh này?');">
+                <button type="submit" class="admin-btn admin-btn--danger">&times;</button>
               </form>
             </div>
           <% }); %>
+          <% if (galleryImages.length === 0) { %><p class="admin-hint">Chưa có ảnh nào.</p><% } %>
         </div>
-        <form action="/admin/san-pham/<%= product.id %>/anh" method="post" enctype="multipart/form-data">
-          <input type="file" name="images" accept="image/*" multiple />
-          <button type="submit" class="admin-btn" style="margin-top:8px;">Tải ảnh lên</button>
+        <form action="/admin/san-pham/<%= product.id %>/anh" method="post" enctype="multipart/form-data" class="upload-box">
+          <input type="file" name="images" accept="image/*" multiple data-preview="#preview-gallery" />
+          <div class="thumbs thumbs--preview" id="preview-gallery" hidden></div>
+          <button type="submit" class="admin-btn">Tải ảnh lên</button>
         </form>
       </div>
 
       <div class="admin-card">
-        <h2 style="margin-top:0; font-size: 16px;">Lookbook</h2>
-        <p style="font-size:12px; color:#71717a; margin-top:-8px;">Ảnh lookbook hiển thị ở cuối trang chi tiết sản phẩm, trang Archive và trang chủ.</p>
-        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom: 16px;">
-          <% lookbookImages.forEach(function(imgUrl) { %>
+        <h2 class="admin-card__title">Lookbook <span><%= lookbookImages.length %> ảnh</span></h2>
+        <p class="admin-hint">Ảnh lookbook hiển thị ở cuối trang chi tiết sản phẩm, trang Archive và trang chủ.</p>
+        <div class="thumbs__grid">
+          <% lookbookImages.forEach(function(imgUrl, i) { %>
             <% const filename = imgUrl.split('/').pop(); %>
-            <div style="position:relative;">
-              <img src="<%= imgUrl %>" alt="" style="width:90px; height:110px; object-fit:cover;" />
-              <form action="/admin/san-pham/<%= product.id %>/lookbook/<%= filename %>/xoa" method="post" style="position:absolute; top:2px; right:2px;">
-                <button type="submit" class="admin-btn admin-btn--danger" style="padding:2px 6px; font-size:11px;">&times;</button>
+            <div class="thumb">
+              <img src="<%= imgUrl %>" alt="" />
+              <span class="thumb__badge"><%= i + 1 %></span>
+              <form action="/admin/san-pham/<%= product.id %>/lookbook/<%= filename %>/xoa" method="post" class="thumb__del" onsubmit="return confirm('Xoá ảnh này?');">
+                <button type="submit" class="admin-btn admin-btn--danger">&times;</button>
               </form>
             </div>
           <% }); %>
-          <% if (lookbookImages.length === 0) { %>
-            <p style="font-size:13px; color:#71717a;">Chưa có ảnh lookbook.</p>
-          <% } %>
+          <% if (lookbookImages.length === 0) { %><p class="admin-hint">Chưa có ảnh lookbook.</p><% } %>
         </div>
-        <form action="/admin/san-pham/<%= product.id %>/lookbook" method="post" enctype="multipart/form-data">
-          <input type="file" name="lookbookImages" accept="image/*" multiple />
-          <button type="submit" class="admin-btn" style="margin-top:8px;">Tải ảnh lookbook lên</button>
+        <form action="/admin/san-pham/<%= product.id %>/lookbook" method="post" enctype="multipart/form-data" class="upload-box">
+          <input type="file" name="lookbookImages" accept="image/*" multiple data-preview="#preview-lookbook" />
+          <div class="thumbs thumbs--preview" id="preview-lookbook" hidden></div>
+          <button type="submit" class="admin-btn">Tải ảnh lookbook lên</button>
         </form>
       </div>
     <% } %>
+    <div class="savebar" data-savebar>
+      <span class="savebar__msg" data-savebar-msg>Chưa có thay đổi</span>
+      <button type="button" class="admin-btn savebar__btn" data-saveall-btn>Lưu toàn bộ trang</button>
+    </div>
   </main>
 </div>
 </body>

@@ -11,7 +11,10 @@
 <main>
   <% if (heroBanners.length > 0) { %>
   <section class="hero">
-    <img class="hero__bg" data-parallax="12" data-reveal data-reveal-slow src="<%= heroBanners[0].image_url %>" alt="" />
+    <picture>
+      <% if (heroBanners[0].image_mobile_url) { %><source media="(max-width: 640px)" srcset="<%= heroBanners[0].image_mobile_url %>" /><% } %>
+      <img class="hero__bg" data-parallax="12" data-reveal data-reveal-slow src="<%= heroBanners[0].image_url %>" alt="" />
+    </picture>
     <div class="hero__content">
       <h1 class="hero__title" data-reveal data-reveal-slow><%= heroBanners[0].title || t('home.taglineLine1') %></h1>
     </div>

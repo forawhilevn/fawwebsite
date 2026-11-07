@@ -1,0 +1,29 @@
+<%
+  var mcPrefix = locale === 'en' ? '/en' : '';
+%>
+<% if (!cart.items.length) { %>
+  <p class="mini-cart__empty"><%= t('cart.empty') %></p>
+<% } else { %>
+  <ul class="mini-cart__list" data-lenis-prevent>
+    <% cart.items.forEach(function (item) { %>
+    <li class="mini-cart__item">
+      <img class="mini-cart__thumb" src="<%= item.image || '/images/logo/logo-mark.png' %>" alt="" />
+      <div class="mini-cart__meta">
+        <span class="mini-cart__name"><%= item.productName %></span>
+        <% if (item.variantLabel) { %>
+          <span class="mini-cart__variant"><%= item.variantLabel %><% if (item.quantity > 1) { %> &times; <%= item.quantity %><% } %></span>
+        <% } else if (item.quantity > 1) { %>
+          <span class="mini-cart__variant">&times; <%= item.quantity %></span>
+        <% } %>
+        <button type="button" class="mini-cart__remove" data-mini-remove data-variant-id="<%= item.variant.id %>"><%= t('cart.remove') %></button>
+      </div>
+      <span class="mini-cart__price"><%= formatVND(item.lineTotal) %></span>
+    </li>
+    <% }); %>
+  </ul>
+  <div class="mini-cart__foot">
+    <span class="mini-cart__sub"><%= t('cart.subtotal') %> &bull; <%= cart.count %> <%= cart.count === 1 ? t('cart.item') : t('cart.items') %></span>
+    <span class="mini-cart__total"><%= formatVND(cart.subtotal) %></span>
+    <a class="pdp-btn mini-cart__view" href="<%= mcPrefix %>/cart"><%= t('cart.viewCart') %></a>
+  </div>
+<% } %>

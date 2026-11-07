@@ -26,13 +26,6 @@ async function showArchive(req, res, next) {
   }
 }
 
-function showWishlist(req, res) {
-  res.render('wishlist', {
-    title: `${res.locals.t('wishlist.title')} — FOR A WHILE`,
-    bodyClass: 'page-wishlist'
-  });
-}
-
 function showAbout(req, res) {
   res.render('about', {
     title: `About — FOR A WHILE`,
@@ -63,7 +56,6 @@ function showContact(req, res) {
 
 module.exports = {
   showArchive,
-  showWishlist,
   showAbout,
   showShippingPolicy,
   showReturnPolicy,

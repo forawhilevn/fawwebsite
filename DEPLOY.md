@@ -20,8 +20,6 @@ Node.js **không chạy được** trên gói Shared Hosting thường của Hos
 
 Gói cũng cần có **MySQL Database** đi kèm (hầu hết các gói trên đều có sẵn qua phpMyAdmin/hPanel).
 
-Đây cũng là gói mà site TOMSTORE (thương hiệu chị em, cùng dev) đang chạy ổn định — nên dùng cùng tier để tận dụng quy trình đã kiểm chứng.
-
 ## 3. Tạo MySQL Database trên Hostinger
 
 1. hPanel → **Databases** → **MySQL Databases** → tạo database mới (ví dụ `faw_store`), tạo user + mật khẩu, gán quyền đầy đủ cho user vào database.
