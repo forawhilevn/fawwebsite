@@ -2740,8 +2740,9 @@ a.sub-banner:hover { filter: brightness(1.12); }
 .page-shop .page-shell { padding-top: 0; }
 .page-home .sub-banners { margin-top: var(--header-gap); }
 
-/* about page with an optional picture next to the text */
-.about-layout.has-image { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: var(--space-7); align-items: center; max-width: 1100px; }
+/* about page with an optional picture next to the text (same scale as the policy pages' picture) */
+.about-layout.has-image { display: grid; grid-template-columns: 1.1fr 1fr; gap: var(--space-7); align-items: center; max-width: none; width: 100%; padding-left: var(--space-5); padding-right: var(--space-5); box-sizing: border-box; }
 .about-layout.has-image .about-content { max-width: none !important; }
-.about-image img { width: 100%; height: auto; display: block; border-radius: 12px; }
-@media (max-width: 900px) { .about-layout.has-image { grid-template-columns: 1fr; gap: var(--space-5); } }
+.about-image { justify-self: center; width: 100%; }
+.about-image img { width: 100%; max-width: none; height: auto; display: block; }
+@media (max-width: 900px) { .about-layout.has-image { grid-template-columns: 1fr; gap: var(--space-5); padding-left: var(--space-4); padding-right: var(--space-4); } }
