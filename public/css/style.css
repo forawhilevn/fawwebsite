@@ -2813,3 +2813,10 @@ a.sub-banner:hover { filter: brightness(1.12); }
 .upload-confirm__body .thumb { width: 100%; }
 .upload-confirm__body .thumb img { height: auto; max-height: 60vh; object-fit: contain; background: #f4f4f5; }
 .upload-confirm__actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+
+/* Sub-banner animations: never show the iPhone play button, taps go to the banner link */
+.sub-banner video { pointer-events: none; }
+.sub-banner video::-webkit-media-controls,
+.sub-banner video::-webkit-media-controls-panel,
+.sub-banner video::-webkit-media-controls-overlay-play-button,
+.sub-banner video::-webkit-media-controls-start-playback-button { display: none !important; -webkit-appearance: none; opacity: 0; }

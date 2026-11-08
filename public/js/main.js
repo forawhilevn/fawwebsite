@@ -16,6 +16,33 @@
     apply();
   })();
 
+  // Sub-banner animations must always play on a loop. iPhones in Low Power Mode block
+  // autoplay, so we retry on load, when the page becomes visible again, and on the
+  // visitor's first touch / scroll (a gesture lets the video start).
+  (function loopVideos() {
+    function kick() {
+      document.querySelectorAll('.sub-banner video').forEach(function (v) {
+        v.muted = true;
+        v.loop = true;
+        v.playsInline = true;
+        v.setAttribute('playsinline', '');
+        v.setAttribute('webkit-playsinline', '');
+        if (v.paused) {
+          var p = v.play();
+          if (p && p.catch) p.catch(function () {});
+        }
+      });
+    }
+    window.FAWApp.playLoopVideos = kick;
+    ['touchstart', 'pointerdown', 'scroll', 'keydown'].forEach(function (ev) {
+      window.addEventListener(ev, kick, { passive: true });
+    });
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) kick(); });
+    window.addEventListener('pageshow', kick);
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', kick);
+    else kick();
+  })();
+
   // Product page behaviour (variants, AJAX cart, mini-cart, size chart, bottom
   // sheet) now lives in /js/product.js.
 
