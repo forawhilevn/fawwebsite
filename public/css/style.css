@@ -2822,13 +2822,17 @@ a.sub-banner:hover { filter: brightness(1.12); }
 .sub-banner video::-webkit-media-controls-start-playback-button { display: none !important; -webkit-appearance: none; opacity: 0; }
 
 /* Header always sits a little above the home banner and the product photos (all screen sizes) */
-/* ~6px gap: header pill bottom is 64px (+bar) on desktop, 56px on phones; the page adds 12px / 8px of its own */
+/* gap under the header = gap above it (promo bar -> header): 12px on desktop, 8px on phones.
+   Header pill bottom is 64px (+bar) on desktop, 56px on phones; the page adds 12px / 8px of its own */
 body.page-home main,
-body.page-product main { padding-top: calc(58px + var(--bar-h)); }
+body.page-product main { padding-top: calc(64px + var(--bar-h)); }
 @media (max-width: 640px) {
   body.page-home main,
-  body.page-product main { padding-top: calc(54px + var(--bar-h)); }
+  body.page-product main { padding-top: calc(56px + var(--bar-h)); }
 }
+/* the home banner photo drifts down with the parallax effect: make it a bit taller and start
+   it higher so the drift never uncovers a black strip at the top of the banner */
+.hero__bg[data-parallax] { inset: auto 0 auto 0; top: -14%; height: 116%; }
 
 /* ADD TO CART: solid red at rest so it stands out (desktop, mobile bar and size sheet) */
 .pdp-btn[data-pdp-add],
