@@ -2761,3 +2761,8 @@ a.sub-banner:hover { filter: brightness(1.12); }
 .admin-notice--error { background:#fee2e2; color:#991b1b; }
 .admin-sidebar__account { display:block; padding:10px 16px; font-size:13px; color:#a1a1aa; text-decoration:none; }
 .admin-sidebar__account:hover, .admin-sidebar__account.is-active { color:#fff; }
+.pw-field { position:relative; }
+.admin-form .pw-field input { padding-right:40px; }
+.pw-toggle { position:absolute; top:50%; right:6px; transform:translateY(-50%); display:flex; align-items:center; justify-content:center; width:30px; height:30px; padding:0; border:0; border-radius:6px; background:transparent; color:#71717a; cursor:pointer; }
+.pw-toggle:hover { color:#18181b; background:rgba(0,0,0,.05); }
+.pw-toggle:focus-visible { outline:2px solid #eb252a; outline-offset:1px; }
