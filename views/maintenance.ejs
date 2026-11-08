@@ -15,7 +15,8 @@
   <% if (mediaMobile && mediaMobile !== mediaDesktop) { %><%- media(mediaMobile, 'is-mobile') %><% } %>
 <% } %>
 <main class="maintenance <%= hasMedia ? 'maintenance--media' : '' %>">
-  <% if (showText || !hasMedia) { %>
+  <%# an image / video / GIF is the whole message: the text only shows when there is no media %>
+  <% if (!hasMedia) { %>
     <img class="maintenance__logo" src="/images/logo/logo-mark.png" alt="FOR A WHILE" />
     <h1 class="maintenance__title"><%= closedTitle %></h1>
     <p class="maintenance__text"><%= closedMessage %></p>
