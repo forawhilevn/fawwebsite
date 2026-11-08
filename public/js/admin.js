@@ -122,45 +122,134 @@
     }
   });
 
-  /* ---------- image previews before upload ---------- */
+  /* ---------- image previews before upload ----------
+     Every image file input in admin shows what was picked before saving:
+     - data-preview="#box"  -> previews go into that box
+     - no data-preview      -> a preview box is created right under the input
+     - data-autosubmit      -> a confirm window with the preview opens first
+     - data-media-preview   -> page has its own preview script, skipped here
+     - data-max-mb="10"     -> size limit used for the warning (default 8) */
 
-  var previewUrls = {};
+  var previewUrls = typeof WeakMap === 'function' ? new WeakMap() : null;
 
-  document.addEventListener('change', function (e) {
-    var input = e.target;
-    if (!input || !input.matches || !input.matches('input[type="file"][data-preview]')) return;
-    var target = document.querySelector(input.getAttribute('data-preview'));
-    if (!target) return;
-    (previewUrls[input.name] || []).forEach(function (u) { URL.revokeObjectURL(u); });
-    previewUrls[input.name] = [];
+  function isImageInput(input) {
+    var accept = (input.getAttribute('accept') || '').toLowerCase();
+    return !accept || accept.indexOf('image') !== -1 || /\.(jpe?g|png|webp|gif)/.test(accept);
+  }
+
+  function fmtSize(bytes) {
+    return bytes >= 1048576 ? (bytes / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(bytes / 1024)) + ' KB';
+  }
+
+  function maxMb(input) {
+    var v = parseFloat(input.getAttribute('data-max-mb'));
+    return v > 0 ? v : 8;
+  }
+
+  // renders thumbnails of the chosen files into target; returns true when every file is within the limit
+  function renderPreview(input, target) {
+    if (previewUrls && previewUrls.get(input)) previewUrls.get(input).forEach(function (u) { URL.revokeObjectURL(u); });
+    var urls = [];
+    if (previewUrls) previewUrls.set(input, urls);
     target.innerHTML = '';
     var files = Array.prototype.slice.call(input.files || []);
     target.hidden = files.length === 0;
-    if (!files.length) return;
+    if (!files.length) return true;
+
+    var limit = maxMb(input);
+    var tooBig = files.filter(function (f) { return f.size > limit * 1048576; });
 
     var label = document.createElement('div');
     label.className = 'thumbs__label';
-    label.textContent = 'Xem trước ' + files.length + ' ảnh sắp tải lên';
+    label.textContent = 'Xem trước ' + (files.length > 1 ? files.length + ' ảnh' : 'ảnh') + ' sắp tải lên (chưa lưu)';
     target.appendChild(label);
 
     var grid = document.createElement('div');
     grid.className = 'thumbs__grid';
     files.forEach(function (file) {
       var url = URL.createObjectURL(file);
-      previewUrls[input.name].push(url);
+      urls.push(url);
       var item = document.createElement('div');
-      item.className = 'thumb thumb--new';
+      item.className = 'thumb thumb--new' + (file.size > limit * 1048576 ? ' thumb--toobig' : '');
       var img = document.createElement('img');
       img.src = url;
       img.alt = '';
+      img.addEventListener('load', function () {
+        dims.textContent = img.naturalWidth + ' × ' + img.naturalHeight + ' · ' + fmtSize(file.size);
+      });
       var cap = document.createElement('span');
       cap.className = 'thumb__name';
       cap.textContent = file.name;
+      var dims = document.createElement('span');
+      dims.className = 'thumb__meta';
+      dims.textContent = fmtSize(file.size);
       item.appendChild(img);
       item.appendChild(cap);
+      item.appendChild(dims);
       grid.appendChild(item);
     });
     target.appendChild(grid);
+
+    if (tooBig.length) {
+      var warn = document.createElement('p');
+      warn.className = 'thumbs__warn';
+      warn.textContent = (tooBig.length === 1 ? 'Ảnh "' + tooBig[0].name + '" (' + fmtSize(tooBig[0].size) + ')' : tooBig.length + ' ảnh') +
+        ' vượt quá ' + limit + ' MB nên sẽ không tải lên được. Hãy nén hoặc giảm kích thước ảnh rồi chọn lại.';
+      target.appendChild(warn);
+    }
+    return tooBig.length === 0;
+  }
+
+  function autoTarget(input) {
+    if (input._previewBox) return input._previewBox;
+    var box = document.createElement('div');
+    box.className = 'thumbs thumbs--preview';
+    box.hidden = true;
+    var anchor = input.closest('label') && input.hidden ? input.closest('label') : input;
+    anchor.parentNode.insertBefore(box, anchor.nextSibling);
+    input._previewBox = box;
+    return box;
+  }
+
+  // confirm window for inputs that upload as soon as a file is picked
+  function confirmUpload(input) {
+    var overlay = document.createElement('div');
+    overlay.className = 'upload-confirm';
+    overlay.innerHTML = '<div class="upload-confirm__box" role="dialog" aria-modal="true">' +
+      '<h3 class="upload-confirm__title">Xem trước ảnh</h3><div class="upload-confirm__body"></div>' +
+      '<div class="upload-confirm__actions"><button type="button" class="admin-btn admin-btn--outline" data-uc-cancel>Huỷ</button>' +
+      '<button type="button" class="admin-btn" data-uc-ok>Tải lên</button></div></div>';
+    document.body.appendChild(overlay);
+    var ok = renderPreview(input, overlay.querySelector('.upload-confirm__body'));
+    var okBtn = overlay.querySelector('[data-uc-ok]');
+    if (!ok) okBtn.disabled = true;
+    function close() {
+      document.removeEventListener('keydown', onKey);
+      overlay.remove();
+    }
+    function cancel() { input.value = ''; close(); }
+    function onKey(e) { if (e.key === 'Escape') cancel(); }
+    document.addEventListener('keydown', onKey);
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) cancel(); });
+    overlay.querySelector('[data-uc-cancel]').addEventListener('click', cancel);
+    okBtn.addEventListener('click', function () {
+      okBtn.disabled = true;
+      okBtn.textContent = 'Đang tải lên...';
+      input.form.submit();
+    });
+    okBtn.focus();
+  }
+
+  document.addEventListener('change', function (e) {
+    var input = e.target;
+    if (!input || !input.matches || !input.matches('input[type="file"]')) return;
+    if (input.hasAttribute('data-media-preview') || !isImageInput(input)) return;
+    if (input.hasAttribute('data-autosubmit')) {
+      if (input.files && input.files.length) confirmUpload(input);
+      return;
+    }
+    var target = input.hasAttribute('data-preview') ? document.querySelector(input.getAttribute('data-preview')) : autoTarget(input);
+    if (target) renderPreview(input, target);
   });
 
 
@@ -352,9 +441,10 @@
     write(true);
   }
 
+  // non-image auto-upload inputs still submit straight away (images get a confirm window above)
   document.addEventListener('change', function (e) {
     var el = e.target;
-    if (el && el.matches && el.matches('input[type="file"][data-autosubmit]') && el.files.length) {
+    if (el && el.matches && el.matches('input[type="file"][data-autosubmit]') && el.files.length && !isImageInput(el)) {
       el.form.submit();
     }
   });

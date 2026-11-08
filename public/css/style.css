@@ -2800,3 +2800,16 @@ a.sub-banner:hover { filter: brightness(1.12); }
 .bg-color { display: flex; align-items: center; gap: 10px; }
 .bg-color input[type="color"] { width: 48px; height: 36px; padding: 2px; cursor: pointer; }
 .bg-color input[type="text"] { width: 120px; font-family: monospace; }
+
+/* Admin: preview of picked images before upload */
+.thumb__meta { display: block; padding: 0 6px 5px; font-size: 10px; color: #a1a1aa; }
+.thumb--toobig { border-color: #dc2626; border-style: solid; }
+.thumb--toobig .thumb__meta { color: #dc2626; font-weight: 700; }
+.thumbs__warn { margin: -6px 0 12px; padding: 8px 12px; background: #fee2e2; color: #991b1b; font-size: 12px; border-radius: 6px; }
+.thumbs--preview .thumbs__label { font-size: 12px; font-weight: 700; color: #eb252a; margin: 8px 0 6px; }
+.upload-confirm { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0, 0, 0, 0.55); }
+.upload-confirm__box { width: min(560px, 100%); max-height: calc(100vh - 32px); overflow: auto; background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); }
+.upload-confirm__title { margin: 0 0 4px; font-size: 16px; }
+.upload-confirm__body .thumb { width: 100%; }
+.upload-confirm__body .thumb img { height: auto; max-height: 60vh; object-fit: contain; background: #f4f4f5; }
+.upload-confirm__actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }

@@ -167,7 +167,7 @@
           </form>
         <% } %>
         <form action="/admin/san-pham/<%= product.id %>/size-chart" method="post" enctype="multipart/form-data" class="upload-box">
-          <input type="file" name="sizeChart" accept="image/*" required />
+          <input type="file" name="sizeChart" accept="image/*" data-max-mb="20" required />
           <button type="submit" class="admin-btn"><%= sizeChartCur ? 'Thay ảnh size chart' : 'Tải ảnh size chart lên' %></button>
         </form>
       </div>
@@ -189,7 +189,7 @@
           <% if (lookbookImages.length === 0) { %><p class="admin-hint">Chưa có ảnh lookbook.</p><% } %>
         </div>
         <form action="/admin/san-pham/<%= product.id %>/lookbook" method="post" enctype="multipart/form-data" class="upload-box">
-          <input type="file" name="lookbookImages" accept="image/*" multiple data-preview="#preview-lookbook" />
+          <input type="file" name="lookbookImages" accept="image/*" data-max-mb="10" multiple data-preview="#preview-lookbook" />
           <div class="thumbs thumbs--preview" id="preview-lookbook" hidden></div>
           <button type="submit" class="admin-btn">Tải ảnh lookbook lên</button>
         </form>

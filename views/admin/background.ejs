@@ -22,7 +22,7 @@
         <strong>Ảnh đề xuất: 1920 × 1080 px trở lên</strong>, .jpg hoặc .webp, <strong>dưới 1MB</strong>. Ảnh được phủ kín khung (có thể bị cắt bớt mép), nên đặt chi tiết quan trọng ở giữa.
       </p>
 
-      <h3 style="font-size:14px; margin:16px 0 8px;">Xem trước</h3>
+      <h3 style="font-size:14px; margin:16px 0 8px;">Xem trước <span id="bg-unsaved" style="color:#eb252a; font-weight:600; text-transform:none;" hidden>(chưa lưu)</span></h3>
       <div class="bg-preview" id="bg-preview" style="background-color:<%= bg.color %>; background-image:<%= bg.image ? "url('" + bg.image + "')" : 'none' %>;">
         <div class="bg-preview__cards"><span></span><span></span><span></span></div>
       </div>
@@ -88,7 +88,9 @@
     fileUrl = file.files && file.files[0] ? URL.createObjectURL(file.files[0]) : null;
     update();
   });
-  form.addEventListener('change', update);
+  var unsaved = document.getElementById('bg-unsaved');
+  form.addEventListener('change', function () { update(); unsaved.hidden = false; });
+  text.addEventListener('input', function () { unsaved.hidden = false; });
 })();
 </script>
 </body>
