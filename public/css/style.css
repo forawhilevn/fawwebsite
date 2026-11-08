@@ -2866,3 +2866,12 @@ body.page-product main { padding-top: calc(64px + var(--bar-h)); }
     margin: var(--space-5) 10px 0;
   }
 }
+
+/* Every storefront page: the first thing under the header (page title, sub-banner...) sits as far
+   below the header as the header sits below the promo bar - 12px on desktop, 8px on phones */
+body[data-barba="wrapper"]:not(.page-home):not(.page-product) main { padding-top: calc(64px + var(--bar-h)); }
+@media (max-width: 640px) {
+  body[data-barba="wrapper"]:not(.page-home):not(.page-product) main { padding-top: calc(56px + var(--bar-h)); }
+}
+body[data-barba="wrapper"]:not(.page-home):not(.page-product) main > :first-child,
+body[data-barba="wrapper"]:not(.page-home):not(.page-product) main > :first-child > :first-child { padding-top: 0; margin-top: 0; }
