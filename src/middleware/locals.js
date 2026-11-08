@@ -6,6 +6,7 @@ const intro = require('../services/intro');
 const promotions = require('../services/promotions');
 const pagesService = require('../services/pages');
 const { getSizeChartUrl } = require('../utils/assets');
+const gridBackground = require('../services/gridBackground');
 
 // Cache-busting token: changes whenever the CSS / JS files change on disk,
 // so browsers never keep showing an old stylesheet after an edit.
@@ -33,6 +34,7 @@ async function attachLocals(req, res, next) {
     res.locals.footerPages = await pagesService.footerPages(locale);
     res.locals.getSizeChartUrl = getSizeChartUrl;
     res.locals.introConfig = intro.buildConfig(res.locals.siteSettings);
+    res.locals.gridBgCss = gridBackground.buildCss(res.locals.siteSettings);
     res.locals.siteClosed = res.locals.siteSettings.site_closed === '1';
     res.locals.assetVersion = assetVersion();
     res.locals.storeName = 'FOR A WHILE';

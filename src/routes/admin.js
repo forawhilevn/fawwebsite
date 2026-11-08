@@ -20,11 +20,13 @@ const pageAdminController = require('../controllers/admin/pageAdminController');
 const settingsController = require('../controllers/admin/settingsController');
 const subBannerController = require('../controllers/admin/subBannerController');
 const inventoryController = require('../controllers/admin/inventoryController');
+const backgroundController = require('../controllers/admin/backgroundController');
 
 const uploadProductImage = makeUploader('products');
 const uploadBannerImage = makeUploader('banners');
 const uploadStoreImage = makeUploader('stores');
 const uploadPageImage = makeUploader('pages');
+const uploadBackgroundImage = makeUploader('backgrounds');
 const uploadLookbookImage = makeSlugUploader('lookbook');
 
 router.use(authController.flashMiddleware);
@@ -140,6 +142,8 @@ router.post('/ma-giam-gia/:id/xoa', discountAdminController.deleteCode);
 
 router.get('/banner-phu', subBannerController.showSubBanners);
 router.post('/banner-phu/luu', subBannerController.saveAll);
+router.get('/hinh-nen', backgroundController.showBackground);
+router.post('/hinh-nen/luu', backgroundController.saveBackground(uploadBackgroundImage.single('image')));
 router.get('/cai-dat', settingsController.showSettings);
 router.post('/cai-dat/dong-mo-web', settingsController.toggleSite);
 router.post('/cai-dat/thong-bao', settingsController.saveClosedMessage);

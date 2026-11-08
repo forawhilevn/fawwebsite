@@ -6,8 +6,12 @@
     <a href="/admin/ton-kho" class="<%= currentPath.startsWith('/admin/ton-kho') ? 'is-active' : '' %>">Tồn kho</a>
     <a href="/admin/danh-muc" class="<%= currentPath.startsWith('/admin/danh-muc') ? 'is-active' : '' %>">Danh mục</a>
     <a href="/admin/don-hang" class="<%= currentPath.startsWith('/admin/don-hang') ? 'is-active' : '' %>">Đơn hàng</a>
-    <a href="/admin/banner" class="<%= currentPath.startsWith('/admin/banner') && !currentPath.startsWith('/admin/banner-phu') ? 'is-active' : '' %>">Banner</a>
-    <a href="/admin/banner-phu" class="<%= currentPath.startsWith('/admin/banner-phu') ? 'is-active' : '' %>">Banner phụ</a>
+    <div class="admin-navgroup">
+      <span class="admin-navgroup__title">Hình banner</span>
+      <a href="/admin/banner" class="<%= currentPath.startsWith('/admin/banner') && !currentPath.startsWith('/admin/banner-phu') ? 'is-active' : '' %>">Banner chính</a>
+      <a href="/admin/banner-phu" class="<%= currentPath.startsWith('/admin/banner-phu') ? 'is-active' : '' %>">Banner phụ</a>
+      <a href="/admin/hinh-nen" class="<%= currentPath.startsWith('/admin/hinh-nen') ? 'is-active' : '' %>">Hình nền sản phẩm</a>
+    </div>
     <a href="/admin/dai-ly" class="<%= currentPath.startsWith('/admin/dai-ly') ? 'is-active' : '' %>">Cửa hàng</a>
     <a href="/admin/khuyen-mai" class="<%= currentPath.startsWith('/admin/khuyen-mai') ? 'is-active' : '' %>">Khuyến mãi</a>
     <a href="/admin/chinh-sach" class="<%= currentPath.startsWith('/admin/chinh-sach') ? 'is-active' : '' %>">Trang chính sách</a>

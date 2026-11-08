@@ -25,7 +25,11 @@ const DEFAULTS = {
   intro_mobile_webm: '',
   intro_mobile_mp4: '',
   intro_desktop_reveal: '3.5',
-  intro_mobile_reveal: '3.5'
+  intro_mobile_reveal: '3.5',
+  gridbg_mode: 'image',
+  gridbg_image: '',
+  gridbg_color: '#0a0a0a',
+  gridbg_fixed: '1'
 };
 
 let tableReady = false;

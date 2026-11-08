@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title><%= title %></title>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+  <%- include('../partials/admin-sidebar') %>
+  <main class="admin-main">
+    <h1>Hình nền sản phẩm</h1>
+    <% if (saved === 'ok') { %><p style="background:#dcfce7; color:#166534; padding:10px 14px; border-radius:6px;">Đã lưu.</p><% } %>
+    <% if (saved === 'error') { %><p class="admin-error" style="background:#fee2e2;"><%= msg || 'Lưu thất bại' %></p><% } %>
+
+    <div class="admin-card" style="max-width:760px;">
+      <p style="font-size:13px; color:#71717a; margin-top:0;">
+        Nền phía sau lưới sản phẩm ở <a href="/" target="_blank">trang chủ</a> và <a href="/shop" target="_blank">trang Shops</a>, dùng chung cho máy tính và điện thoại.
+      </p>
+      <p style="font-size:13px; background:#fef3c7; color:#92400e; padding:8px 12px; border-radius:6px;">
+        <strong>Ảnh đề xuất: 1920 × 1080 px trở lên</strong>, .jpg hoặc .webp, <strong>dưới 1MB</strong>. Ảnh được phủ kín khung (có thể bị cắt bớt mép), nên đặt chi tiết quan trọng ở giữa.
+      </p>
+
+      <h3 style="font-size:14px; margin:16px 0 8px;">Xem trước</h3>
+      <div class="bg-preview" id="bg-preview" style="background-color:<%= bg.color %>; background-image:<%= bg.image ? "url('" + bg.image + "')" : 'none' %>;">
+        <div class="bg-preview__cards"><span></span><span></span><span></span></div>
+      </div>
+
+      <form action="/admin/hinh-nen/luu" method="post" enctype="multipart/form-data" class="admin-form" id="bg-form">
+        <label>Kiểu nền</label>
+        <div class="bg-mode">
+          <label><input type="radio" name="mode" value="image" <%= bg.mode === 'image' ? 'checked' : '' %> /> Dùng ảnh</label>
+          <label><input type="radio" name="mode" value="color" <%= bg.mode === 'color' ? 'checked' : '' %> /> Chỉ màu nền</label>
+        </div>
+
+        <div id="bg-image-fields" <%= bg.mode === 'color' ? 'hidden' : '' %>>
+          <label>Ảnh đang dùng</label>
+          <p style="font-size:13px; margin:0;">
+            <% if (bg.uploaded) { %><%= bg.uploaded.split('/').pop() %>
+            <% } else { %>Ảnh mặc định (pattern con mắt)<% } %>
+          </p>
+          <% if (bg.uploaded) { %>
+            <label class="admin-check" style="display:flex; gap:6px; align-items:center; font-weight:400;"><input type="checkbox" name="remove" value="1" style="width:auto;" /> Xoá ảnh đã tải lên, quay về ảnh mặc định</label>
+          <% } %>
+          <label for="bg-file"><%= bg.uploaded ? 'Thay bằng ảnh mới' : 'Tải ảnh mới lên' %></label>
+          <input type="file" id="bg-file" name="image" accept=".jpg,.jpeg,.png,.webp,.gif" />
+        </div>
+
+        <label for="bg-color-picker">Màu nền</label>
+        <div class="bg-color">
+          <input type="color" id="bg-color-picker" value="<%= bg.color %>" />
+          <input type="text" id="bg-color" name="color" value="<%= bg.color %>" maxlength="7" pattern="#[0-9a-fA-F]{6}" />
+        </div>
+        <p class="admin-hint" style="font-size:12px; color:#71717a; margin:4px 0 0;">Khi dùng ảnh, màu này hiện ra trong lúc ảnh đang tải.</p>
+
+        <label class="admin-check" style="display:flex; gap:8px; align-items:center; margin-top:16px;"><input type="checkbox" name="fixed" value="1" <%= bg.fixed ? 'checked' : '' %> style="width:auto;" /> Hiệu ứng cố định: nền đứng yên, sản phẩm trượt lên trên khi cuộn</label>
+
+        <button type="submit" class="admin-btn" style="margin-top:20px; padding:12px 28px;">Lưu</button>
+      </form>
+    </div>
+  </main>
+</div>
+<script>
+(function () {
+  var preview = document.getElementById('bg-preview');
+  var form = document.getElementById('bg-form');
+  var imageFields = document.getElementById('bg-image-fields');
+  var picker = document.getElementById('bg-color-picker');
+  var text = document.getElementById('bg-color');
+  var file = document.getElementById('bg-file');
+  var savedImage = <%- JSON.stringify(bg.uploaded || defaultImage) %>;
+  var defaultImage = <%- JSON.stringify(defaultImage) %>;
+  var fileUrl = null;
+
+  function update() {
+    var mode = form.querySelector('input[name="mode"]:checked').value;
+    imageFields.hidden = mode !== 'image';
+    var remove = form.querySelector('input[name="remove"]');
+    var img = fileUrl || (remove && remove.checked ? defaultImage : savedImage);
+    preview.style.backgroundImage = mode === 'image' ? 'url("' + img + '")' : 'none';
+    if (/^#[0-9a-f]{6}$/i.test(text.value)) preview.style.backgroundColor = text.value;
+  }
+  picker.addEventListener('input', function () { text.value = picker.value; update(); });
+  text.addEventListener('input', function () { if (/^#[0-9a-f]{6}$/i.test(text.value)) picker.value = text.value; update(); });
+  file.addEventListener('change', function () {
+    if (fileUrl) URL.revokeObjectURL(fileUrl);
+    fileUrl = file.files && file.files[0] ? URL.createObjectURL(file.files[0]) : null;
+    update();
+  });
+  form.addEventListener('change', update);
+})();
+</script>
+</body>
+</html>
