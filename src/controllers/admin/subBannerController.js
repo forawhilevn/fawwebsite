@@ -1,10 +1,11 @@
 const path = require('path');
+const storage = require('../../utils/storage');
 const fs = require('fs');
 const multer = require('multer');
 const settings = require('../../services/settings');
 const intro = require('../../services/intro');
 
-const DIR = path.join(intro.PUBLIC_DIR, 'video', 'uploads');
+const DIR = path.join(storage.STORAGE_DIR, 'video', 'uploads');
 const EXT = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.avif', '.mp4', '.webm', '.m4v', '.mov'];
 const upload = multer({
   storage: multer.diskStorage({

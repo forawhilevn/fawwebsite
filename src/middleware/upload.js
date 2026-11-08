@@ -1,4 +1,5 @@
 const path = require('path');
+const storage = require('../utils/storage');
 const fs = require('fs');
 const multer = require('multer');
 const db = require('../db');
@@ -18,7 +19,7 @@ function makeSlugUploader(baseFolder) {
       try {
         const product = await db('products').where({ id: req.params.id }).first();
         if (!product) return cb(new Error('Sản phẩm không tồn tại'));
-        const destDir = path.join(__dirname, '..', '..', 'public', 'images', baseFolder, product.slug);
+        const destDir = path.join(storage.STORAGE_DIR, 'images', baseFolder, product.slug);
         fs.mkdirSync(destDir, { recursive: true });
         req.__productSlug = product.slug;
         cb(null, destDir);
@@ -41,7 +42,7 @@ function makeSlugUploader(baseFolder) {
 }
 
 function makeUploader(subfolder) {
-  const destDir = path.join(__dirname, '..', '..', 'public', 'images', 'uploads', subfolder);
+  const destDir = path.join(storage.STORAGE_DIR, 'images', 'uploads', subfolder);
   fs.mkdirSync(destDir, { recursive: true });
 
   const storage = multer.diskStorage({

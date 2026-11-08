@@ -21,6 +21,9 @@ app.set('trust proxy', 1);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+// admin uploads live outside the app folder in production (see src/utils/storage.js)
+const storage = require('./src/utils/storage');
+if (storage.SEPARATE) app.use(express.static(storage.STORAGE_DIR, { index: false }));
 app.use(
   express.static(path.join(__dirname, 'public'), {
     // CSS / JS are always revalidated (cheap 304 when unchanged) so edits show up right away
@@ -62,6 +65,9 @@ app.use(errorHandler);
 async function bootstrap() {
   if (process.env.NODE_ENV !== 'production' && process.env.AUTO_MIGRATE !== '1') return;
   await db.migrate.latest({ directory: path.join(__dirname, 'migrations') });
+  const adopted = storage.adoptPublicUploads();
+  if (adopted) console.log('Da chuyen ' + adopted + ' file upload sang ' + storage.STORAGE_DIR);
+  console.log('Thu muc luu file upload: ' + storage.STORAGE_DIR);
   const hasAdmin = await db('admin_users').first();
   if (!hasAdmin && process.env.ADMIN_DEFAULT_PASSWORD) {
     const bcrypt = require('bcryptjs');

@@ -1,9 +1,10 @@
 const fs = require('fs');
+const storage = require('../../utils/storage');
 const path = require('path');
 const multer = require('multer');
 const db = require('../../db');
 
-const DIR = path.join(__dirname, '..', '..', '..', 'public', 'images', 'sizecharts');
+const DIR = path.join(storage.STORAGE_DIR, 'images', 'sizecharts');
 const EXTS = ['.jpg', '.jpeg', '.png', '.webp'];
 
 const upload = multer({
@@ -25,7 +26,7 @@ const upload = multer({
 
 function removeAll(slug) {
   EXTS.forEach((ext) => {
-    try { fs.unlinkSync(path.join(DIR, slug + ext)); } catch (e) { /* none */ }
+    storage.remove('/images/sizecharts/' + slug + ext);
   });
 }
 

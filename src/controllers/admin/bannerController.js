@@ -1,4 +1,5 @@
 const fs = require('fs');
+const storage = require('../../utils/storage');
 const path = require('path');
 const db = require('../../db');
 const { cropToFixedSize } = require('../../utils/imageProcess');
@@ -8,7 +9,7 @@ const IMAGE_ERROR_MESSAGE = 'Ảnh không hợp lệ hoặc bị lỗi khi xử 
 
 function removeUploadedFile(imageUrl) {
   if (imageUrl && imageUrl.startsWith('/images/uploads/')) {
-    const filePath = path.join(__dirname, '..', '..', '..', 'public', imageUrl);
+    const filePath = path.join(storage.STORAGE_DIR, imageUrl);
     fs.unlink(filePath, () => {});
   }
 }
@@ -47,7 +48,7 @@ async function listBanners(req, res, next) {
   }
 }
 
-const BANNER_DIR = path.join(__dirname, '..', '..', '..', 'public', 'images', 'uploads', 'banners');
+const BANNER_DIR = path.join(storage.STORAGE_DIR, 'images', 'uploads', 'banners');
 
 // Crop one uploaded file and return its public URL (or null if there is no file).
 async function processHeroFile(file, sizeKey) {
@@ -254,7 +255,7 @@ async function uploadFeaturedBanner(req, res, next) {
 
     let imageUrl = existing ? existing.image_url : null;
     if (req.file) {
-      const destPath = path.join(__dirname, '..', '..', '..', 'public', 'images', 'uploads', 'banners', req.file.filename);
+      const destPath = path.join(storage.STORAGE_DIR, 'images', 'uploads', 'banners', req.file.filename);
       try {
         await cropToFixedSize(destPath, 'featured');
       } catch (imgErr) {
@@ -289,7 +290,7 @@ async function createArchiveBanner(req, res, next) {
   try {
     if (!req.file) return res.redirect('/admin/banner');
 
-    const destPath = path.join(__dirname, '..', '..', '..', 'public', 'images', 'uploads', 'banners', req.file.filename);
+    const destPath = path.join(storage.STORAGE_DIR, 'images', 'uploads', 'banners', req.file.filename);
     try {
       await cropToFixedSize(destPath, 'thumb');
     } catch (imgErr) {

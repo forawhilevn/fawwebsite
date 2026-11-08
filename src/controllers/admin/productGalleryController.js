@@ -1,4 +1,5 @@
 const fs = require('fs');
+const storage = require('../../utils/storage');
 const path = require('path');
 const db = require('../../db');
 const { cropToFixedSize } = require('../../utils/imageProcess');
@@ -7,7 +8,7 @@ const MAX_IMAGES = 10;
 
 function removeUploadedFile(imageUrl) {
   if (imageUrl && imageUrl.startsWith('/images/uploads/')) {
-    const filePath = path.join(__dirname, '..', '..', '..', 'public', imageUrl);
+    const filePath = path.join(storage.STORAGE_DIR, imageUrl);
     fs.unlink(filePath, () => {});
   }
 }
@@ -32,7 +33,7 @@ async function uploadImages(req, res, next) {
         removeUploadedFile('/images/uploads/products/' + file.filename);
         continue;
       }
-      const destPath = path.join(__dirname, '..', '..', '..', 'public', 'images', 'uploads', 'products', file.filename);
+      const destPath = path.join(storage.STORAGE_DIR, 'images', 'uploads', 'products', file.filename);
       try {
         await cropToFixedSize(destPath, 'product');
       } catch (imgErr) {

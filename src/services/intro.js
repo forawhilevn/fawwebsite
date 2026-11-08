@@ -1,4 +1,5 @@
 const fs = require('fs');
+const storage = require('../utils/storage');
 const path = require('path');
 
 const PUBLIC_DIR = path.join(__dirname, '..', '..', 'public');
@@ -11,7 +12,7 @@ const DEFAULT_REVEAL = 3.5;
 function urlWithVersion(url) {
   if (!url) return '';
   try {
-    const st = fs.statSync(path.join(PUBLIC_DIR, url.replace(/^\//, '')));
+    const st = fs.statSync(storage.locate(url) || '');
     return url + '?v=' + Math.floor(st.mtimeMs);
   } catch (err) {
     return '';
@@ -43,7 +44,7 @@ function buildConfig(s) {
 
 function removeFile(url) {
   if (!url || url.indexOf('/video/uploads/') !== 0) return;
-  try { fs.unlinkSync(path.join(PUBLIC_DIR, url.replace(/^\//, ''))); } catch (err) { /* already gone */ }
+  storage.remove(url);
 }
 
 module.exports = { buildConfig, removeFile, PUBLIC_DIR, DEFAULT_REVEAL };

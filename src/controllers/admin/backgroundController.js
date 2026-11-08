@@ -1,4 +1,5 @@
 const settings = require('../../services/settings');
+const storage = require('../../utils/storage');
 const fs = require('fs');
 const path = require('path');
 const intro = require('../../services/intro');
@@ -7,7 +8,7 @@ const gridBackground = require('../../services/gridBackground');
 // deletes a previously uploaded background (never the built-in default image)
 function removeUpload(url) {
   if (!/^\/images\/uploads\/backgrounds\/[\w.-]+$/.test(url || '')) return;
-  try { fs.unlinkSync(path.join(intro.PUBLIC_DIR, url.replace(/^\//, ''))); } catch (err) { /* already gone */ }
+  storage.remove(url);
 }
 
 async function showBackground(req, res, next) {

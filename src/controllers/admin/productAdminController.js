@@ -1,4 +1,5 @@
 const fs = require('fs');
+const storage = require('../../utils/storage');
 const path = require('path');
 const { body, validationResult } = require('express-validator');
 const db = require('../../db');
@@ -10,7 +11,7 @@ const IMAGE_ERROR_MESSAGE = 'Ảnh không hợp lệ hoặc bị lỗi khi xử 
 
 function removeUploadedFile(imageUrl) {
   if (imageUrl && imageUrl.startsWith('/images/uploads/')) {
-    const filePath = path.join(__dirname, '..', '..', '..', 'public', imageUrl);
+    const filePath = path.join(storage.STORAGE_DIR, imageUrl);
     fs.unlink(filePath, () => {});
   }
 }
@@ -85,7 +86,7 @@ async function createProduct(req, res, next) {
 
     let coverImageUrl = null;
     if (req.file) {
-      const destPath = path.join(__dirname, '..', '..', '..', 'public', 'images', 'uploads', 'products', req.file.filename);
+      const destPath = path.join(storage.STORAGE_DIR, 'images', 'uploads', 'products', req.file.filename);
       try {
         await cropToFixedSize(destPath, 'product');
       } catch (imgErr) {
@@ -180,7 +181,7 @@ async function updateProduct(req, res, next) {
 
     let coverImageUrl = product.cover_image_url;
     if (req.file) {
-      const destPath = path.join(__dirname, '..', '..', '..', 'public', 'images', 'uploads', 'products', req.file.filename);
+      const destPath = path.join(storage.STORAGE_DIR, 'images', 'uploads', 'products', req.file.filename);
       try {
         await cropToFixedSize(destPath, 'product');
       } catch (imgErr) {

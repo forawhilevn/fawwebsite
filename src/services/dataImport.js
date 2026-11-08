@@ -14,7 +14,8 @@ const { ensurePagesSchema } = require('./pages');
 
 const ROOT = path.join(__dirname, '..', '..');
 const BUNDLE_DIR = path.join(ROOT, 'data-import');
-const PUBLIC_DIR = path.join(ROOT, 'public');
+const storage = require('../utils/storage');
+const PUBLIC_DIR = storage.STORAGE_DIR; // uploads live outside the app folder in production
 
 // insert order (parents first); deletion runs in reverse
 const TABLES = ['categories', 'products', 'product_variants', 'product_images', 'banners', 'promotions', 'stores', 'pages', 'discount_codes'];

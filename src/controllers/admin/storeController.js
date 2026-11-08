@@ -1,4 +1,5 @@
 const fs = require('fs');
+const storage = require('../../utils/storage');
 const path = require('path');
 const db = require('../../db');
 const { cropToFixedSize } = require('../../utils/imageProcess');
@@ -13,7 +14,7 @@ function clean(v, max) {
 
 function removeUploadedFile(url) {
   if (url && url.startsWith('/images/uploads/')) {
-    fs.unlink(path.join(__dirname, '..', '..', '..', 'public', url), () => {});
+    storage.remove(url);
   }
 }
 

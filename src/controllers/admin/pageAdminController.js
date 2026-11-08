@@ -1,4 +1,5 @@
 const fs = require('fs');
+const storage = require('../../utils/storage');
 const path = require('path');
 const db = require('../../db');
 const pages = require('../../services/pages');
@@ -6,7 +7,7 @@ const { sanitizeHtml } = require('../../utils/sanitize');
 
 function removeUploaded(url) {
   if (url && url.indexOf('/images/uploads/pages/') === 0) {
-    fs.unlink(path.join(__dirname, '..', '..', '..', 'public', url), () => {});
+    storage.remove(url);
   }
 }
 
