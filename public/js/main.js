@@ -43,6 +43,21 @@
     else kick();
   })();
 
+  // Page titles in capitals: letters with a mark above the capital (Ử, Ả, Ố, Ề...) reach higher
+  // than the title box, so those titles get a little extra room under the header (see CSS).
+  (function markAccentTitles() {
+    var TOP_MARKS = /[\u0300\u0301\u0303\u0309\u0302\u0306\u031B]/;
+    function mark() {
+      document.querySelectorAll('main .page-title, main .about-title, main .policy-title').forEach(function (el) {
+        var text = (el.textContent || '').normalize('NFD');
+        el.classList.toggle('has-top-accent', TOP_MARKS.test(text));
+      });
+    }
+    window.FAWApp.markAccentTitles = mark;
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mark);
+    else mark();
+  })();
+
   // Product page behaviour (variants, AJAX cart, mini-cart, size chart, bottom
   // sheet) now lives in /js/product.js.
 

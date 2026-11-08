@@ -41,5 +41,6 @@ window.FAWMotion.initPageTransitions = function initPageTransitions() {
     if (window.FAWMotion.refreshOnImagesLoad) window.FAWMotion.refreshOnImagesLoad(data.next.container);
     if (window.FAWApp && window.FAWApp.rebind) window.FAWApp.rebind();
     if (window.FAWApp && window.FAWApp.playLoopVideos) window.FAWApp.playLoopVideos();
+    if (window.FAWApp && window.FAWApp.markAccentTitles) window.FAWApp.markAccentTitles();
   });
 };
