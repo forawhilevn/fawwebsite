@@ -1,0 +1,660 @@
+{
+ "id": "local-20261108-233727",
+ "created": "2026-11-08 23:37:27",
+ "tables": {
+  "categories": [
+   {
+    "id": 13,
+    "slug": "ao",
+    "name_vi": "Áo",
+    "name_en": "Tops",
+    "sort_order": 1,
+    "image_url": null,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 14,
+    "slug": "quan",
+    "name_vi": "Quần",
+    "name_en": "Bottoms",
+    "sort_order": 2,
+    "image_url": null,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 15,
+    "slug": "phu-kien",
+    "name_vi": "Phụ kiện",
+    "name_en": "Accessories",
+    "sort_order": 3,
+    "image_url": null,
+    "created_at": "2026-08-15 18:28:35"
+   }
+  ],
+  "products": [
+   {
+    "id": 16,
+    "category_id": 13,
+    "name_vi": "\"CRANKY BOY\" LONG SLEEVE",
+    "name_en": "\"CRANKY BOY\" LONG SLEEVE",
+    "slug": "cranky-boy-long-sleeve",
+    "description_vi": "▪ Hình in '' CRANKY BOY '' lớn ở phía trước.\n▪ Phía sau in ở hông trái cụm '' everything is a copy of a copy... ''\n▪ Trên cổ tay phải thêu hình logo ngôi sao F★",
+    "description_en": "▪ Large \"CRANKY BOY\" print on the front.\n▪ \"everything is a copy of a copy...\" printed on the left hip at the back.\n▪ F★ star logo embroidered on the right cuff.",
+    "sku": null,
+    "price": 480000,
+    "sale_price": null,
+    "cover_image_url": "/images/seed/cranky-boy-long-sleeve/1.jpg",
+    "is_featured": 1,
+    "is_active": 1,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 17,
+    "category_id": 14,
+    "name_vi": "DOUBLE KNEE DENIM PANT",
+    "name_en": "DOUBLE KNEE DENIM PANT",
+    "slug": "faw-double-knee",
+    "description_vi": "Quần jeans denim đen dáng rộng (baggy) phong cách carpenter/workwear, với thiết kế double-knee gia cố đầu gối, đường chỉ may tương phản trắng nổi bật, túi hammer loop và logo thêu nhỏ ở túi trước. Chất liệu denim dày dặn, bền chắc, phù hợp phong cách streetwear cá tính.",
+    "description_en": "Black baggy carpenter/workwear-style denim jeans with reinforced double-knee construction, contrast white stitching, a hammer loop pocket, and a small embroidered logo on the front pocket. Heavyweight, durable denim built for streetwear.",
+    "sku": null,
+    "price": 700000,
+    "sale_price": null,
+    "cover_image_url": "/images/seed/faw-double-knee/1.jpg",
+    "is_featured": 1,
+    "is_active": 1,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 18,
+    "category_id": 13,
+    "name_vi": "\"LOVE AGAIN\" TSHIRT",
+    "name_en": "\"LOVE AGAIN\" TSHIRT",
+    "slug": "love-again-tshirt",
+    "description_vi": "▪️LOVE\n▪️FAIL\n▪️LOVE AGAIN",
+    "description_en": "▪️LOVE\n▪️FAIL\n▪️LOVE AGAIN",
+    "sku": null,
+    "price": 350000,
+    "sale_price": null,
+    "cover_image_url": "/images/seed/love-again-tshirt/1.jpg",
+    "is_featured": 0,
+    "is_active": 1,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 19,
+    "category_id": 15,
+    "name_vi": "F★ TRUCKER HAT",
+    "name_en": "F★ TRUCKER HAT",
+    "slug": "trucker-hat",
+    "description_vi": "ONE SIZE FOR ALL\n2 MÀU: CAM & ĐEN",
+    "description_en": "ONE SIZE FOR ALL\n2 COLORS: ORANGE & BLACK",
+    "sku": null,
+    "price": 380000,
+    "sale_price": null,
+    "cover_image_url": "/images/seed/trucker-hat/1.jpg",
+    "is_featured": 0,
+    "is_active": 1,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 20,
+    "category_id": 13,
+    "name_vi": "FROM ANOTHER WORLD TSHIRT",
+    "name_en": "FROM ANOTHER WORLD TSHIRT",
+    "slug": "from-another-world-tshirt",
+    "description_vi": "Áo 100% cotton 2 chiều.\r\nGraphic in lụa mặt trước, hiệu ứng crack",
+    "description_en": "Áo 100% cotton 2 chiều.\r\nGraphic in lụa mặt trước, hiệu ứng crack",
+    "sku": null,
+    "price": 350000,
+    "sale_price": null,
+    "cover_image_url": "/images/uploads/products/1794063486843-167120014.jpg",
+    "is_featured": 0,
+    "is_active": 1,
+    "created_at": "2026-11-07 14:58:07"
+   }
+  ],
+  "product_variants": [
+   {
+    "id": 45,
+    "product_id": 16,
+    "size": "M",
+    "color": "Navy",
+    "color_hex": "#31394a",
+    "sku": null,
+    "stock": 8,
+    "price_override": null,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 46,
+    "product_id": 16,
+    "size": "L",
+    "color": "Navy",
+    "color_hex": "#31394a",
+    "sku": null,
+    "stock": 10,
+    "price_override": null,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 47,
+    "product_id": 16,
+    "size": "XL",
+    "color": "Navy",
+    "color_hex": "#31394a",
+    "sku": null,
+    "stock": 6,
+    "price_override": null,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 48,
+    "product_id": 17,
+    "size": "29",
+    "color": "Black",
+    "color_hex": "#111111",
+    "sku": null,
+    "stock": 5,
+    "price_override": null,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 49,
+    "product_id": 17,
+    "size": "30",
+    "color": "Black",
+    "color_hex": "#111111",
+    "sku": null,
+    "stock": 8,
+    "price_override": null,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 50,
+    "product_id": 17,
+    "size": "31",
+    "color": "Black",
+    "color_hex": "#111111",
+    "sku": null,
+    "stock": 8,
+    "price_override": null,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 51,
+    "product_id": 17,
+    "size": "32",
+    "color": "Black",
+    "color_hex": "#111111",
+    "sku": null,
+    "stock": 4,
+    "price_override": null,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 52,
+    "product_id": 18,
+    "size": "M",
+    "color": "Grey",
+    "color_hex": "#6b6b63",
+    "sku": null,
+    "stock": 7,
+    "price_override": null,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 53,
+    "product_id": 18,
+    "size": "L",
+    "color": "Grey",
+    "color_hex": "#6b6b63",
+    "sku": null,
+    "stock": 9,
+    "price_override": null,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 54,
+    "product_id": 18,
+    "size": "XL",
+    "color": "Grey",
+    "color_hex": "#6b6b63",
+    "sku": null,
+    "stock": 5,
+    "price_override": null,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 55,
+    "product_id": 19,
+    "size": "One Size",
+    "color": "Orange",
+    "color_hex": "#f4791d",
+    "sku": null,
+    "stock": 15,
+    "price_override": null,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 56,
+    "product_id": 19,
+    "size": "One Size",
+    "color": "Black",
+    "color_hex": "#111111",
+    "sku": null,
+    "stock": 12,
+    "price_override": null,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 57,
+    "product_id": 20,
+    "size": "S",
+    "color": "Đen",
+    "color_hex": "#1C1C1C",
+    "sku": null,
+    "stock": 10,
+    "price_override": null,
+    "created_at": "2026-11-07 15:46:28"
+   },
+   {
+    "id": 58,
+    "product_id": 20,
+    "size": "M",
+    "color": "Đen",
+    "color_hex": "#1C1C1C",
+    "sku": null,
+    "stock": 15,
+    "price_override": null,
+    "created_at": "2026-11-07 15:46:28"
+   },
+   {
+    "id": 59,
+    "product_id": 20,
+    "size": "L",
+    "color": "Đen",
+    "color_hex": "#1C1C1C",
+    "sku": null,
+    "stock": 15,
+    "price_override": null,
+    "created_at": "2026-11-07 15:46:28"
+   },
+   {
+    "id": 60,
+    "product_id": 20,
+    "size": "XL",
+    "color": "Đen",
+    "color_hex": "#1C1C1C",
+    "sku": null,
+    "stock": 10,
+    "price_override": null,
+    "created_at": "2026-11-07 15:46:28"
+   },
+   {
+    "id": 61,
+    "product_id": 20,
+    "size": "S",
+    "color": "Trắng",
+    "color_hex": "#F4F4EF",
+    "sku": null,
+    "stock": 0,
+    "price_override": null,
+    "created_at": "2026-11-07 15:46:28"
+   },
+   {
+    "id": 62,
+    "product_id": 20,
+    "size": "M",
+    "color": "Trắng",
+    "color_hex": "#F4F4EF",
+    "sku": null,
+    "stock": 10,
+    "price_override": null,
+    "created_at": "2026-11-07 15:46:28"
+   },
+   {
+    "id": 63,
+    "product_id": 20,
+    "size": "L",
+    "color": "Trắng",
+    "color_hex": "#F4F4EF",
+    "sku": null,
+    "stock": 10,
+    "price_override": null,
+    "created_at": "2026-11-07 15:46:28"
+   },
+   {
+    "id": 64,
+    "product_id": 20,
+    "size": "XL",
+    "color": "Trắng",
+    "color_hex": "#F4F4EF",
+    "sku": null,
+    "stock": 0,
+    "price_override": null,
+    "created_at": "2026-11-07 15:46:28"
+   }
+  ],
+  "product_images": [
+   {
+    "id": 75,
+    "product_id": 16,
+    "variant_id": null,
+    "image_url": "/images/seed/cranky-boy-long-sleeve/1.jpg",
+    "sort_order": 0,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 76,
+    "product_id": 16,
+    "variant_id": null,
+    "image_url": "/images/seed/cranky-boy-long-sleeve/2.jpg",
+    "sort_order": 1,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 77,
+    "product_id": 16,
+    "variant_id": null,
+    "image_url": "/images/seed/cranky-boy-long-sleeve/3.jpg",
+    "sort_order": 2,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 78,
+    "product_id": 16,
+    "variant_id": null,
+    "image_url": "/images/seed/cranky-boy-long-sleeve/4.jpg",
+    "sort_order": 3,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 79,
+    "product_id": 16,
+    "variant_id": null,
+    "image_url": "/images/seed/cranky-boy-long-sleeve/5.jpg",
+    "sort_order": 4,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 80,
+    "product_id": 17,
+    "variant_id": null,
+    "image_url": "/images/seed/faw-double-knee/1.jpg",
+    "sort_order": 0,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 81,
+    "product_id": 17,
+    "variant_id": null,
+    "image_url": "/images/seed/faw-double-knee/2.jpg",
+    "sort_order": 1,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 82,
+    "product_id": 17,
+    "variant_id": null,
+    "image_url": "/images/seed/faw-double-knee/3.jpg",
+    "sort_order": 2,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 83,
+    "product_id": 17,
+    "variant_id": null,
+    "image_url": "/images/seed/faw-double-knee/4.jpg",
+    "sort_order": 3,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 84,
+    "product_id": 17,
+    "variant_id": null,
+    "image_url": "/images/seed/faw-double-knee/5.jpg",
+    "sort_order": 4,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 85,
+    "product_id": 17,
+    "variant_id": null,
+    "image_url": "/images/seed/faw-double-knee/6.jpg",
+    "sort_order": 5,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 86,
+    "product_id": 18,
+    "variant_id": null,
+    "image_url": "/images/seed/love-again-tshirt/1.jpg",
+    "sort_order": 0,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 87,
+    "product_id": 18,
+    "variant_id": null,
+    "image_url": "/images/seed/love-again-tshirt/2.jpg",
+    "sort_order": 1,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 88,
+    "product_id": 18,
+    "variant_id": null,
+    "image_url": "/images/seed/love-again-tshirt/3.jpg",
+    "sort_order": 2,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 89,
+    "product_id": 19,
+    "variant_id": null,
+    "image_url": "/images/seed/trucker-hat/1.jpg",
+    "sort_order": 0,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 90,
+    "product_id": 19,
+    "variant_id": null,
+    "image_url": "/images/seed/trucker-hat/2.jpg",
+    "sort_order": 1,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 91,
+    "product_id": 19,
+    "variant_id": null,
+    "image_url": "/images/seed/trucker-hat/3.jpg",
+    "sort_order": 2,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 92,
+    "product_id": 19,
+    "variant_id": null,
+    "image_url": "/images/seed/trucker-hat/4.jpg",
+    "sort_order": 3,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 93,
+    "product_id": 19,
+    "variant_id": null,
+    "image_url": "/images/seed/trucker-hat/5.jpg",
+    "sort_order": 4,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 94,
+    "product_id": 19,
+    "variant_id": null,
+    "image_url": "/images/seed/trucker-hat/6.jpg",
+    "sort_order": 5,
+    "created_at": "2026-08-15 18:28:35"
+   },
+   {
+    "id": 95,
+    "product_id": 20,
+    "variant_id": null,
+    "image_url": "/images/uploads/products/1794066498074-326038008.jpg",
+    "sort_order": 1,
+    "created_at": "2026-11-07 15:48:20"
+   },
+   {
+    "id": 96,
+    "product_id": 20,
+    "variant_id": null,
+    "image_url": "/images/uploads/products/1794066498097-269768202.jpg",
+    "sort_order": 2,
+    "created_at": "2026-11-07 15:48:23"
+   },
+   {
+    "id": 97,
+    "product_id": 20,
+    "variant_id": null,
+    "image_url": "/images/uploads/products/1794066498115-406040364.jpg",
+    "sort_order": 3,
+    "created_at": "2026-11-07 15:48:26"
+   },
+   {
+    "id": 98,
+    "product_id": 20,
+    "variant_id": null,
+    "image_url": "/images/uploads/products/1794066498141-231740725.jpg",
+    "sort_order": 4,
+    "created_at": "2026-11-07 15:48:29"
+   }
+  ],
+  "banners": [
+   {
+    "id": 9,
+    "image_url": "/images/seed/homepage/hero.png",
+    "link_url": "/shop",
+    "type": "hero",
+    "title_vi": "FROM ANOTHER WORLD",
+    "title_en": "FROM ANOTHER WORLD",
+    "sort_order": 1,
+    "is_active": 1,
+    "created_at": "2026-08-15 18:28:35",
+    "image_mobile_url": null
+   },
+   {
+    "id": 10,
+    "image_url": "/images/seed/homepage/banner-san-pham.png",
+    "link_url": "/shop",
+    "type": "featured",
+    "title_vi": null,
+    "title_en": null,
+    "sort_order": 1,
+    "is_active": 1,
+    "created_at": "2026-08-15 18:28:35",
+    "image_mobile_url": null
+   }
+  ],
+  "promotions": [
+   {
+    "id": 1,
+    "kind": "freeship",
+    "name_vi": "FREESHIP",
+    "name_en": "FREESHIP",
+    "discount_type": "percent",
+    "value": 0,
+    "min_order_total": 380000,
+    "min_quantity": null,
+    "scope_type": "all",
+    "scope_ids": null,
+    "require_code": 0,
+    "code": null,
+    "starts_at": null,
+    "expires_at": null,
+    "bar_text_vi": "FREESHIP TẤT CẢ ĐƠN HÀNG TỪ 350.000",
+    "bar_text_en": "FREESHIP TẤT CẢ ĐƠN HÀNG TỪ 350.000",
+    "is_active": 1,
+    "sort_order": 1,
+    "created_at": "2026-11-08 06:12:19"
+   },
+   {
+    "id": 2,
+    "kind": "order_discount",
+    "name_vi": "Giảm 10% đơn từ 420.000",
+    "name_en": "Giảm 10% đơn từ 420.000",
+    "discount_type": "percent",
+    "value": 10,
+    "min_order_total": 420000,
+    "min_quantity": null,
+    "scope_type": "all",
+    "scope_ids": null,
+    "require_code": 0,
+    "code": null,
+    "starts_at": null,
+    "expires_at": null,
+    "bar_text_vi": "Giảm 10% đơn từ 420.000",
+    "bar_text_en": "Giảm 10% đơn từ 420.000",
+    "is_active": 1,
+    "sort_order": 2,
+    "created_at": "2026-11-08 06:13:26"
+   }
+  ],
+  "stores": [
+   {
+    "id": 1,
+    "type": "store",
+    "name_vi": "SECTOR STORE",
+    "name_en": "SECTOR STORE",
+    "city": "Ho Chi Minh",
+    "address": "42 Đ. Tôn Thất Thiệp, Sài Gòn, Hồ Chí Minh 700000",
+    "phone": null,
+    "hours": "9:00 - 21:00 ( Tue - Sun )",
+    "maps_url": "https://www.google.com/maps/place/SECTOR+Store/@10.7735905,106.702314,17z/data=!3m1!4b1!4m6!3m5!1s0x31752fad09eebc23:0x482b6c491c6ddec6!8m2!3d10.7735905!4d106.702314!16s%2Fg%2F11svlbhgrb?entry=ttu&g_ep=EgoyMDI2MTEwMy4wIKXMDSoASAFQAw%3D%3D",
+    "lat_lng": null,
+    "instagram": null,
+    "facebook": null,
+    "note_vi": null,
+    "note_en": null,
+    "image_url": "/images/uploads/stores/1794118666230-288966922.jpg",
+    "sort_order": 1,
+    "is_active": 1,
+    "is_closed": 0,
+    "created_at": "2026-11-08 06:17:47",
+    "images": "[\"/images/uploads/stores/1794118666230-288966922.jpg\",\"/images/uploads/stores/1794119530400-965481701.jpg\",\"/images/uploads/stores/1794119530408-768522796.jpg\"]"
+   }
+  ],
+  "pages": [
+   {
+    "id": 1,
+    "slug": "about",
+    "title_vi": "Về chúng tôi",
+    "title_en": "About us",
+    "content_vi": "<h1 class=\"about-title\">FROM ANOTHER WORLD</h1>\r\n<p>For Awhile ( FAW, forawh1le ) ra mắt lần đầu vào năm 2020, bắt đầu với việc khai thác lối sống của người trượt ván ( nhưng mà thích vẽ, làm nghệ ) và được biết đến rộng rãi hơn trong cộng đồng \"đường phố\" qua các hình vẽ, bức tranh, sản phẩm collab và góp mặt trong một vài sự kiện ván trượt với các skateshop và skatebrand việt nam.</p>\r\n<p>Để mà nói rõ ràng và định hình F.A.W là gì và như thế nào, thì khá là miên man.<br>Xin chào, mình là:</p>\r\n<p class=\"about-big\">A kid with passion<br>A dude know how to draw<br>A guy got work to do</p>",
+    "content_en": "<h1 class=\"about-title\">FROM ANOTHER WORLD</h1>\r\n<p>For A While (FAW, forawh1le) first launched in 2020, starting out by exploring skateboarding culture (but for people who also love to draw and make art), and became more widely known in the streetwear community through artwork, paintings, collab pieces, and appearances at skate events with Vietnamese skateshops and skate brands.</p>\r\n<p>Trying to clearly define what F.A.W is and how it works is honestly a long story.<br>Hi, we are:</p>\r\n<p class=\"about-big\">A kid with passion<br>A dude know how to draw<br>A guy got work to do</p>",
+    "is_system": 1,
+    "is_active": 1,
+    "show_in_footer": 0,
+    "sort_order": 0,
+    "updated_at": "2026-11-08 15:33:33",
+    "image_url": "/images/uploads/pages/1794152013260-632880013.png"
+   }
+  ],
+  "discount_codes": []
+ },
+ "settings": {
+  "site_closed": "0",
+  "closed_at": "",
+  "closed_title_vi": "ĐỢI XÍU NHE",
+  "closed_title_en": "BE RIGHT BACK",
+  "closed_message_vi": "FAW đang chuẩn bị cho collection mới. Hẹn gặp lại bạn sớm.",
+  "closed_message_en": "FAW is getting ready for a new collection. See you soon.",
+  "subbanner_1_media": "/video/uploads/sub-1-1794150937315.mp4",
+  "subbanner_enabled": "1",
+  "subbanner_home": "1",
+  "subbanner_shop": "1",
+  "subbanner_1_link": "",
+  "subbanner_2_link": "",
+  "subbanner_2_media": "/video/uploads/sub-2-1794150937320.mp4",
+  "closed_show_text": "1"
+ }
+}

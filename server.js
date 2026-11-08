@@ -71,6 +71,14 @@ async function bootstrap() {
     });
     console.log('Da tao tai khoan admin dau tien.');
   }
+  // one-time copy of the data exported from the local machine (see src/services/dataImport.js)
+  if (process.env.NODE_ENV === 'production') {
+    try {
+      await require('./src/services/dataImport').runDataImport();
+    } catch (err) {
+      console.error('Nhap du lieu that bai:', err.message);
+    }
+  }
 }
 
 const PORT = process.env.PORT || 3000;
