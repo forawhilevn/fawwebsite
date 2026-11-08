@@ -40,6 +40,8 @@ async function attachLocals(req, res, next) {
     res.locals.storeName = 'FOR A WHILE';
     res.locals.hotline = process.env.STORE_HOTLINE || '';
     res.locals.currentPath = req.path;
+    res.locals.siteUrl = (process.env.SITE_URL || (req.protocol + '://' + req.get('host'))).replace(/\/$/, '');
+    res.locals.pageUrl = res.locals.siteUrl + req.originalUrl.split('?')[0];
     res.locals.formatVND = formatVND;
     res.locals.discountPercent = discountPercent;
     next();
