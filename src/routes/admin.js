@@ -27,11 +27,26 @@ const uploadStoreImage = makeUploader('stores');
 const uploadPageImage = makeUploader('pages');
 const uploadLookbookImage = makeSlugUploader('lookbook');
 
+router.use(authController.flashMiddleware);
+
 router.get('/login', redirectIfAdmin, authController.showLogin);
 router.post('/login', redirectIfAdmin, authController.login);
 router.post('/logout', authController.logout);
 
+// Quen mat khau (OTP qua Gmail)
+router.get('/quen-mat-khau', redirectIfAdmin, authController.showForgot);
+router.post('/quen-mat-khau', redirectIfAdmin, authController.requestReset);
+router.post('/quen-mat-khau/gui-lai', redirectIfAdmin, authController.resendReset);
+router.post('/quen-mat-khau/xac-nhan', redirectIfAdmin, authController.confirmReset);
+
 router.use(requireAdmin);
+
+// Doi mat khau (OTP qua Gmail)
+router.get('/doi-mat-khau', authController.showChange);
+router.post('/doi-mat-khau', authController.requestChange);
+router.post('/doi-mat-khau/gui-lai', authController.resendChange);
+router.post('/doi-mat-khau/xac-nhan', authController.confirmChange);
+router.post('/doi-mat-khau/huy', authController.cancelChange);
 
 router.get('/', dashboardController.showDashboard);
 

@@ -14,6 +14,7 @@
     <a href="/admin/ma-giam-gia" class="<%= currentPath.startsWith('/admin/ma-giam-gia') ? 'is-active' : '' %>">Mã giảm giá</a>
     <a href="/admin/cai-dat" class="<%= currentPath.startsWith('/admin/cai-dat') ? 'is-active' : '' %>">Cài đặt website<% if (typeof siteClosed !== 'undefined' && siteClosed) { %> <span style="background:#eb252a; color:#fff; font-size:10px; padding:2px 6px; border-radius:999px; margin-left:4px;">ĐÓNG</span><% } %></a>
   </nav>
+  <a href="/admin/doi-mat-khau" class="admin-sidebar__account<%= currentPath.startsWith('/admin/doi-mat-khau') ? ' is-active' : '' %>">Đổi mật khẩu</a>
   <form action="/admin/logout" method="post" class="admin-sidebar__logout">
     <button type="submit" class="admin-btn admin-btn--outline" style="width:100%;">Đăng xuất</button>
   </form>
