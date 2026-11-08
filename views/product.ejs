@@ -129,9 +129,7 @@
       <% } else { %>
         <button type="submit" class="pdp-btn pdp-bar__main" data-pdp-add><%= t('product.addToCart') %></button>
       <% } %>
-      <a href="<%= cartUrl %>" class="pdp-btn pdp-btn--ghost pdp-bar__cart" data-cart-link>
-        <%= t('nav.cart') %><span class="cart-count" data-cart-count <%= cartCount > 0 ? '' : 'hidden' %>><%= cartCount %></span>
-      </a>
+      <a href="<%= cartUrl %>" class="pdp-bar__cartlink" data-cart-link><%= t('product.checkCart') %></a>
     </div>
 
     <% if (multiVariant) { %>

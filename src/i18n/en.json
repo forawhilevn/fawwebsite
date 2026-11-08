@@ -49,6 +49,7 @@
   "cart.remove": "Remove",
   "cart.update": "Update",
   "product.inCart": "IN CART",
+  "product.checkCart": "View cart",
   "product.selectSizeBtn": "SELECT SIZE",
   "product.zoom": "Zoom image",
   "product.selectColorBtn": "SELECT COLOR",
