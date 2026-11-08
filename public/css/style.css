@@ -2875,3 +2875,8 @@ body[data-barba="wrapper"]:not(.page-home):not(.page-product) main { padding-top
 }
 body[data-barba="wrapper"]:not(.page-home):not(.page-product) main > :first-child,
 body[data-barba="wrapper"]:not(.page-home):not(.page-product) main > :first-child > :first-child { padding-top: 0; margin-top: 0; }
+/* Vietnamese accents (Ử, Ả, Ổ...) rise ~0.28em above the title box: leave room for them so the
+   header never clips them, plus a small 4px breathing space */
+body[data-barba="wrapper"]:not(.page-home):not(.page-product) main .page-title,
+body[data-barba="wrapper"]:not(.page-home):not(.page-product) main .about-title,
+body[data-barba="wrapper"]:not(.page-home):not(.page-product) main .policy-title { padding-top: 0.22em; }
