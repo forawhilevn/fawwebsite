@@ -2890,3 +2890,15 @@ body[data-barba="wrapper"]:not(.page-home):not(.page-product) main .policy-title
 .page-shop .sub-banners + .container > .page-title:not(.has-top-accent) { margin-top: -0.2em; }
 .page-shop .sub-banners + .container > .page-title.has-top-accent { margin-top: -0.12em; }
 @media (max-width: 900px) { .page-shop .sub-banners { margin-bottom: 14px; } }
+
+/* Closed page with an image / video / GIF: logo + FOR A WHILE on top, Instagram link at the bottom */
+.maintenance--media { justify-content: space-between; padding: 28px 20px calc(28px + env(safe-area-inset-bottom)); }
+.maintenance__top { display: flex; align-items: center; justify-content: center; gap: 12px; }
+.maintenance__toplogo { height: 40px; width: auto; }
+.maintenance__wordmark { font-family: var(--font-brand); font-weight: 900; font-size: 24px; letter-spacing: 0.06em; line-height: 1; color: var(--color-red); white-space: nowrap; }
+.maintenance__ig { display: inline-flex; align-items: center; gap: 8px; color: #fff; font-size: 14px; font-weight: 600; letter-spacing: 0.04em; text-decoration: none; text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6); transition: color 0.2s ease; }
+.maintenance__ig:hover { color: var(--color-red); }
+@media (max-width: 640px) {
+  .maintenance__toplogo { height: 32px; }
+  .maintenance__wordmark { font-size: 20px; }
+}
