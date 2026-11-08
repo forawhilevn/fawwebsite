@@ -1,0 +1,26 @@
+<div class="order-line" style="border-top: 1px solid #ddd; padding-top: 8px;">
+  <span><%= t('cart.subtotal') %></span>
+  <span><%= formatVND(pricing.subtotal) %></span>
+</div>
+<% if (pricing.discountAmount > 0) { %>
+  <div class="order-line order-line--promo">
+    <span><%= pricing.discountLabel %></span>
+    <span>-<%= formatVND(pricing.discountAmount) %></span>
+  </div>
+<% } %>
+<div class="order-line">
+  <span><%= t('checkout.shipping') %></span>
+  <span>
+    <% if (pricing.shippingFee === null) { %><%= t('checkout.chooseZone') %>
+    <% } else if (pricing.shippingFee === 0) { %><%= t('checkout.free') %><% if (pricing.baseFee > 0) { %> <s style="opacity:.55;"><%= formatVND(pricing.baseFee) %></s><% } %>
+    <% } else { %><%= formatVND(pricing.shippingFee) %><% } %>
+  </span>
+</div>
+<% if (pricing.nextPromo) { %>
+  <p class="next-promo"><%= t('cart.nextPromo').replace('{amount}', formatVND(pricing.nextPromo.need)).replace('{offer}', pricing.nextPromo.text) %></p>
+<% } %>
+<% if (pricing.codeInvalid) { %><p class="form-error" style="margin:6px 0;"><%= t('checkout.codeInvalid') %></p><% } %>
+<div class="order-line" style="border-top: 1px solid #ddd; padding-top: 8px; font-weight:700; font-size:18px;">
+  <span><%= t('cart.total') %></span>
+  <span><%= formatVND(pricing.total) %></span>
+</div>

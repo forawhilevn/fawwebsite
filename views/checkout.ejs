@@ -32,6 +32,15 @@
             <input type="email" name="email" value="<%= formData.email || '' %>" />
           </div>
 
+          <div class="form-field <%= errors.find(e => e.path === 'shippingZone') ? 'form-field--error' : '' %>">
+            <label><%= t('checkout.zone') %></label>
+            <select name="shippingZone" data-checkout-zone required>
+              <option value="" <%= !pricing.zone ? 'selected' : '' %> disabled><%= t('checkout.chooseZone') %></option>
+              <option value="hcm" <%= pricing.zone === 'hcm' ? 'selected' : '' %>><%= t('checkout.zoneHcm') %></option>
+              <option value="other" <%= pricing.zone === 'other' ? 'selected' : '' %>><%= t('checkout.zoneOther') %></option>
+            </select>
+          </div>
+
           <div class="form-field <%= errors.find(e => e.path === 'address') ? 'form-field--error' : '' %>">
             <label><%= t('checkout.address') %></label>
             <textarea name="address" rows="3" required><%= formData.address || '' %></textarea>
@@ -69,13 +78,13 @@
               </div>
             <% }); %>
 
-            <div class="discount-row">
-              <input type="text" name="discountCode" placeholder="<%= t('checkout.discountCode') %>" value="<%= discount ? discount.code : '' %>" style="flex:1; padding: 10px; border: 1px solid var(--color-fg-on-alt);" />
+            <div class="discount-row" style="display:flex; gap:8px;">
+              <input type="text" name="discountCode" data-checkout-code placeholder="<%= t('checkout.discountCode') %>" value="<%= formData.discountCode || '' %>" style="flex:1; padding: 10px; border: 1px solid var(--color-fg-on-alt);" />
+              <button type="button" class="btn btn-outline" data-checkout-apply style="padding: 8px 14px;"><%= t('checkout.applyDiscount') %></button>
             </div>
 
-            <div class="order-line" style="border-top: 1px solid #ddd; padding-top: 8px; font-weight:700;">
-              <span><%= t('cart.subtotal') %></span>
-              <span><%= formatVND(cart.subtotal) %></span>
+            <div data-checkout-totals data-quote-url="<%= locale === 'en' ? '/en/checkout/quote' : '/checkout/quote' %>">
+              <%- include('partials/checkout-totals', { pricing: pricing }) %>
             </div>
           </div>
 

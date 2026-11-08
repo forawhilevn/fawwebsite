@@ -1,0 +1,17 @@
+<%
+  var sb = (typeof siteSettings !== 'undefined' && siteSettings) || {};
+  var subOn = sb.subbanner_enabled !== '0' && (subPage === 'home' ? sb.subbanner_home !== '0' : sb.subbanner_shop !== '0');
+  var subItems = [1, 2].map(function (n) { return { media: sb['subbanner_' + n + '_media'], link: sb['subbanner_' + n + '_link'] }; }).filter(function (b) { return b.media; });
+%>
+<% if (subOn && subItems.length) { %>
+<div class="sub-banners sub-banners--<%= subItems.length %>">
+  <% subItems.forEach(function (b) {
+       var vid = /\.(mp4|webm|m4v|mov)(\?|$)/i.test(b.media);
+       var tag = b.link ? 'a' : 'div'; %>
+    <<%= tag %> class="sub-banner" data-reveal<% if (b.link) { %> href="<%= b.link %>"<% if (/^https?:/i.test(b.link)) { %> target="_blank" rel="noopener"<% } %><% } %>>
+      <% if (vid) { %><video src="<%= b.media %>" autoplay muted loop playsinline preload="auto"></video>
+      <% } else { %><img src="<%= b.media %>" alt="" loading="lazy" /><% } %>
+    </<%= tag %>>
+  <% }); %>
+</div>
+<% } %>

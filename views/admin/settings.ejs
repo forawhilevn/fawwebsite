@@ -15,7 +15,67 @@
     <% if (saved === 'opened') { %><p style="background:#dcfce7; color:#166534; padding:10px 14px; border-radius:6px;">Website đã MỞ LẠI.</p><% } %>
     <% if (saved === 'message') { %><p style="background:#dcfce7; color:#166534; padding:10px 14px; border-radius:6px;">Đã lưu nội dung thông báo.</p><% } %>
 
+    <% if (saved === 'video') { %><p style="background:#dcfce7; color:#166534; padding:10px 14px; border-radius:6px;">Đã lưu video mở đầu.</p><% } %>
+    <% if (saved === 'closedmedia') { %><p style="background:#dcfce7; color:#166534; padding:10px 14px; border-radius:6px;">Đã lưu banner trang thông báo.</p><% } %>
+    <% if (saved === 'closedmediaerror') { %><p class="admin-error" style="background:#fee2e2;"><%= msg || 'Tải file thất bại' %></p><% } %>
+    <% if (saved === 'videoerror') { %><p class="admin-error" style="background:#fee2e2;"><%= msg || 'Tải video thất bại' %></p><% } %>
+
     <% var closed = s.site_closed === '1'; %>
+
+    <div class="admin-card">
+      <h2 style="margin-top:0; font-size:16px;">Video mở đầu (intro)</h2>
+      <p style="font-size:13px; color:#71717a;">
+        Video chạy một lần khi khách vào trang chủ, phía dưới là website. Mỗi thiết bị có video riêng;
+        nếu không tải video mobile thì điện thoại dùng video desktop. Chưa tải gì thì dùng video mặc định.
+        Nhận .webm, .mp4, .m4v, .mov (tối đa 500MB mỗi file) - có thể chọn nhiều file cùng lúc, hệ thống tự phân loại.
+      </p>
+      <p style="font-size:13px; background:#fef3c7; color:#92400e; padding:8px 12px; border-radius:6px;">
+        Lưu ý: nền trong suốt chỉ chạy trên Chrome/Android/Firefox với file <strong>.webm (VP9 alpha)</strong>;
+        Safari/iPhone cần file <strong>.mp4/.mov</strong> (HEVC alpha hoặc nền phẳng). Nên tải đủ cả hai loại cho mỗi thiết bị.
+        File .mov dạng ProRes/Animation (rất nặng) Chrome không phát được và trang sẽ bỏ qua intro.
+      </p>
+
+      <form action="/admin/cai-dat/video/tuy-chon" method="post" class="admin-form" style="margin-bottom:16px;">
+        <label style="display:flex; align-items:center; gap:8px; text-transform:none; letter-spacing:0;">
+          <input type="checkbox" name="enabled" value="1" <%= introConfig.enabled ? 'checked' : '' %> style="width:auto;" />
+          Bật video mở đầu
+        </label>
+        <div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:8px;">
+          <div><label>Desktop: lộ trang web ở giây thứ</label><input type="text" inputmode="decimal" name="revealDesktop" value="<%= s.intro_desktop_reveal %>" style="width:100px;" /></div>
+          <div><label>Mobile: lộ trang web ở giây thứ</label><input type="text" inputmode="decimal" name="revealMobile" value="<%= s.intro_mobile_reveal %>" style="width:100px;" /></div>
+        </div>
+        <button type="submit" class="admin-btn" style="margin-top:12px;">Lưu tuỳ chọn</button>
+      </form>
+
+      <div class="intro-grid">
+      <% [['desktop','Desktop (ngang 16:9)'],['mobile','Mobile (dọc 9:16)']].forEach(function(dev) { var d = dev[0]; %>
+        <div class="intro-box">
+          <h3><%= dev[1] %></h3>
+          <% [['webm','WebM - nền trong suốt (Chrome/Android)'],['mp4','MP4 / MOV - Safari, iPhone, dự phòng']].forEach(function(k) {
+               var url = s['intro_' + d + '_' + k[0]]; %>
+            <div class="intro-slot">
+              <div class="intro-slot__label"><%= k[1] %></div>
+              <% if (url) { %>
+                <video src="<%= url %>" muted controls playsinline preload="metadata" class="intro-slot__video"></video>
+                <div class="intro-slot__file"><%= url.split('/').pop() %></div>
+                <form action="/admin/cai-dat/video/<%= d %>/<%= k[0] %>/xoa" method="post" onsubmit="return confirm('Xoá video này?');">
+                  <button type="submit" class="admin-btn admin-btn--danger" style="padding:4px 10px; font-size:12px;">Xoá</button>
+                </form>
+              <% } else { %>
+                <div class="intro-slot__empty"><%= d === 'mobile' ? 'Chưa có - đang dùng video desktop' : 'Chưa có - đang dùng video mặc định' %></div>
+              <% } %>
+            </div>
+          <% }); %>
+          <form action="/admin/cai-dat/video/<%= d %>/tai-len" method="post" enctype="multipart/form-data" class="admin-form">
+            <input type="file" name="videos" accept=".webm,.mp4,.m4v,.mov,video/*" multiple required />
+            <button type="submit" class="admin-btn" style="margin-top:8px;">Tải lên</button>
+          </form>
+        </div>
+      <% }); %>
+      </div>
+      <p style="font-size:13px; margin-bottom:0;"><a href="/?intro=1" target="_blank" rel="noopener">Xem thử intro trên trang chủ</a> (desktop; xem bản mobile bằng cách thu nhỏ cửa sổ dưới 768px).</p>
+    </div>
+
     <div class="admin-card" style="border:2px solid <%= closed ? '#eb252a' : '#16a34a' %>;">
       <h2 style="margin-top:0; font-size:16px;">Đóng / mở website</h2>
       <p style="font-size:14px;">
@@ -48,10 +108,78 @@
         <input type="text" name="titleEn" value="<%= s.closed_title_en %>" maxlength="120" />
         <label>Nội dung (EN)</label>
         <textarea name="messageEn" rows="3" maxlength="500"><%= s.closed_message_en %></textarea>
+        <label style="display:flex; align-items:center; gap:8px; text-transform:none; letter-spacing:0; margin-top:12px;">
+          <input type="checkbox" name="showText" value="1" <%= s.closed_show_text !== '0' ? 'checked' : '' %> style="width:auto;" />
+          Hiện chữ (tiêu đề + nội dung) đè lên banner
+        </label>
         <button type="submit" class="admin-btn" style="margin-top:12px;">Lưu nội dung</button>
       </form>
     </div>
+
+    <div class="admin-card" id="closed-media">
+      <h2 style="margin-top:0; font-size:16px;">Banner ảnh / video trang thông báo khi đóng</h2>
+      <p style="font-size:13px; color:#71717a;">
+        Ảnh hoặc video sẽ phủ kín nền trang thông báo (video tự chạy, lặp lại, tắt tiếng). Mỗi thiết bị có file riêng;
+        nếu không tải bản mobile thì điện thoại dùng bản desktop. Chưa tải gì thì hiện nền đen như cũ.
+        Nhận .jpg .png .webp .gif .mp4 .webm .mov (tối đa 500MB). Nên dùng .mp4 (H.264) cho video để chạy được mọi trình duyệt.
+      </p>
+      <div class="intro-grid">
+      <% [['desktop','Desktop (ngang 16:9)'],['mobile','Mobile (dọc 9:16)']].forEach(function(dev) {
+           var d = dev[0]; var url = s['closed_media_' + d]; var isVideo = /\.(mp4|webm|m4v|mov)$/i.test(url || ''); %>
+        <div class="intro-box">
+          <h3><%= dev[1] %></h3>
+          <div class="intro-slot">
+            <% if (url) { %>
+              <% if (isVideo) { %>
+                <video src="<%= url %>" muted controls playsinline preload="metadata" class="intro-slot__video"></video>
+              <% } else { %>
+                <img src="<%= url %>" alt="" class="intro-slot__video" style="object-fit:contain;" />
+              <% } %>
+              <div class="intro-slot__file"><%= url.split('/').pop() %></div>
+              <form action="/admin/cai-dat/dong-web/<%= d %>/xoa" method="post" onsubmit="return confirm('Xoá banner này?');">
+                <button type="submit" class="admin-btn admin-btn--danger" style="padding:4px 10px; font-size:12px;">Xoá</button>
+              </form>
+            <% } else { %>
+              <div class="intro-slot__empty"><%= d === 'mobile' ? 'Chưa có - đang dùng bản desktop' : 'Chưa có - nền đen' %></div>
+            <% } %>
+          </div>
+          <form action="/admin/cai-dat/dong-web/<%= d %>/tai-len" method="post" enctype="multipart/form-data" class="admin-form">
+            <input type="file" name="media" accept="image/*,video/*,.mov" required data-media-preview="#closed-preview-<%= d %>" />
+            <div class="intro-slot" id="closed-preview-<%= d %>" hidden style="margin-top:8px;"></div>
+            <button type="submit" class="admin-btn" style="margin-top:8px;"><%= url ? 'Thay file' : 'Tải lên' %></button>
+          </form>
+        </div>
+      <% }); %>
+      </div>
+    </div>
   </main>
 </div>
+<script>
+(function () {
+  // preview of a chosen image / video before uploading
+  document.addEventListener('change', function (e) {
+    var input = e.target;
+    if (!input.matches || !input.matches('input[type="file"][data-media-preview]')) return;
+    var box = document.querySelector(input.getAttribute('data-media-preview'));
+    if (!box) return;
+    if (box._url) { URL.revokeObjectURL(box._url); box._url = null; }
+    box.innerHTML = '';
+    var f = input.files && input.files[0];
+    box.hidden = !f;
+    if (!f) return;
+    box._url = URL.createObjectURL(f);
+    var isVideo = /^video\//.test(f.type) || /\.(mp4|webm|m4v|mov)$/i.test(f.name);
+    var el = document.createElement(isVideo ? 'video' : 'img');
+    el.src = box._url;
+    el.className = 'intro-slot__video';
+    if (isVideo) { el.muted = true; el.controls = true; el.playsInline = true; el.preload = 'metadata'; } else { el.style.objectFit = 'contain'; }
+    var label = document.createElement('div');
+    label.className = 'intro-slot__file';
+    label.textContent = 'Xem trước (chưa tải lên): ' + f.name;
+    box.appendChild(el);
+    box.appendChild(label);
+  });
+})();
+</script>
 </body>
 </html>

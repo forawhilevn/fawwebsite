@@ -6,7 +6,26 @@ const DEFAULTS = {
   closed_title_en: 'BE RIGHT BACK',
   closed_message_vi: 'FAW đang chuẩn bị cho collection mới. Hẹn gặp lại bạn sớm.',
   closed_message_en: 'FAW is getting ready for a new collection. See you soon.',
-  closed_at: ''
+  closed_at: '',
+  closed_media_desktop: '',
+  closed_media_mobile: '',
+  closed_show_text: '1',
+  subbanner_enabled: '1',
+  subbanner_home: '1',
+  subbanner_shop: '1',
+  subbanner_1_media: '',
+  subbanner_1_link: '',
+  subbanner_2_media: '',
+  subbanner_2_link: '',
+  ship_fee_hcm: '25000',
+  ship_fee_other: '35000',
+  intro_enabled: '1',
+  intro_desktop_webm: '',
+  intro_desktop_mp4: '',
+  intro_mobile_webm: '',
+  intro_mobile_mp4: '',
+  intro_desktop_reveal: '3.5',
+  intro_mobile_reveal: '3.5'
 };
 
 let tableReady = false;

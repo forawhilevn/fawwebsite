@@ -38,6 +38,8 @@
       <p style="text-align:right; margin-top:12px;">
         <strong>Tạm tính: <%= formatVND(order.subtotal) %></strong><br/>
         <% if (order.discount_amount > 0) { %>Giảm giá: -<%= formatVND(order.discount_amount) %><br/><% } %>
+        Phí ship<%= order.shipping_zone ? (order.shipping_zone === 'hcm' ? ' (HCM)' : ' (tỉnh khác)') : '' %>: <%= order.shipping_fee > 0 ? formatVND(order.shipping_fee) : 'Miễn phí' %><br/>
+        <% if (order.promo_note) { %><span style="font-size:12px; color:#71717a;">Khuyến mãi: <%= order.promo_note %></span><br/><% } %>
         <strong style="font-size: 18px;">Tổng cộng: <%= formatVND(order.total) %></strong>
       </p>
     </div>

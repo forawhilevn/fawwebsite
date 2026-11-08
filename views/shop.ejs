@@ -10,6 +10,7 @@
 
 <main>
   <div class="page-shell page-shell--light">
+    <%- include('partials/sub-banners', { subPage: 'shop' }) %>
     <div class="container">
       <h1 class="page-title"><%= activeCategory ? activeCategory.name : t('shop.title') %></h1>
 

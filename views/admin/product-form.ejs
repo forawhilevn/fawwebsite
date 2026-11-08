@@ -155,6 +155,24 @@
       </div>
 
       <div class="admin-card">
+        <% var sizeChartCur = getSizeChartUrl(product.slug); %>
+        <h2 class="admin-card__title">Size chart <span><%= sizeChartCur ? 'Đã có ảnh' : 'Chưa có' %></span></h2>
+        <p class="admin-hint">Ảnh bảng size hiển thị trong cửa sổ "Hướng dẫn chọn size" ở trang sản phẩm. Tải ảnh mới sẽ thay ảnh cũ (jpg, png, webp, tối đa 20MB).</p>
+        <% if (sizeChartCur) { %>
+          <div class="thumb" style="max-width:360px; margin-bottom:12px;">
+            <img src="<%= sizeChartCur %>" alt="Size chart" style="width:100%; height:auto;" />
+          </div>
+          <form action="/admin/san-pham/<%= product.id %>/size-chart/xoa" method="post" onsubmit="return confirm('Xoá ảnh size chart?');" style="margin-bottom:12px;">
+            <button type="submit" class="admin-btn admin-btn--danger">Xoá size chart</button>
+          </form>
+        <% } %>
+        <form action="/admin/san-pham/<%= product.id %>/size-chart" method="post" enctype="multipart/form-data" class="upload-box">
+          <input type="file" name="sizeChart" accept="image/*" required />
+          <button type="submit" class="admin-btn"><%= sizeChartCur ? 'Thay ảnh size chart' : 'Tải ảnh size chart lên' %></button>
+        </form>
+      </div>
+
+      <div class="admin-card">
         <h2 class="admin-card__title">Lookbook <span><%= lookbookImages.length %> ảnh</span></h2>
         <p class="admin-hint">Ảnh lookbook hiển thị ở cuối trang chi tiết sản phẩm, trang Archive và trang chủ.</p>
         <div class="thumbs__grid">

@@ -11,7 +11,12 @@ window.FAWMotion.initVideoIntro = function initVideoIntro() {
   var skip = document.getElementById('videoIntroSkip');
   var root = document.documentElement;
   var KEY = 'faw_video_intro_shown';
-  var REVEAL_AT = 3.5; // seconds: the red scribble starts to recede here
+  var isMobile = window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+  var dev = isMobile ? 'mobile' : 'desktop';
+  var webmSrc = intro.getAttribute('data-' + dev + '-webm') || '';
+  var mp4Src = intro.getAttribute('data-' + dev + '-mp4') || '';
+  var REVEAL_AT = parseFloat(intro.getAttribute('data-' + dev + '-reveal'));
+  if (!isFinite(REVEAL_AT)) REVEAL_AT = 3.5; // seconds: the site is revealed from here
 
   var force = /[?&]intro=1/.test(location.search);
   var seen = false;
@@ -24,7 +29,11 @@ window.FAWMotion.initVideoIntro = function initVideoIntro() {
 
   var ua = navigator.userAgent || '';
   var appleWebKit = /iP(hone|ad|od)/.test(ua) || (/Safari/.test(ua) && !/Chrome|Chromium|CriOS|FxiOS|Edg|Android/.test(ua));
-  var canAlpha = !appleWebKit && video && video.canPlayType && !!video.canPlayType('video/webm; codecs="vp9"');
+  var canWebm = !!(video && video.canPlayType && video.canPlayType('video/webm; codecs="vp9"'));
+  // Transparent WebM where supported; otherwise the flat/HEVC mp4-mov (fade-out ending).
+  var useWebm = !appleWebKit && canWebm && !!webmSrc;
+  var chosen = useWebm ? webmSrc : (mp4Src || (canWebm ? webmSrc : ''));
+  var canAlpha = useWebm || (!mp4Src && !!chosen);
 
   var revealed = false;
   var finished = false;
@@ -56,7 +65,8 @@ window.FAWMotion.initVideoIntro = function initVideoIntro() {
 
   if (!video) { finish(); return; }
 
-  video.src = canAlpha ? '/video/WEB_INTRO.webm' : '/video/WEB_INTRO.mp4';
+  if (!chosen) { finish(); return; }
+  video.src = chosen;
 
   video.addEventListener('playing', function () { intro.classList.add('is-playing'); });
   video.addEventListener('ended', finish);

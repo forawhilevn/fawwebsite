@@ -14,10 +14,13 @@ function getLookbookImages(slug) {
 }
 
 function getSizeChartUrl(slug) {
-  const exts = ['jpg', 'jpeg', 'png'];
+  const exts = ['jpg', 'jpeg', 'png', 'webp'];
   for (const ext of exts) {
     const filePath = path.join(PUBLIC_DIR, 'images', 'sizecharts', `${slug}.${ext}`);
-    if (fs.existsSync(filePath)) return `/images/sizecharts/${slug}.${ext}`;
+    if (fs.existsSync(filePath)) {
+      // ?v= makes browsers pick up a replaced chart straight away
+      return `/images/sizecharts/${slug}.${ext}?v=${Math.floor(fs.statSync(filePath).mtimeMs)}`;
+    }
   }
   return null;
 }

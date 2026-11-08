@@ -15,6 +15,9 @@
         forawh1le.iwd
       </a>
       <a href="<%= locale === 'en' ? '/en/shipping-policy' : '/shipping-policy' %>"><%= t('nav.shippingPolicy') %></a>
+      <% (typeof footerPages !== 'undefined' ? footerPages : []).forEach(function(fp) { %>
+        <a href="<%= locale === 'en' ? '/en/p/' : '/p/' %><%= fp.slug %>"><%= fp.title %></a>
+      <% }); %>
     </div>
   </div>
   <div class="site-footer__pattern">

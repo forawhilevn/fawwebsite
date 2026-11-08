@@ -194,6 +194,21 @@ async function toggleHeroBanner(req, res, next) {
   }
 }
 
+async function updateHeroTitle(req, res, next) {
+  try {
+    const banner = await db('banners').where('id', req.params.id).where('type', 'hero').first();
+    if (banner) {
+      await db('banners').where('id', banner.id).update({
+        title_vi: String(req.body.titleVi || '').trim().slice(0, 200) || null,
+        title_en: String(req.body.titleEn || '').trim().slice(0, 200) || null
+      });
+    }
+    res.redirect('/admin/banner');
+  } catch (err) {
+    next(err);
+  }
+}
+
 // Swap a hero banner with its neighbour. The first ACTIVE hero banner is the
 // one shown on the homepage, so order matters.
 function moveHeroBanner(direction) {
@@ -314,6 +329,7 @@ async function deleteArchiveBanner(req, res, next) {
 }
 
 module.exports = {
+  updateHeroTitle,
   listBanners,
   createHeroBanner,
   updateHeroImages,

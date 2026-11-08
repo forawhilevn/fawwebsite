@@ -13,11 +13,18 @@ const lookbookController = require('../controllers/admin/lookbookController');
 const orderAdminController = require('../controllers/admin/orderAdminController');
 const bannerController = require('../controllers/admin/bannerController');
 const discountAdminController = require('../controllers/admin/discountAdminController');
+const sizeChartController = require('../controllers/admin/sizeChartController');
+const storeController = require('../controllers/admin/storeController');
+const promoController = require('../controllers/admin/promoController');
+const pageAdminController = require('../controllers/admin/pageAdminController');
 const settingsController = require('../controllers/admin/settingsController');
+const subBannerController = require('../controllers/admin/subBannerController');
 const inventoryController = require('../controllers/admin/inventoryController');
 
 const uploadProductImage = makeUploader('products');
 const uploadBannerImage = makeUploader('banners');
+const uploadStoreImage = makeUploader('stores');
+const uploadPageImage = makeUploader('pages');
 const uploadLookbookImage = makeSlugUploader('lookbook');
 
 router.get('/login', redirectIfAdmin, authController.showLogin);
@@ -61,6 +68,9 @@ router.post('/san-pham/:id/anh/:imageId/xoa', productGalleryController.deleteIma
 router.post('/san-pham/:id/lookbook', uploadLookbookImage.array('lookbookImages', 10), lookbookController.uploadImages);
 router.post('/san-pham/:id/lookbook/:filename/xoa', lookbookController.deleteImage);
 
+router.post('/san-pham/:id/size-chart', sizeChartController.uploadSizeChart);
+router.post('/san-pham/:id/size-chart/xoa', sizeChartController.deleteSizeChart);
+
 router.get('/don-hang', orderAdminController.listOrders);
 router.get('/don-hang/:id', orderAdminController.showOrder);
 router.post('/don-hang/:id/trang-thai', orderAdminController.updateStatus);
@@ -76,6 +86,7 @@ router.post('/banner/chinh', heroUpload, bannerController.createHeroBanner);
 router.post('/banner/chinh/:id/anh', heroUpload, bannerController.updateHeroImages);
 router.post('/banner/chinh/:id/anh-mobile/xoa', bannerController.removeHeroMobile);
 router.post('/banner/chinh/:id/anh-desktop/xoa', bannerController.removeHeroDesktop);
+router.post('/banner/chinh/:id/tieu-de', bannerController.updateHeroTitle);
 router.post('/banner/chinh/:id/an-hien', bannerController.toggleHeroBanner);
 router.post('/banner/chinh/:id/len', bannerController.moveHeroBanner('up'));
 router.post('/banner/chinh/:id/xuong', bannerController.moveHeroBanner('down'));
@@ -84,13 +95,43 @@ router.post('/banner/noi-bat', uploadBannerImage.single('image'), bannerControll
 router.post('/banner/archive', uploadBannerImage.single('image'), bannerController.createArchiveBanner);
 router.post('/banner/archive/:id/xoa', bannerController.deleteArchiveBanner);
 
+router.get('/dai-ly', storeController.listStores);
+router.post('/dai-ly/moi', uploadStoreImage.array('images', 5), storeController.createStore);
+router.post('/dai-ly/:id/sua', uploadStoreImage.array('images', 5), storeController.updateStore);
+router.post('/dai-ly/:id/an-hien', storeController.toggleStore);
+router.post('/dai-ly/:id/len', storeController.moveStore('up'));
+router.post('/dai-ly/:id/xuong', storeController.moveStore('down'));
+router.post('/dai-ly/:id/xoa', storeController.deleteStore);
+
+router.get('/khuyen-mai', promoController.listPromos);
+router.post('/khuyen-mai/phi-ship', promoController.saveShipping);
+router.post('/khuyen-mai/moi', promoController.createPromo);
+router.post('/khuyen-mai/:id/sua', promoController.updatePromo);
+router.post('/khuyen-mai/:id/an-hien', promoController.togglePromo);
+router.post('/khuyen-mai/:id/xoa', promoController.deletePromo);
+
+router.get('/chinh-sach', pageAdminController.listPages);
+router.get('/chinh-sach/moi', pageAdminController.showForm);
+router.post('/chinh-sach/moi', uploadPageImage.single('image'), pageAdminController.savePage);
+router.get('/chinh-sach/:slug/sua', pageAdminController.showForm);
+router.post('/chinh-sach/:slug/sua', uploadPageImage.single('image'), pageAdminController.savePage);
+router.post('/chinh-sach/:slug/mac-dinh', pageAdminController.resetPage);
+router.post('/chinh-sach/:slug/xoa', pageAdminController.deletePage);
+
 router.get('/ma-giam-gia', discountAdminController.listCodes);
 router.post('/ma-giam-gia/moi', discountAdminController.createCode);
 router.post('/ma-giam-gia/:id/an-hien', discountAdminController.toggleCode);
 router.post('/ma-giam-gia/:id/xoa', discountAdminController.deleteCode);
 
+router.get('/banner-phu', subBannerController.showSubBanners);
+router.post('/banner-phu/luu', subBannerController.saveAll);
 router.get('/cai-dat', settingsController.showSettings);
 router.post('/cai-dat/dong-mo-web', settingsController.toggleSite);
 router.post('/cai-dat/thong-bao', settingsController.saveClosedMessage);
+router.post('/cai-dat/dong-web/:device/tai-len', settingsController.uploadClosedMedia);
+router.post('/cai-dat/dong-web/:device/xoa', settingsController.removeClosedMedia);
+router.post('/cai-dat/video/tuy-chon', settingsController.saveIntroOptions);
+router.post('/cai-dat/video/:device/tai-len', settingsController.uploadIntroVideo);
+router.post('/cai-dat/video/:device/:kind/xoa', settingsController.removeIntroVideo);
 
 module.exports = router;

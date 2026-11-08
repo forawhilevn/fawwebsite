@@ -6,7 +6,11 @@
     <a href="/admin/ton-kho" class="<%= currentPath.startsWith('/admin/ton-kho') ? 'is-active' : '' %>">Tồn kho</a>
     <a href="/admin/danh-muc" class="<%= currentPath.startsWith('/admin/danh-muc') ? 'is-active' : '' %>">Danh mục</a>
     <a href="/admin/don-hang" class="<%= currentPath.startsWith('/admin/don-hang') ? 'is-active' : '' %>">Đơn hàng</a>
-    <a href="/admin/banner" class="<%= currentPath.startsWith('/admin/banner') ? 'is-active' : '' %>">Banner</a>
+    <a href="/admin/banner" class="<%= currentPath.startsWith('/admin/banner') && !currentPath.startsWith('/admin/banner-phu') ? 'is-active' : '' %>">Banner</a>
+    <a href="/admin/banner-phu" class="<%= currentPath.startsWith('/admin/banner-phu') ? 'is-active' : '' %>">Banner phụ</a>
+    <a href="/admin/dai-ly" class="<%= currentPath.startsWith('/admin/dai-ly') ? 'is-active' : '' %>">Cửa hàng</a>
+    <a href="/admin/khuyen-mai" class="<%= currentPath.startsWith('/admin/khuyen-mai') ? 'is-active' : '' %>">Khuyến mãi</a>
+    <a href="/admin/chinh-sach" class="<%= currentPath.startsWith('/admin/chinh-sach') ? 'is-active' : '' %>">Trang chính sách</a>
     <a href="/admin/ma-giam-gia" class="<%= currentPath.startsWith('/admin/ma-giam-gia') ? 'is-active' : '' %>">Mã giảm giá</a>
     <a href="/admin/cai-dat" class="<%= currentPath.startsWith('/admin/cai-dat') ? 'is-active' : '' %>">Cài đặt website<% if (typeof siteClosed !== 'undefined' && siteClosed) { %> <span style="background:#eb252a; color:#fff; font-size:10px; padding:2px 6px; border-radius:999px; margin-left:4px;">ĐÓNG</span><% } %></a>
   </nav>

@@ -7,6 +7,11 @@
 <% if (typeof siteClosedPreview !== 'undefined' && siteClosedPreview) { %>
 <div class="closed-bar">Website đang ĐÓNG với khách — chỉ admin xem được trang này · <a href="/admin/cai-dat">Mở lại</a></div>
 <% } %>
+<% if (typeof promoBar !== 'undefined' && promoBar.length) { %>
+<div class="promo-bar" data-promo-bar>
+  <% promoBar.forEach(function(txt, i) { %><span class="promo-bar__item <%= i === 0 ? 'is-on' : '' %>"><%= txt %></span><% }); %>
+</div>
+<% } %>
 <header class="site-header">
   <div class="site-header__pill">
     <button type="button" class="site-header__menu-toggle" data-menu-toggle aria-label="<%= t('nav.menu') %>" aria-expanded="false" aria-controls="mobileNav">
@@ -21,6 +26,7 @@
     <nav class="site-header__nav">
       <a href="<%= pfx %>/shop" class="<%= shopActive ? 'is-active' : '' %>"><%= t('nav.shop') %></a>
       <a href="<%= pfx %>/archive" class="<%= navActive('/archive') ? 'is-active' : '' %>"><%= t('nav.lookbook') %></a>
+      <a href="<%= pfx %>/stores" class="<%= navActive('/stores') ? 'is-active' : '' %>"><%= t('nav.stores') %></a>
       <a href="<%= pfx %>/about" class="<%= navActive('/about') ? 'is-active' : '' %>"><%= t('nav.about') %></a>
     </nav>
 
@@ -39,6 +45,7 @@
   <nav class="site-header__mobile-nav" id="mobileNav" data-mobile-nav>
     <a href="<%= pfx %>/shop" class="<%= shopActive ? 'is-active' : '' %>"><%= t('nav.shop') %></a>
     <a href="<%= pfx %>/archive" class="<%= navActive('/archive') ? 'is-active' : '' %>"><%= t('nav.lookbook') %></a>
+    <a href="<%= pfx %>/stores" class="<%= navActive('/stores') ? 'is-active' : '' %>"><%= t('nav.stores') %></a>
     <a href="<%= pfx %>/about" class="<%= navActive('/about') ? 'is-active' : '' %>"><%= t('nav.about') %></a>
   </nav>
 

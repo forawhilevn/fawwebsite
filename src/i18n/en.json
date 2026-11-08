@@ -1,7 +1,7 @@
 {
   "nav.menu": "Menu",
-  "nav.shop": "Shop",
-  "nav.archive": "Archive",
+  "nav.shop": "Shops",
+  "nav.archive": "Lookbook",
   "nav.lookbook": "Lookbook",
   "nav.cart": "Cart",
   "nav.search": "Search",
@@ -10,7 +10,6 @@
   "nav.contact": "Contact",
   "nav.shippingPolicy": "Shipping Policy",
   "nav.returnPolicy": "Return Policy",
-
   "home.newArrivals": "NEW ARRIVALS",
   "home.allProducts": "ALL PRODUCTS",
   "home.featured": "FEATURED",
@@ -19,7 +18,6 @@
   "home.taglineLine1": "FROM ANOTHER WORLD",
   "home.taglineLine2": "Where perspective is personal.",
   "home.videoIntroEnter": "SHOP NOW",
-
   "shop.title": "PRODUCTS",
   "shop.filter.availability": "Availability",
   "shop.filter.category": "Category",
@@ -31,7 +29,6 @@
   "shop.itemsCount": "items",
   "shop.soldOut": "SOLD OUT",
   "shop.empty": "No products in this category yet.",
-
   "product.selectSize": "Select size",
   "product.selectColor": "Select color",
   "product.sizeGuide": "Size guide",
@@ -40,7 +37,6 @@
   "product.description": "Description",
   "product.relatedProducts": "RELATED PRODUCTS",
   "product.pleaseSelectVariant": "Please select a size before adding to cart.",
-
   "cart.title": "CART",
   "cart.empty": "Your cart is empty.",
   "cart.continueShopping": "Continue shopping",
@@ -55,13 +51,14 @@
   "product.inCart": "IN CART",
   "product.selectSizeBtn": "SELECT SIZE",
   "product.zoom": "Zoom image",
+  "product.selectColorBtn": "SELECT COLOR",
+  "product.selectSizeColorBtn": "SELECT SIZE / COLOR",
   "product.back": "BACK",
   "product.close": "CLOSE",
   "cart.viewCart": "VIEW CART",
   "cart.item": "item",
   "cart.items": "items",
   "cart.addError": "Could not update your cart, please try again.",
-
   "checkout.title": "CHECKOUT",
   "checkout.customerInfo": "Delivery information",
   "checkout.fullName": "Full name",
@@ -76,7 +73,6 @@
   "checkout.applyDiscount": "Apply",
   "checkout.placeOrder": "PLACE ORDER",
   "checkout.orderSummary": "Order summary",
-
   "order.confirmationTitle": "ORDER PLACED",
   "order.code": "Order code",
   "order.scanToPay": "Scan to pay",
@@ -86,13 +82,32 @@
   "order.transferNote": "Transfer note",
   "order.codInstructions": "Please have the exact amount ready when your order arrives.",
   "order.backToHome": "Back to home",
-
-
   "footer.instagram": "Instagram",
   "footer.rightsReserved": "FOR A WHILE. All rights reserved",
-
   "error.title": "Something went wrong",
   "error.message": "The system is having an issue, please try again later.",
   "error.notFoundTitle": "Page not found",
-  "error.notFoundMessage": "The page you're looking for doesn't exist or was removed."
+  "error.notFoundMessage": "The page you're looking for doesn't exist or was removed.",
+  "nav.stores": "Stores",
+  "stores.title": "Stores",
+  "stores.intro": "Find FAW near you.",
+  "stores.all": "All",
+  "stores.viewMap": "View map",
+  "stores.call": "Call",
+  "stores.hours": "Opening hours",
+  "stores.closed": "Temporarily closed",
+  "stores.empty": "No stores yet.",
+  "cart.freeshipMore": "Add {amount} more for free shipping",
+  "cart.freeshipDone": "Your order ships free",
+  "cart.shippingAtCheckout": "Calculated at checkout",
+  "checkout.shipping": "Shipping",
+  "checkout.free": "Free",
+  "checkout.zone": "Delivery area",
+  "checkout.chooseZone": "Choose area",
+  "checkout.zoneHcm": "Ho Chi Minh City",
+  "checkout.zoneOther": "Other provinces",
+  "checkout.zoneRequired": "Please choose a delivery area.",
+  "checkout.codeInvalid": "Invalid code or requirements not met.",
+  "cart.nextPromo": "Add {amount} more to get: {offer}",
+  "stores.viewPhotos": "View photos"
 }

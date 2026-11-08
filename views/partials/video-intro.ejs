@@ -1,4 +1,7 @@
-<div class="video-intro" id="videoIntro" aria-hidden="true">
+<% if (introConfig.enabled) { %>
+<div class="video-intro" id="videoIntro" aria-hidden="true"
+  data-desktop-webm="<%= introConfig.desktop.webm %>" data-desktop-mp4="<%= introConfig.desktop.mp4 %>" data-desktop-reveal="<%= introConfig.desktop.reveal %>"
+  data-mobile-webm="<%= introConfig.mobile.webm %>" data-mobile-mp4="<%= introConfig.mobile.mp4 %>" data-mobile-reveal="<%= introConfig.mobile.reveal %>">
   <video
     id="videoIntroMain"
     class="video-intro__video"
@@ -17,3 +20,4 @@
     }
   } catch (e) {}
 </script>
+<% } %>

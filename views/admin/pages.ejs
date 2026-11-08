@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title><%= title %></title>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+  <%- include('../partials/admin-sidebar') %>
+  <main class="admin-main">
+    <h1>Trang chính sách</h1>
+    <% if (saved) { %><p style="background:#dcfce7; color:#166534; padding:10px 14px; border-radius:6px;">Đã lưu.</p><% } %>
+
+    <div class="admin-card">
+      <h2 class="admin-card__title">Trang có sẵn <span>Sửa nội dung tiếng Việt và tiếng Anh riêng</span></h2>
+      <table class="admin-table">
+        <thead><tr><th>Trang</th><th>Nội dung</th><th>Thao tác</th></tr></thead>
+        <tbody>
+        <% system.forEach(function(p) { %>
+          <tr>
+            <td><strong><%= p.title %></strong><div style="font-size:12px; color:#71717a;"><a href="<%= p.url %>" target="_blank"><%= p.url %></a></div></td>
+            <td style="font-size:13px;"><%= p.edited ? 'Đã chỉnh sửa' : 'Mặc định' %></td>
+            <td>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <a href="/admin/chinh-sach/<%= p.slug %>/sua" class="admin-btn admin-btn--outline" style="padding:4px 10px;">Sửa</a>
+                <% if (p.edited) { %>
+                <form action="/admin/chinh-sach/<%= p.slug %>/mac-dinh" method="post" onsubmit="return confirm('Khôi phục nội dung gốc? Phần bạn đã sửa sẽ mất.');"><button class="admin-btn admin-btn--outline" style="padding:4px 10px;">Khôi phục mặc định</button></form>
+                <% } %>
+              </div>
+            </td>
+          </tr>
+        <% }); %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="admin-card">
+      <h2 class="admin-card__title">Trang tự tạo <span><%= custom.length %> trang</span></h2>
+      <p class="admin-hint">Ví dụ: Chính sách bảo mật, Điều khoản sử dụng, Hướng dẫn mua hàng. Trang tự tạo có địa chỉ <code>/p/ten-trang</code> và có thể gắn link ở chân trang.</p>
+      <% if (custom.length === 0) { %><p class="admin-hint">Chưa có trang nào.</p><% } else { %>
+      <table class="admin-table">
+        <thead><tr><th>Trang</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+        <tbody>
+        <% custom.forEach(function(p) { %>
+          <tr style="<%= p.is_active ? '' : 'opacity:.55;' %>">
+            <td><strong><%= p.title_vi %></strong><div style="font-size:12px; color:#71717a;"><a href="/p/<%= p.slug %>" target="_blank">/p/<%= p.slug %></a></div></td>
+            <td style="font-size:12px;"><%= p.is_active ? 'Đang hiển thị' : 'Đang ẩn' %><%= p.show_in_footer ? ' · có link ở footer' : '' %></td>
+            <td>
+              <div style="display:flex; gap:6px;">
+                <a href="/admin/chinh-sach/<%= p.slug %>/sua" class="admin-btn admin-btn--outline" style="padding:4px 10px;">Sửa</a>
+                <form action="/admin/chinh-sach/<%= p.slug %>/xoa" method="post" onsubmit="return confirm('Xoá trang này? Không thể hoàn tác.');"><button class="admin-btn admin-btn--danger" style="padding:4px 10px;">Xoá</button></form>
+              </div>
+            </td>
+          </tr>
+        <% }); %>
+        </tbody>
+      </table>
+      <% } %>
+      <a href="/admin/chinh-sach/moi" class="admin-btn" style="margin-top:12px; display:inline-block;">+ Thêm trang mới</a>
+    </div>
+  </main>
+</div>
+</body>
+</html>

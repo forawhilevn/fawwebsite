@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title><%= title %></title>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+  <%- include('../partials/admin-sidebar') %>
+  <main class="admin-main">
+    <h1>Khuyến mãi &amp; phí ship</h1>
+    <% if (error) { %><p class="admin-error"><%= error %></p><% } %>
+    <% if (saved) { %><p style="background:#dcfce7; color:#166534; padding:10px 14px; border-radius:6px;">Đã lưu.</p><% } %>
+    <% var e = editing || {}; %>
+
+    <div class="admin-card">
+      <h2 class="admin-card__title">Phí vận chuyển <span>Khách chọn khu vực ở bước thanh toán; chương trình Freeship sẽ miễn khoản này</span></h2>
+      <form action="/admin/khuyen-mai/phi-ship" method="post" class="admin-form" style="display:flex; gap:16px; flex-wrap:wrap; align-items:flex-end;">
+        <div><label>Nội thành TP.HCM (₫)</label><input type="text" inputmode="numeric" data-money autocomplete="off" name="feeHcm" value="<%= s.ship_fee_hcm %>" style="width:160px;" /></div>
+        <div><label>Tỉnh / thành khác (₫)</label><input type="text" inputmode="numeric" data-money autocomplete="off" name="feeOther" value="<%= s.ship_fee_other %>" style="width:160px;" /></div>
+        <button type="submit" class="admin-btn">Lưu phí ship</button>
+      </form>
+    </div>
+
+    <div class="admin-card" id="promo-form">
+      <h2 class="admin-card__title"><%= editing ? 'Sửa chương trình' : 'Tạo chương trình khuyến mãi' %></h2>
+      <p class="admin-hint">Khi một đơn đủ điều kiện nhiều chương trình giảm giá, hệ thống chỉ áp dụng <strong>một mức giảm tốt nhất</strong> cho khách; Freeship được cộng thêm.</p>
+      <form action="<%= editing ? '/admin/khuyen-mai/' + e.id + '/sua' : '/admin/khuyen-mai/moi' %>" method="post" class="admin-form" data-promo-form>
+        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+          <div style="flex:1; min-width:220px;"><label>Tên chương trình (VI) *</label><input type="text" name="nameVi" value="<%= e.name_vi || '' %>" required /></div>
+          <div style="flex:1; min-width:220px;"><label>Tên chương trình (EN)</label><input type="text" name="nameEn" value="<%= e.name_en || '' %>" /></div>
+        </div>
+
+        <label>Loại khuyến mãi</label>
+        <select name="kind" data-promo-kind>
+          <% Object.keys(kinds).forEach(function(k) { %>
+            <option value="<%= k %>" <%= (e.kind || 'order_discount') === k ? 'selected' : '' %>><%= kinds[k] %></option>
+          <% }); %>
+        </select>
+
+        <div data-show-for="order_discount quantity_discount product_discount" style="display:flex; gap:16px; flex-wrap:wrap;">
+          <div>
+            <label>Hình thức giảm</label>
+            <select name="discountType">
+              <option value="percent" <%= e.discount_type !== 'fixed' ? 'selected' : '' %>>Giảm theo %</option>
+              <option value="fixed" <%= e.discount_type === 'fixed' ? 'selected' : '' %>>Giảm số tiền (₫)</option>
+            </select>
+          </div>
+          <div><label>Mức giảm</label><input type="text" inputmode="numeric" name="value" value="<%= e.value || '' %>" style="width:140px;" /></div>
+        </div>
+
+        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+          <div data-show-for="freeship order_discount product_discount quantity_discount"><label>Đơn tối thiểu (₫, không bắt buộc)</label><input type="text" inputmode="numeric" data-money autocomplete="off" name="minOrderTotal" value="<%= e.min_order_total || '' %>" style="width:180px;" /></div>
+          <div data-show-for="quantity_discount"><label>Số sản phẩm tối thiểu *</label><input type="text" inputmode="numeric" name="minQuantity" value="<%= e.min_quantity || '' %>" style="width:140px;" /></div>
+        </div>
+
+        <div data-show-for="product_discount">
+          <label>Áp dụng cho</label>
+          <select name="scopeType" data-promo-scope>
+            <option value="all" <%= !e.scope_type || e.scope_type === 'all' ? 'selected' : '' %>>Tất cả sản phẩm</option>
+            <option value="category" <%= e.scope_type === 'category' ? 'selected' : '' %>>Danh mục chọn bên dưới</option>
+            <option value="product" <%= e.scope_type === 'product' ? 'selected' : '' %>>Sản phẩm chọn bên dưới</option>
+          </select>
+          <% var ids = String(e.scope_ids || '').split(','); %>
+          <div data-scope-box="category" class="promo-checks">
+            <% categories.forEach(function(c) { %>
+              <label><input type="checkbox" name="scopeCategories" value="<%= c.id %>" <%= ids.indexOf(String(c.id)) !== -1 && e.scope_type === 'category' ? 'checked' : '' %> /> <%= c.name_vi %></label>
+            <% }); %>
+          </div>
+          <div data-scope-box="product" class="promo-checks">
+            <% products.forEach(function(p) { %>
+              <label><input type="checkbox" name="scopeProducts" value="<%= p.id %>" <%= ids.indexOf(String(p.id)) !== -1 && e.scope_type === 'product' ? 'checked' : '' %> /> <%= p.name_vi %></label>
+            <% }); %>
+          </div>
+        </div>
+
+        <label style="display:flex; align-items:center; gap:8px; text-transform:none; letter-spacing:0; margin-top:10px;">
+          <input type="checkbox" name="requireCode" value="1" data-promo-needcode <%= e.require_code ? 'checked' : '' %> style="width:auto;" />
+          Khách phải nhập mã mới được áp dụng (không tích = tự động áp dụng)
+        </label>
+        <div data-code-box><label>Mã khuyến mãi</label><input type="text" name="code" value="<%= e.code || '' %>" style="width:200px; text-transform:uppercase;" /></div>
+
+        <div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:6px;">
+          <div><label>Bắt đầu (không bắt buộc)</label><input type="date" name="startsAt" value="<%= e.starts_at || '' %>" /></div>
+          <div><label>Kết thúc (không bắt buộc)</label><input type="date" name="expiresAt" value="<%= e.expires_at || '' %>" /></div>
+        </div>
+
+        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+          <div style="flex:1; min-width:220px;"><label>Chữ trên thanh thông báo (VI)</label><input type="text" name="barTextVi" value="<%= e.bar_text_vi || '' %>" placeholder="Để trống = tự tạo từ điều kiện" /></div>
+          <div style="flex:1; min-width:220px;"><label>Chữ trên thanh thông báo (EN)</label><input type="text" name="barTextEn" value="<%= e.bar_text_en || '' %>" /></div>
+        </div>
+        <p class="admin-hint">Chương trình tự động áp dụng sẽ hiện trên thanh thông báo đầu trang web. Chương trình cần nhập mã chỉ hiện nếu bạn điền chữ ở ô trên.</p>
+
+        <div style="margin-top:12px; display:flex; gap:10px;">
+          <button type="submit" class="admin-btn"><%= editing ? 'Lưu thay đổi' : 'Tạo chương trình' %></button>
+          <% if (editing) { %><a href="/admin/khuyen-mai" class="admin-btn admin-btn--outline">Huỷ</a><% } %>
+        </div>
+      </form>
+    </div>
+
+    <div class="admin-card">
+      <h2 class="admin-card__title">Danh sách chương trình <span><%= promos.length %> chương trình</span></h2>
+      <% if (promos.length === 0) { %><p class="admin-hint">Chưa có chương trình nào.</p><% } else { %>
+      <table class="admin-table">
+        <thead><tr><th>Chương trình</th><th>Điều kiện / mức giảm</th><th>Thời gian</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+        <tbody>
+        <% promos.forEach(function(p) { %>
+          <tr style="<%= p.is_active ? '' : 'opacity:.55;' %>">
+            <td><strong><%= p.name_vi %></strong><div style="font-size:12px; color:#71717a;"><%= kinds[p.kind] || p.kind %></div></td>
+            <td style="font-size:13px;">
+              <% if (p.kind !== 'freeship') { %><%= p.discount_type === 'fixed' ? new Intl.NumberFormat('vi-VN').format(p.value) + '₫' : p.value + '%' %> · <% } %>
+              <%= p.min_order_total ? 'đơn từ ' + new Intl.NumberFormat('vi-VN').format(p.min_order_total) + '₫' : 'mọi đơn' %>
+              <%= p.min_quantity ? ' · từ ' + p.min_quantity + ' sp' : '' %>
+              <% if (p.scope_type !== 'all') { %> · <%= p.scope_type === 'category' ? 'theo danh mục' : 'theo sản phẩm' %><% } %>
+              <div style="color:#71717a;"><%= p.require_code ? 'Cần mã: ' + (p.code || '') : 'Tự động áp dụng' %></div>
+            </td>
+            <td style="font-size:12px;"><%= p.starts_at || '—' %> → <%= p.expires_at || '—' %></td>
+            <td style="font-size:12px;"><%= p.is_active ? 'Đang bật' : 'Đã tắt' %></td>
+            <td>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <a href="/admin/khuyen-mai?sua=<%= p.id %>#promo-form" class="admin-btn admin-btn--outline" style="padding:4px 10px;">Sửa</a>
+                <form action="/admin/khuyen-mai/<%= p.id %>/an-hien" method="post"><button class="admin-btn admin-btn--outline" style="padding:4px 10px;"><%= p.is_active ? 'Tắt' : 'Bật' %></button></form>
+                <form action="/admin/khuyen-mai/<%= p.id %>/xoa" method="post" onsubmit="return confirm('Xoá chương trình này?');"><button class="admin-btn admin-btn--danger" style="padding:4px 10px;">Xoá</button></form>
+              </div>
+            </td>
+          </tr>
+        <% }); %>
+        </tbody>
+      </table>
+      <% } %>
+      <p class="admin-hint" style="margin-top:10px;">Mã giảm giá cũ vẫn dùng được ở mục <a href="/admin/ma-giam-gia">Mã giảm giá</a>; hệ thống sẽ chọn mức giảm tốt nhất giữa mã đó và các chương trình ở đây.</p>
+    </div>
+  </main>
+</div>
+<script>
+(function () {
+  var form = document.querySelector('[data-promo-form]');
+  if (!form) return;
+  var kind = form.querySelector('[data-promo-kind]');
+  var scope = form.querySelector('[data-promo-scope]');
+  var need = form.querySelector('[data-promo-needcode]');
+  function sync() {
+    var k = kind.value;
+    form.querySelectorAll('[data-show-for]').forEach(function (el) {
+      el.style.display = el.getAttribute('data-show-for').split(' ').indexOf(k) !== -1 ? '' : 'none';
+    });
+    var sc = scope ? scope.value : 'all';
+    form.querySelectorAll('[data-scope-box]').forEach(function (el) {
+      el.style.display = (k === 'product_discount' && el.getAttribute('data-scope-box') === sc) ? 'flex' : 'none';
+    });
+    form.querySelector('[data-code-box]').style.display = need.checked ? '' : 'none';
+  }
+  kind.addEventListener('change', sync);
+  if (scope) scope.addEventListener('change', sync);
+  need.addEventListener('change', sync);
+  sync();
+})();
+</script>
+</body>
+</html>

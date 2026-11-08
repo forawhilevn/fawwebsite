@@ -1,6 +1,7 @@
 const db = require('../db');
 const { localizeProduct } = require('../utils/i18n');
 const { getLookbookImages } = require('../utils/assets');
+const pageController = require('./pageController');
 
 async function showArchive(req, res, next) {
   try {
@@ -16,7 +17,7 @@ async function showArchive(req, res, next) {
       .filter((section) => section.images.length > 0);
 
     res.render('archive', {
-      title: `Archive — FOR A WHILE`,
+      title: `Lookbook — FOR A WHILE`,
       bodyClass: 'page-archive',
       banners,
       lookbookSections
@@ -26,24 +27,30 @@ async function showArchive(req, res, next) {
   }
 }
 
-function showAbout(req, res) {
-  res.render('about', {
-    title: `About — FOR A WHILE`,
-    bodyClass: 'page-about'
+function showAbout(req, res, next) {
+  pageController.managed('about', req, res, next, () => {
+    res.render('about', {
+      title: `About — FOR A WHILE`,
+      bodyClass: 'page-about'
+    });
   });
 }
 
-function showShippingPolicy(req, res) {
-  res.render('shipping-policy', {
-    title: `${res.locals.t('nav.shippingPolicy')} — FOR A WHILE`,
-    bodyClass: 'page-policy'
+function showShippingPolicy(req, res, next) {
+  pageController.managed('shipping-policy', req, res, next, () => {
+    res.render('shipping-policy', {
+      title: `${res.locals.t('nav.shippingPolicy')} — FOR A WHILE`,
+      bodyClass: 'page-policy'
+    });
   });
 }
 
-function showReturnPolicy(req, res) {
-  res.render('return-policy', {
-    title: `${res.locals.t('nav.returnPolicy')} — FOR A WHILE`,
-    bodyClass: 'page-policy'
+function showReturnPolicy(req, res, next) {
+  pageController.managed('return-policy', req, res, next, () => {
+    res.render('return-policy', {
+      title: `${res.locals.t('nav.returnPolicy')} — FOR A WHILE`,
+      bodyClass: 'page-policy'
+    });
   });
 }
 

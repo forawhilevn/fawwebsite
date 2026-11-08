@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="<%= locale %>">
+<head>
+<%- include('partials/head') %>
+</head>
+<body class="<%= bodyClass %>" data-barba="wrapper">
+<%- include('partials/preloader') %>
+<div data-barba="container" data-barba-namespace="stores">
+<%- include('partials/header') %>
+
+<main>
+  <div class="page-shell page-shell--light">
+    <div class="container">
+      <h1 class="page-title"><%= t('stores.title') %></h1>
+
+      <% if (stores.length === 0) { %>
+        <p><%= t('stores.empty') %></p>
+      <% } else { %>
+        <p class="stores-intro"><%= t('stores.intro') %></p>
+
+        <% if (cities.length > 1) { %>
+          <div class="stores-filter" role="tablist">
+            <button type="button" class="stores-chip is-active" data-store-city="">
+              <%= t('stores.all') %>
+            </button>
+            <% cities.forEach(function(c) { %>
+              <button type="button" class="stores-chip" data-store-city="<%= c %>"><%= c %></button>
+            <% }); %>
+          </div>
+        <% } %>
+
+        <div class="stores-list">
+          <% stores.forEach(function(s) { %>
+            <article class="store-card" data-store-card data-city="<%= s.city || '' %>">
+              <div class="store-media">
+                <div class="store-slider" data-store-slider>
+                  <div class="store-slider__track" data-slider-track>
+                    <% if (s.imageList.length) { s.imageList.forEach(function(u) { %>
+                      <img src="<%= u %>" alt="<%= s.name %>" loading="lazy" />
+                    <% }); } else { %>
+                      <img src="/images/logo/logo-mark.png" alt="" class="is-placeholder" />
+                    <% } %>
+                  </div>
+                  <% if (s.imageList.length > 1) { %>
+                    <button type="button" class="store-slider__nav store-slider__nav--prev" data-slider-prev aria-label="Prev">&lsaquo;</button>
+                    <button type="button" class="store-slider__nav store-slider__nav--next" data-slider-next aria-label="Next">&rsaquo;</button>
+                    <div class="store-slider__dots" data-slider-dots>
+                      <% s.imageList.forEach(function(u, i) { %><span class="<%= i === 0 ? 'is-on' : '' %>"></span><% }); %>
+                    </div>
+                  <% } %>
+                </div>
+                <div class="store-mapbox">
+                  <iframe title="Map" data-map-frame data-src="<%= s.embed %>" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+                </div>
+              </div>
+              <div class="store-card__body">
+                <h2 class="store-card__name"><%= s.name %></h2>
+                <% if (s.is_closed) { %><span class="store-card__tag"><%= t('stores.closed') %></span><% } %>
+                <% if (s.address) { %><p class="store-card__line"><%= s.address %><% if (s.city) { %>, <%= s.city %><% } %></p><% } %>
+                <% if (s.hours) { %><p class="store-card__line store-card__line--muted"><%= t('stores.hours') %>: <%= s.hours %></p><% } %>
+                <% if (s.note) { %><p class="store-card__note"><%= s.note %></p><% } %>
+                <div class="store-card__actions">
+                  <button type="button" class="store-btn store-btn--primary" data-store-map-toggle data-label-map="<%= t('stores.viewMap') %>" data-label-photos="<%= t('stores.viewPhotos') %>"><%= t('stores.viewMap') %></button>
+                  <% if (s.phoneHref) { %><a class="store-btn" href="tel:<%= s.phoneHref %>"><%= t('stores.call') %> <%= s.phone %></a><% } %>
+                  <% if (s.instagramUrl) { %><a class="store-btn" href="<%= s.instagramUrl %>" target="_blank" rel="noopener">Instagram</a><% } %>
+                  <% if (s.facebookUrl) { %><a class="store-btn" href="<%= s.facebookUrl %>" target="_blank" rel="noopener">Facebook</a><% } %>
+                </div>
+              </div>
+            </article>
+          <% }); %>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>
+</div>
+<%- include('partials/scripts') %>
+</body>
+</html>

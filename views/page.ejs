@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="<%= locale %>">
+<head>
+<%- include('partials/head') %>
+</head>
+<body class="<%= bodyClass %>" data-barba="wrapper">
+<%- include('partials/preloader') %>
+<div data-barba="container" data-barba-namespace="page-<%= namespace %>">
+<%- include('partials/header') %>
+
+<main>
+<% if (layout === 'about') { %>
+  <section class="section" style="min-height: 70vh; display:flex; align-items:center;">
+    <div class="container about-layout <%= mascot ? 'has-image' : '' %>">
+      <div class="about-content" style="max-width: 760px;" data-reveal>
+        <%- pageHtml %>
+      </div>
+      <% if (mascot) { %>
+      <div class="about-image" data-reveal>
+        <img src="<%= mascot %>" alt="" loading="lazy" />
+      </div>
+      <% } %>
+    </div>
+  </section>
+<% } else { %>
+  <div class="page-shell--light">
+    <div class="policy-layout" style="<%= mascot ? '' : 'grid-template-columns: minmax(0, 760px);' %>">
+      <div class="policy-content" data-reveal>
+        <% if (pageHtml.indexOf('<h1') === -1) { %><h1 class="policy-title"><%= pageTitle %></h1><% } %>
+        <%- pageHtml %>
+      </div>
+      <% if (mascot) { %>
+      <div class="policy-mascot" data-reveal>
+        <img src="<%= mascot %>" alt="" loading="lazy" />
+      </div>
+      <% } %>
+    </div>
+  </div>
+<% } %>
+</main>
+
+<%- include('partials/footer') %>
+</div>
+<%- include('partials/scripts') %>
+</body>
+</html>

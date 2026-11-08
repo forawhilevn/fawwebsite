@@ -36,7 +36,14 @@
           <tr class="<%= b.id === firstActiveId ? 'is-live' : '' %>" style="<%= b.is_active ? '' : 'opacity:.6;' %>">
             <td class="hero-table__info">
               <div class="hero-item__status">#<%= i + 1 %> · <%= b.id === firstActiveId ? 'ĐANG HIỂN THỊ' : (b.is_active ? 'Đang bật (chờ)' : 'Đang ẩn') %></div>
-              <% if (b.title_vi) { %><div class="hero-item__title"><%= b.title_vi %></div><% } %>
+              <form action="/admin/banner/chinh/<%= b.id %>/tieu-de" method="post" class="admin-form" style="margin-top:8px;">
+                <label style="font-size:11px;">Chữ lớn trên ảnh (VI)</label>
+                <input type="text" name="titleVi" value="<%= b.title_vi || '' %>" maxlength="200" placeholder="Để trống = không hiện chữ" />
+                <label style="font-size:11px; margin-top:6px;">Chữ lớn trên ảnh (EN)</label>
+                <input type="text" name="titleEn" value="<%= b.title_en || '' %>" maxlength="200" />
+                <p class="admin-hint" style="margin:4px 0;">Để trống và lưu thì không hiện chữ trên ảnh. Chữ tự xuống dòng theo độ rộng.</p>
+                <button type="submit" class="admin-btn admin-btn--outline" style="font-size:11px; padding:4px 10px;">Lưu chữ</button>
+              </form>
             </td>
             <td class="hero-cell">
               <% if (hasDesktop) { %>
@@ -107,9 +114,9 @@
     </div>
 
     <div class="admin-card">
-      <h2 style="margin-top:0; font-size:16px;">Trang Archive — ảnh bổ sung</h2>
+      <h2 style="margin-top:0; font-size:16px;">Trang Lookbook — ảnh bổ sung</h2>
       <p style="font-size:13px; color:#71717a; margin-top:-4px;">
-        Vị trí: cuối <a href="/archive" target="_blank">trang Archive</a>, hiện dạng lưới 2 cột bên dưới các bộ lookbook của sản phẩm. Ảnh vuông 800×800.
+        Vị trí: cuối <a href="/archive" target="_blank">trang Lookbook</a>, hiện dạng lưới 2 cột bên dưới các bộ lookbook của sản phẩm. Ảnh vuông 800×800.
       </p>
       <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px;">
         <% archiveBanners.forEach(function(b) { %>

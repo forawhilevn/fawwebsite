@@ -1,5 +1,8 @@
 const db = require('../db');
 
+// Max units of one variant per order
+const MAX_QTY = 3;
+
 function ensureCart(req) {
   if (!req.session.cart) {
     req.session.cart = {};
@@ -10,7 +13,7 @@ function ensureCart(req) {
 function addItem(req, variantId, quantity) {
   const cart = ensureCart(req);
   const id = String(variantId);
-  cart[id] = (cart[id] || 0) + quantity;
+  cart[id] = Math.min(MAX_QTY, (cart[id] || 0) + quantity);
   if (cart[id] < 1) delete cart[id];
 }
 
@@ -20,7 +23,7 @@ function setQuantity(req, variantId, quantity) {
   if (quantity <= 0) {
     delete cart[id];
   } else {
-    cart[id] = quantity;
+    cart[id] = Math.min(MAX_QTY, quantity);
   }
 }
 
@@ -65,7 +68,9 @@ async function getCartDetails(req, locale) {
   let subtotal = 0;
   let count = 0;
 
-  for (const [idStr, qty] of Object.entries(cart)) {
+  for (const [idStr, rawQty] of Object.entries(cart)) {
+    const qty = Math.min(MAX_QTY, Number(rawQty) || 0);
+    if (qty < 1) continue;
     const variant = variantMap.get(Number(idStr));
     if (!variant) continue;
     const product = productMap.get(variant.product_id);
@@ -100,5 +105,6 @@ module.exports = {
   removeItem,
   clearCart,
   cartCount,
-  getCartDetails
+  getCartDetails,
+  MAX_QTY
 };

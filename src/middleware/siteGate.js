@@ -19,6 +19,9 @@ function siteGate(req, res, next) {
     title: 'FOR A WHILE',
     bodyClass: 'page-maintenance',
     closedTitle: (isEn ? settings.closed_title_en : settings.closed_title_vi) || settings.closed_title_vi,
+    mediaDesktop: settings.closed_media_desktop || '',
+    mediaMobile: settings.closed_media_mobile || settings.closed_media_desktop || '',
+    showText: settings.closed_show_text !== '0',
     closedMessage: (isEn ? settings.closed_message_en : settings.closed_message_vi) || settings.closed_message_vi
   });
 }

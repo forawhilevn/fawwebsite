@@ -1,7 +1,7 @@
 {
   "nav.menu": "Menu",
-  "nav.shop": "Shop",
-  "nav.archive": "Archive",
+  "nav.shop": "Shops",
+  "nav.archive": "Lookbook",
   "nav.lookbook": "Lookbook",
   "nav.cart": "Giỏ hàng",
   "nav.search": "Tìm kiếm",
@@ -10,7 +10,6 @@
   "nav.contact": "Liên hệ",
   "nav.shippingPolicy": "Chính sách vận chuyển",
   "nav.returnPolicy": "Chính sách đổi trả",
-
   "home.newArrivals": "SẢN PHẨM MỚI",
   "home.allProducts": "TẤT CẢ SẢN PHẨM",
   "home.featured": "NỔI BẬT",
@@ -19,7 +18,6 @@
   "home.taglineLine1": "FROM ANOTHER WORLD",
   "home.taglineLine2": "Where perspective is personal.",
   "home.videoIntroEnter": "VÀO SHOP",
-
   "shop.title": "SẢN PHẨM",
   "shop.filter.availability": "Tình trạng",
   "shop.filter.category": "Danh mục",
@@ -31,7 +29,6 @@
   "shop.itemsCount": "sản phẩm",
   "shop.soldOut": "SOLD OUT",
   "shop.empty": "Chưa có sản phẩm nào trong danh mục này.",
-
   "product.selectSize": "Chọn size",
   "product.selectColor": "Chọn màu",
   "product.sizeGuide": "Bảng size",
@@ -40,7 +37,6 @@
   "product.description": "Mô tả",
   "product.relatedProducts": "SẢN PHẨM LIÊN QUAN",
   "product.pleaseSelectVariant": "Vui lòng chọn size trước khi thêm vào giỏ.",
-
   "cart.title": "GIỎ HÀNG",
   "cart.empty": "Giỏ hàng của bạn đang trống.",
   "cart.continueShopping": "Tiếp tục mua sắm",
@@ -55,13 +51,14 @@
   "product.inCart": "TRONG GIỎ",
   "product.selectSizeBtn": "CHỌN SIZE",
   "product.zoom": "Phóng to ảnh",
+  "product.selectColorBtn": "CHỌN MÀU",
+  "product.selectSizeColorBtn": "CHỌN SIZE / MÀU",
   "product.back": "QUAY LẠI",
   "product.close": "ĐÓNG",
   "cart.viewCart": "XEM GIỎ HÀNG",
   "cart.item": "sản phẩm",
   "cart.items": "sản phẩm",
   "cart.addError": "Không thể cập nhật giỏ hàng, vui lòng thử lại.",
-
   "checkout.title": "THANH TOÁN",
   "checkout.customerInfo": "Thông tin nhận hàng",
   "checkout.fullName": "Họ và tên",
@@ -76,7 +73,6 @@
   "checkout.applyDiscount": "Áp dụng",
   "checkout.placeOrder": "ĐẶT HÀNG",
   "checkout.orderSummary": "Đơn hàng của bạn",
-
   "order.confirmationTitle": "ĐẶT HÀNG THÀNH CÔNG",
   "order.code": "Mã đơn hàng",
   "order.scanToPay": "Quét mã để chuyển khoản",
@@ -86,13 +82,32 @@
   "order.transferNote": "Nội dung chuyển khoản",
   "order.codInstructions": "Vui lòng chuẩn bị đúng số tiền khi shipper giao hàng.",
   "order.backToHome": "Về trang chủ",
-
-
   "footer.instagram": "Instagram",
   "footer.rightsReserved": "Bản quyền thuộc về FOR A WHILE",
-
   "error.title": "Đã có lỗi xảy ra",
   "error.message": "Hệ thống đang gặp sự cố, vui lòng thử lại sau.",
   "error.notFoundTitle": "Không tìm thấy trang",
-  "error.notFoundMessage": "Trang bạn tìm không tồn tại hoặc đã bị gỡ bỏ."
+  "error.notFoundMessage": "Trang bạn tìm không tồn tại hoặc đã bị gỡ bỏ.",
+  "nav.stores": "Cửa hàng",
+  "stores.title": "Cửa hàng",
+  "stores.intro": "Tìm nơi mua FAW gần bạn.",
+  "stores.all": "Tất cả",
+  "stores.viewMap": "Xem bản đồ",
+  "stores.call": "Gọi",
+  "stores.hours": "Giờ mở cửa",
+  "stores.closed": "Tạm đóng",
+  "stores.empty": "Chưa có cửa hàng nào.",
+  "cart.freeshipMore": "Mua thêm {amount} để được freeship",
+  "cart.freeshipDone": "Đơn của bạn được miễn phí ship",
+  "cart.shippingAtCheckout": "Tính ở bước thanh toán",
+  "checkout.shipping": "Phí vận chuyển",
+  "checkout.free": "Miễn phí",
+  "checkout.zone": "Khu vực giao hàng",
+  "checkout.chooseZone": "Chọn khu vực",
+  "checkout.zoneHcm": "TP. Hồ Chí Minh",
+  "checkout.zoneOther": "Tỉnh / thành khác",
+  "checkout.zoneRequired": "Vui lòng chọn khu vực giao hàng.",
+  "checkout.codeInvalid": "Mã không hợp lệ hoặc chưa đủ điều kiện.",
+  "cart.nextPromo": "Mua thêm {amount} để được: {offer}",
+  "stores.viewPhotos": "Xem ảnh"
 }

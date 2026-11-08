@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title><%= title %></title>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+  <%- include('../partials/admin-sidebar') %>
+  <main class="admin-main">
+    <h1>Banner phụ (2 banner video)</h1>
+    <% if (saved === 'ok') { %><p style="background:#dcfce7; color:#166534; padding:10px 14px; border-radius:6px;">Đã lưu.</p><% } %>
+    <% if (saved === 'error') { %><p class="admin-error" style="background:#fee2e2;"><%= msg || 'Tải file thất bại' %></p><% } %>
+
+    <div class="admin-card">
+      <h2 style="margin-top:0; font-size:16px;">Hai banner nằm ngang dưới header</h2>
+      <p style="font-size:13px; color:#71717a;">
+        Hiển thị ở <a href="/" target="_blank">trang chủ</a> (dưới banner chính) và <a href="/shop" target="_blank">trang Shops</a> (trên danh sách sản phẩm).
+        Máy tính: 2 banner nằm ngang cạnh nhau. Điện thoại: xếp dọc, mỗi banner full chiều rộng.
+      </p>
+      <p style="font-size:13px; background:#fef3c7; color:#92400e; padding:8px 12px; border-radius:6px;">
+        <strong>Kích thước đề xuất: 1600 × 400 px (tỷ lệ 4:1)</strong> cho mỗi banner, dùng chung cho desktop và mobile. Banner luôn giữ đúng tỷ lệ này ở mọi màn hình, và chiếm full chiều ngang (2 banner cạnh nhau trên màn hình rộng, tự xuống dòng thành 1 cột khi màn hình hẹp).
+        Video: .mp4 (H.264), 1600×400, 5–15 giây, lặp lại, <strong>dưới 5MB</strong> (tự tắt tiếng). Ảnh: .jpg/.webp 1600×400.
+      </p>
+      <form action="/admin/banner-phu/luu" method="post" enctype="multipart/form-data" class="admin-form">
+        <label style="display:flex; align-items:center; gap:8px; text-transform:none; letter-spacing:0;"><input type="checkbox" name="enabled" value="1" <%= s.subbanner_enabled !== '0' ? 'checked' : '' %> style="width:auto;" /> Bật banner phụ</label>
+        <label style="display:flex; align-items:center; gap:8px; text-transform:none; letter-spacing:0;"><input type="checkbox" name="home" value="1" <%= s.subbanner_home !== '0' ? 'checked' : '' %> style="width:auto;" /> Hiện ở trang chủ</label>
+        <label style="display:flex; align-items:center; gap:8px; text-transform:none; letter-spacing:0;"><input type="checkbox" name="shop" value="1" <%= s.subbanner_shop !== '0' ? 'checked' : '' %> style="width:auto;" /> Hiện ở trang Shops</label>
+
+        <div class="intro-grid" style="margin-top:16px;">
+        <% [1, 2].forEach(function(n) { var url = s['subbanner_' + n + '_media']; var isVideo = /\.(mp4|webm|m4v|mov)$/i.test(url || ''); %>
+          <div class="intro-box">
+            <h3>Banner <%= n %> (<%= n === 1 ? 'trái' : 'phải' %>)</h3>
+            <% if (url) { %>
+              <div class="intro-slot">
+                <% if (isVideo) { %><video src="<%= url %>" muted controls playsinline preload="metadata" class="intro-slot__video"></video>
+                <% } else { %><img src="<%= url %>" alt="" class="intro-slot__video" style="object-fit:contain;" /><% } %>
+                <div class="intro-slot__file"><%= url.split('/').pop() %></div>
+                <label style="text-transform:none; letter-spacing:0; display:flex; gap:6px; align-items:center; font-size:12px;"><input type="checkbox" name="remove<%= n %>" value="1" style="width:auto;" /> Xoá banner này</label>
+              </div>
+            <% } else { %><div class="intro-slot"><div class="intro-slot__empty">Chưa có</div></div><% } %>
+            <label style="margin-top:8px;"><%= url ? 'Thay bằng file mới' : 'Chọn ảnh / video' %></label>
+            <input type="file" name="media<%= n %>" accept="image/*,video/*,.mov" data-media-preview="#sub-preview-<%= n %>" />
+            <div class="intro-slot" id="sub-preview-<%= n %>" hidden style="margin-top:8px;"></div>
+            <label style="margin-top:8px;">Link khi bấm banner (không bắt buộc)</label>
+            <input type="text" name="link<%= n %>" value="<%= s['subbanner_' + n + '_link'] %>" placeholder="/shop hoặc https://..." />
+          </div>
+        <% }); %>
+        </div>
+        <button type="submit" class="admin-btn" style="margin-top:16px; padding:12px 28px;">Lưu tất cả</button>
+      </form>
+    </div>
+  </main>
+</div>
+<script>
+(function () {
+  // preview of a chosen image / video before uploading
+  document.addEventListener('change', function (e) {
+    var input = e.target;
+    if (!input.matches || !input.matches('input[type="file"][data-media-preview]')) return;
+    var box = document.querySelector(input.getAttribute('data-media-preview'));
+    if (!box) return;
+    if (box._url) { URL.revokeObjectURL(box._url); box._url = null; }
+    box.innerHTML = '';
+    var f = input.files && input.files[0];
+    box.hidden = !f;
+    if (!f) return;
+    box._url = URL.createObjectURL(f);
+    var isVideo = /^video\//.test(f.type) || /\.(mp4|webm|m4v|mov)$/i.test(f.name);
+    var el = document.createElement(isVideo ? 'video' : 'img');
+    el.src = box._url;
+    el.className = 'intro-slot__video';
+    if (isVideo) { el.muted = true; el.controls = true; el.playsInline = true; el.preload = 'metadata'; } else { el.style.objectFit = 'contain'; }
+    var label = document.createElement('div');
+    label.className = 'intro-slot__file';
+    label.textContent = 'Xem trước (chưa tải lên): ' + f.name;
+    box.appendChild(el);
+    box.appendChild(label);
+  });
+})();
+</script>
+</body>
+</html>

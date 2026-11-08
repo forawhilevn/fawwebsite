@@ -3,6 +3,8 @@ const db = require('../db');
 const cartService = require('../services/cart');
 const paymentService = require('../services/payment');
 const discountService = require('../services/discount');
+const pricingService = require('../services/pricing');
+const { ensurePromoSchema } = require('../services/promoSchema');
 const { generateOrderCode } = require('../utils/format');
 
 async function showCheckout(req, res, next) {
@@ -11,16 +13,38 @@ async function showCheckout(req, res, next) {
     if (cart.items.length === 0) {
       return res.redirect('/cart');
     }
+    const pricing = await pricingService.computePricing({ cart, zone: null, codeInput: '', locale: res.locals.locale });
 
     res.render('checkout', {
       title: `${res.locals.t('checkout.title')} — FOR A WHILE`,
       bodyClass: 'page-checkout',
       cart,
+      pricing,
       methods: paymentService.listMethods(res.locals.t),
       errors: [],
       formData: {},
       discount: null
     });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// Live totals while the customer picks a shipping zone / types a code.
+async function quote(req, res, next) {
+  try {
+    const cart = await cartService.getCartDetails(req, res.locals.locale);
+    if (cart.items.length === 0) return res.json({ ok: false });
+    const pricing = await pricingService.computePricing({
+      cart,
+      zone: req.query.zone,
+      codeInput: req.query.code,
+      locale: res.locals.locale
+    });
+    const html = await new Promise((resolve, reject) => {
+      res.render('partials/checkout-totals', { pricing }, (err, out) => (err ? reject(err) : resolve(out)));
+    });
+    res.json({ ok: true, html });
   } catch (err) {
     next(err);
   }
@@ -35,33 +59,38 @@ const checkoutValidators = [
 
 async function submitOrder(req, res, next) {
   try {
+    await ensurePromoSchema();
     const cart = await cartService.getCartDetails(req, res.locals.locale);
     if (cart.items.length === 0) {
       return res.redirect('/cart');
     }
 
-    const errors = validationResult(req);
+    const errors = validationResult(req).array();
+    if (pricingService.ZONES.indexOf(req.body.shippingZone) === -1) {
+      errors.push({ path: 'shippingZone', msg: res.locals.t('checkout.zoneRequired') });
+    }
 
-    const discountCode = (req.body.discountCode || '').trim();
-    const discountRow = discountCode
-      ? await discountService.findValidCode(discountCode, cart.subtotal)
-      : null;
-    const discountAmount = discountService.computeDiscountAmount(discountRow, cart.subtotal);
+    const pricing = await pricingService.computePricing({
+      cart,
+      zone: req.body.shippingZone,
+      codeInput: req.body.discountCode,
+      locale: res.locals.locale
+    });
 
-    if (!errors.isEmpty()) {
+    if (errors.length > 0) {
       return res.status(400).render('checkout', {
         title: `${res.locals.t('checkout.title')} — FOR A WHILE`,
         bodyClass: 'page-checkout',
         cart,
+        pricing,
         methods: paymentService.listMethods(res.locals.t),
-        errors: errors.array(),
+        errors,
         formData: req.body,
-        discount: discountRow ? { code: discountRow.code, amount: discountAmount } : null
+        discount: null
       });
     }
 
     const orderCode = generateOrderCode();
-    const total = Math.max(0, cart.subtotal - discountAmount);
 
     const [orderId] = await db('orders')
       .insert({
@@ -74,10 +103,13 @@ async function submitOrder(req, res, next) {
         payment_method: req.body.paymentMethod,
         payment_status: 'unpaid',
         status: 'pending',
-        discount_code_id: discountRow ? discountRow.id : null,
-        discount_amount: discountAmount,
+        discount_code_id: pricing.codeRow ? pricing.codeRow.id : null,
+        discount_amount: pricing.discountAmount,
         subtotal: cart.subtotal,
-        total,
+        shipping_fee: pricing.shippingFee || 0,
+        shipping_zone: pricing.zone,
+        promo_note: pricing.note || null,
+        total: pricing.total,
         locale: res.locals.locale
       })
       .returning('id');
@@ -95,8 +127,8 @@ async function submitOrder(req, res, next) {
       });
     }
 
-    if (discountRow) {
-      await discountService.markUsed(discountRow.id);
+    if (pricing.codeRow) {
+      await discountService.markUsed(pricing.codeRow.id);
     }
 
     cartService.clearCart(req);
@@ -134,4 +166,4 @@ async function showConfirmation(req, res, next) {
   }
 }
 
-module.exports = { showCheckout, checkoutValidators, submitOrder, showConfirmation };
+module.exports = { showCheckout, quote, checkoutValidators, submitOrder, showConfirmation };

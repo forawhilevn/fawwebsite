@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title><%= title %></title>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+  <%- include('../partials/admin-sidebar') %>
+  <main class="admin-main">
+    <h1>Cửa hàng</h1>
+    <% if (error) { %><p class="admin-error"><%= error %></p><% } %>
+    <% var e = editing || {}; %>
+
+    <div class="admin-card" id="store-form">
+      <h2 class="admin-card__title"><%= editing ? 'Sửa cửa hàng' : 'Thêm cửa hàng' %> <span>Hiển thị ở trang <a href="/stores" target="_blank">/stores</a></span></h2>
+      <form action="<%= editing ? '/admin/dai-ly/' + e.id + '/sua' : '/admin/dai-ly/moi' %>" method="post" enctype="multipart/form-data" class="admin-form">
+        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+          <div style="flex:1; min-width:220px;"><label>Tên (VI) *</label><input type="text" name="nameVi" value="<%= e.name_vi || '' %>" required /></div>
+          <div style="flex:1; min-width:220px;"><label>Tên (EN)</label><input type="text" name="nameEn" value="<%= e.name_en || '' %>" /></div>
+        </div>
+        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+          <div style="flex:1; min-width:160px;"><label>Thành phố / tỉnh (dùng để lọc)</label><input type="text" name="city" value="<%= e.city || '' %>" placeholder="VD: Hồ Chí Minh" /></div>
+          <div style="flex:1; min-width:160px;"><label>Số điện thoại</label><input type="text" name="phone" value="<%= e.phone || '' %>" /></div>
+        </div>
+        <label>Địa chỉ</label>
+        <input type="text" name="address" value="<%= e.address || '' %>" placeholder="Số nhà, đường, phường, quận" />
+        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+          <div style="flex:1; min-width:220px;"><label>Giờ mở cửa</label><input type="text" name="hours" value="<%= e.hours || '' %>" placeholder="9:00 - 21:00 hằng ngày" /></div>
+          <div style="flex:1; min-width:220px;"><label>Toạ độ Google Maps (không bắt buộc)</label><input type="text" name="latLng" value="<%= e.lat_lng || '' %>" placeholder="10.7769,106.7009" /></div>
+        </div>
+        <label>Link Google Maps (không bắt buộc)</label>
+        <input type="text" name="mapsUrl" value="<%= e.maps_url || '' %>" placeholder="https://maps.app.goo.gl/..." />
+        <p class="admin-hint">Bản đồ hiển thị theo toạ độ nếu có, nếu không thì theo địa chỉ. Nếu bản đồ ghim chưa đúng chỗ, hãy nhập toạ độ (chuột phải vào điểm trên Google Maps &rarr; bấm vào dòng toạ độ để sao chép).</p>
+        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+          <div style="flex:1; min-width:220px;"><label>Instagram (@tên hoặc link)</label><input type="text" name="instagram" value="<%= e.instagram || '' %>" /></div>
+          <div style="flex:1; min-width:220px;"><label>Facebook (link)</label><input type="text" name="facebook" value="<%= e.facebook || '' %>" /></div>
+        </div>
+        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+          <div style="flex:1; min-width:220px;"><label>Ghi chú (VI)</label><textarea name="noteVi" rows="2" maxlength="600"><%= e.note_vi || '' %></textarea></div>
+          <div style="flex:1; min-width:220px;"><label>Ghi chú (EN)</label><textarea name="noteEn" rows="2" maxlength="600"><%= e.note_en || '' %></textarea></div>
+        </div>
+        <% var imgs = []; try { imgs = JSON.parse(e.images || '[]'); } catch (x) {} if (!imgs.length && e.image_url) imgs = [e.image_url]; %>
+        <label>Ảnh cửa hàng (tối đa 5 ảnh, tự cắt tỷ lệ 4:5, hiển thị dạng slide lướt ngang)</label>
+        <% if (imgs.length) { %>
+          <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:8px;">
+            <% imgs.forEach(function(u, i) { %>
+              <div style="text-align:center; font-size:12px;">
+                <img src="<%= u %>" alt="" style="width:80px; height:100px; object-fit:cover; border-radius:6px; display:block;" />
+                <label style="text-transform:none; letter-spacing:0; display:flex; gap:4px; align-items:center; justify-content:center; margin-top:4px;"><input type="checkbox" name="removeImg" value="<%= u %>" style="width:auto;" /> Xoá<%= i === 0 ? ' (ảnh đầu)' : '' %></label>
+              </div>
+            <% }); %>
+          </div>
+        <% } %>
+        <input type="file" name="images" accept="image/*" multiple data-preview="#preview-store" />
+        <div class="thumbs thumbs--preview" id="preview-store" hidden></div>
+        <p class="admin-hint">Ảnh mới sẽ được thêm vào sau các ảnh hiện có. Ảnh đầu tiên là ảnh hiển thị đầu slide.</p>
+        <label style="display:flex; align-items:center; gap:8px; text-transform:none; letter-spacing:0; margin-top:12px;">
+          <input type="checkbox" name="isClosed" value="1" <%= e.is_closed ? 'checked' : '' %> style="width:auto;" /> Đang tạm đóng cửa (hiện nhãn "Tạm đóng")
+        </label>
+        <div style="margin-top:12px; display:flex; gap:10px;">
+          <button type="submit" class="admin-btn"><%= editing ? 'Lưu thay đổi' : 'Thêm cửa hàng' %></button>
+          <% if (editing) { %><a href="/admin/dai-ly" class="admin-btn admin-btn--outline">Huỷ</a><% } %>
+        </div>
+      </form>
+    </div>
+
+    <div class="admin-card">
+      <h2 class="admin-card__title">Danh sách <span><%= stores.length %> cửa hàng · dùng ↑ ↓ để đổi thứ tự hiển thị</span></h2>
+      <% if (stores.length === 0) { %><p class="admin-hint">Chưa có cửa hàng nào.</p><% } else { %>
+      <table class="admin-table">
+        <thead><tr><th>Cửa hàng</th><th>Địa chỉ</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+        <tbody>
+        <% stores.forEach(function(s) { %>
+          <tr style="<%= s.is_active ? '' : 'opacity:.55;' %>">
+            <td>
+              <div style="display:flex; gap:10px; align-items:center;">
+                <% if (s.image_url) { %><img src="<%= s.image_url %>" alt="" style="width:40px; height:50px; object-fit:cover; border-radius:4px;" /><% } %>
+                <div><strong><%= s.name_vi %></strong><div style="font-size:12px; color:#71717a;"><%= s.city || '' %></div></div>
+              </div>
+            </td>
+            <td style="font-size:13px;"><%= s.address || '' %><% if (s.phone) { %><div style="color:#71717a;"><%= s.phone %></div><% } %></td>
+            <td style="font-size:12px;"><%= s.is_active ? 'Đang hiển thị' : 'Đang ẩn' %><% if (s.is_closed) { %><br /><span style="color:#eb252a;">Tạm đóng</span><% } %></td>
+            <td>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <form action="/admin/dai-ly/<%= s.id %>/len" method="post"><button class="admin-btn admin-btn--outline" style="padding:4px 10px;">↑</button></form>
+                <form action="/admin/dai-ly/<%= s.id %>/xuong" method="post"><button class="admin-btn admin-btn--outline" style="padding:4px 10px;">↓</button></form>
+                <a href="/admin/dai-ly?sua=<%= s.id %>#store-form" class="admin-btn admin-btn--outline" style="padding:4px 10px;">Sửa</a>
+                <form action="/admin/dai-ly/<%= s.id %>/an-hien" method="post"><button class="admin-btn admin-btn--outline" style="padding:4px 10px;"><%= s.is_active ? 'Ẩn' : 'Hiện' %></button></form>
+                <form action="/admin/dai-ly/<%= s.id %>/xoa" method="post" onsubmit="return confirm('Xoá cửa hàng này? Không thể hoàn tác.');"><button class="admin-btn admin-btn--danger" style="padding:4px 10px;">Xoá</button></form>
+              </div>
+            </td>
+          </tr>
+        <% }); %>
+        </tbody>
+      </table>
+      <% } %>
+    </div>
+  </main>
+</div>
+</body>
+</html>

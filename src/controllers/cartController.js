@@ -1,5 +1,6 @@
 const db = require('../db');
 const cartService = require('../services/cart');
+const pricingService = require('../services/pricing');
 
 function wantsJson(req) {
   return req.xhr || /application\/json/.test(req.get('accept') || '');
@@ -23,10 +24,14 @@ async function buildCartPayload(req, res) {
 async function showCart(req, res, next) {
   try {
     const cart = await cartService.getCartDetails(req, res.locals.locale);
+    const pricing = cart.items.length
+      ? await pricingService.computePricing({ cart, zone: null, codeInput: '', locale: res.locals.locale })
+      : null;
     res.render('cart', {
       title: `${res.locals.t('cart.title')} — FOR A WHILE`,
       bodyClass: 'page-cart',
-      cart
+      cart,
+      pricing
     });
   } catch (err) {
     next(err);

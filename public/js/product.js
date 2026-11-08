@@ -113,7 +113,8 @@
 
     qsa(root, '[data-color-option]').forEach(function (btn) {
       var value = btn.getAttribute('data-value');
-      var ok = available(v.size, value);
+      // a colour stays clickable if ANY size of it is in stock; clicking jumps to a size that exists
+      var ok = available(null, value);
       btn.classList.toggle('is-selected', value === v.color);
       btn.classList.toggle('is-soldout', !ok);
       btn.setAttribute('aria-pressed', value === v.color ? 'true' : 'false');

@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title><%= title %></title>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+  <%- include('../partials/admin-sidebar') %>
+  <main class="admin-main">
+    <h1><%= isNew ? 'Thêm trang mới' : 'Sửa: ' + page.title_vi %></h1>
+    <% if (error) { %><p class="admin-error"><%= error %></p><% } %>
+
+    <form action="<%= isNew ? '/admin/chinh-sach/moi' : '/admin/chinh-sach/' + page.slug + '/sua' %>" method="post" enctype="multipart/form-data" class="admin-form" data-page-form>
+      <div class="admin-card">
+        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+          <div style="flex:1; min-width:220px;"><label>Tiêu đề (VI) *</label><input type="text" name="titleVi" value="<%= page.title_vi %>" required /></div>
+          <div style="flex:1; min-width:220px;"><label>Tiêu đề (EN)</label><input type="text" name="titleEn" value="<%= page.title_en || '' %>" /></div>
+        </div>
+        <% if (isNew) { %>
+          <label>Địa chỉ trang (không bắt buộc)</label>
+          <input type="text" name="slug" placeholder="vd: chinh-sach-bao-mat" style="max-width:320px;" />
+        <% } %>
+        <div style="display:flex; gap:24px; flex-wrap:wrap; margin-top:10px;">
+          <label style="display:flex; align-items:center; gap:8px; text-transform:none; letter-spacing:0;"><input type="checkbox" name="isActive" value="1" <%= page.is_active ? 'checked' : '' %> style="width:auto;" /> Hiển thị trang</label>
+          <% if (!page.is_system) { %>
+          <label style="display:flex; align-items:center; gap:8px; text-transform:none; letter-spacing:0;"><input type="checkbox" name="showInFooter" value="1" <%= page.show_in_footer ? 'checked' : '' %> style="width:auto;" /> Gắn link ở chân trang (footer)</label>
+          <% } %>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <h2 class="admin-card__title">Hình hiển thị <span><%= page.slug === 'about' ? 'Hiện bên cạnh nội dung (mặc định: không có hình)' : 'Hiện ở bên phải nội dung' %></span></h2>
+        <% var cur = page.image_url; var shown = cur === 'none' ? '' : (cur || page.default_image); %>
+        <% if (shown) { %>
+          <div style="display:flex; gap:14px; align-items:center; margin-bottom:10px;">
+            <img src="<%= shown %>" alt="" style="max-width:160px; max-height:160px; object-fit:contain; border:1px solid #e4e4e7; border-radius:8px; background:#0a0a0a; padding:6px;" />
+            <div style="font-size:12px; color:#71717a;"><%= cur && cur !== 'none' ? 'Hình bạn đã tải lên' : 'Hình mặc định' %></div>
+          </div>
+        <% } else { %>
+          <p class="admin-hint"><%= cur === 'none' ? 'Đang ẩn hình.' : 'Chưa có hình.' %></p>
+        <% } %>
+        <label>Chọn hình mới (jpg, png, webp, gif - tối đa 8MB)</label>
+        <input type="file" name="image" accept="image/*" data-media-preview="#page-image-preview" />
+        <div class="intro-slot" id="page-image-preview" hidden style="margin-top:8px; max-width:320px;"></div>
+        <div style="display:flex; gap:20px; flex-wrap:wrap; margin-top:10px;">
+          <label style="display:flex; align-items:center; gap:6px; text-transform:none; letter-spacing:0;"><input type="radio" name="imageMode" value="keep" checked style="width:auto;" /> Giữ nguyên (hoặc dùng hình mới nếu đã chọn)</label>
+          <% if (page.default_image) { %><label style="display:flex; align-items:center; gap:6px; text-transform:none; letter-spacing:0;"><input type="radio" name="imageMode" value="default" style="width:auto;" /> Dùng lại hình mặc định</label><% } %>
+          <label style="display:flex; align-items:center; gap:6px; text-transform:none; letter-spacing:0;"><input type="radio" name="imageMode" value="hide" style="width:auto;" /> Không hiện hình</label>
+        </div>
+      </div>
+
+      <% [['vi','Nội dung tiếng Việt', page.content_vi],['en','Nội dung tiếng Anh (EN)', page.content_en]].forEach(function(l) { %>
+      <div class="admin-card" data-editor data-lang="<%= l[0] %>">
+        <h2 class="admin-card__title"><%= l[1] %> <span><%= l[0] === 'en' ? 'Để trống = hiển thị bản tiếng Việt' : '' %></span></h2>
+        <div class="rte-toolbar">
+          <button type="button" data-cmd="formatBlock" data-val="h1" title="Tiêu đề lớn">Tiêu đề</button>
+          <button type="button" data-cmd="formatBlock" data-val="h3" title="Tiêu đề mục">Mục</button>
+          <button type="button" data-cmd="formatBlock" data-val="p" title="Đoạn văn">Đoạn</button>
+          <span class="rte-sep"></span>
+          <button type="button" data-cmd="bold"><strong>B</strong></button>
+          <button type="button" data-cmd="italic"><em>I</em></button>
+          <button type="button" data-cmd="underline"><u>U</u></button>
+          <span class="rte-sep"></span>
+          <button type="button" data-cmd="insertUnorderedList">&bull; Danh sách</button>
+          <button type="button" data-cmd="insertOrderedList">1. Đánh số</button>
+          <span class="rte-sep"></span>
+          <button type="button" data-act="link">Link</button>
+          <button type="button" data-act="table">Bảng</button>
+          <button type="button" data-cmd="insertHorizontalRule">&mdash;</button>
+          <button type="button" data-cmd="removeFormat">Xoá định dạng</button>
+          <span class="rte-sep"></span>
+          <button type="button" data-cmd="undo">&larr;</button>
+          <button type="button" data-cmd="redo">&rarr;</button>
+          <button type="button" data-act="source" class="rte-source">Mã HTML</button>
+        </div>
+        <div class="rte-area policy-content" contenteditable="true" data-rte-area><%- l[2] || '' %></div>
+        <textarea name="content<%= l[0] === 'vi' ? 'Vi' : 'En' %>" class="rte-source-area" data-rte-source hidden rows="16"></textarea>
+      </div>
+      <% }); %>
+
+      <div style="display:flex; gap:10px; margin-bottom:40px;">
+        <button type="submit" class="admin-btn">Lưu trang</button>
+        <a href="/admin/chinh-sach" class="admin-btn admin-btn--outline">Quay lại</a>
+        <% if (!isNew && !page.is_system) { %><a href="/p/<%= page.slug %>" target="_blank" class="admin-btn admin-btn--outline">Xem trang</a><% } %>
+      </div>
+    </form>
+  </main>
+</div>
+<script>
+(function () {
+  var form = document.querySelector('[data-page-form]');
+  if (!form) return;
+  var dirty = false, submitting = false;
+
+  form.querySelectorAll('[data-editor]').forEach(function (box) {
+    var area = box.querySelector('[data-rte-area]');
+    var src = box.querySelector('[data-rte-source]');
+    var showingSource = false;
+
+    function focusArea() { if (!showingSource) area.focus(); }
+
+    box.querySelectorAll('.rte-toolbar button').forEach(function (btn) {
+      btn.addEventListener('mousedown', function (e) { e.preventDefault(); });
+      btn.addEventListener('click', function () {
+        var cmd = btn.getAttribute('data-cmd');
+        var act = btn.getAttribute('data-act');
+        if (act === 'source') {
+          if (!showingSource) { src.value = area.innerHTML; area.hidden = true; src.hidden = false; btn.classList.add('is-on'); }
+          else { area.innerHTML = src.value; src.hidden = true; area.hidden = false; btn.classList.remove('is-on'); }
+          showingSource = !showingSource;
+          return;
+        }
+        if (showingSource) return;
+        focusArea();
+        if (act === 'link') {
+          var url = prompt('Nhập link (https://...)');
+          if (url) document.execCommand('createLink', false, url);
+        } else if (act === 'table') {
+          document.execCommand('insertHTML', false,
+            '<table class="cart-table"><thead><tr><th>Cột 1</th><th>Cột 2</th></tr></thead><tbody>' +
+            '<tr><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td></tr></tbody></table><p><br></p>');
+        } else if (cmd === 'formatBlock') {
+          document.execCommand('formatBlock', false, btn.getAttribute('data-val'));
+        } else if (cmd) {
+          document.execCommand(cmd, false, null);
+        }
+        dirty = true;
+      });
+    });
+    area.addEventListener('input', function () { dirty = true; });
+    src.addEventListener('input', function () { dirty = true; });
+
+    // on submit: whichever view is active is what gets saved
+    box._collect = function () {
+      if (!showingSource) src.value = area.innerHTML;
+      src.hidden = false; // make sure the textarea is submitted
+      return true;
+    };
+  });
+
+  form.addEventListener('input', function () { dirty = true; });
+  form.addEventListener('submit', function () {
+    submitting = true;
+    form.querySelectorAll('[data-editor]').forEach(function (b) { if (b._collect) b._collect(); });
+    form.querySelectorAll('[data-rte-source]').forEach(function (t) { t.style.display = 'none'; });
+  });
+  window.addEventListener('beforeunload', function (e) {
+    if (dirty && !submitting) { e.preventDefault(); e.returnValue = ''; }
+  });
+})();
+</script>
+<script>
+(function () {
+  // preview of a chosen image / video before uploading
+  document.addEventListener('change', function (e) {
+    var input = e.target;
+    if (!input.matches || !input.matches('input[type="file"][data-media-preview]')) return;
+    var box = document.querySelector(input.getAttribute('data-media-preview'));
+    if (!box) return;
+    if (box._url) { URL.revokeObjectURL(box._url); box._url = null; }
+    box.innerHTML = '';
+    var f = input.files && input.files[0];
+    box.hidden = !f;
+    if (!f) return;
+    box._url = URL.createObjectURL(f);
+    var isVideo = /^video\//.test(f.type) || /\.(mp4|webm|m4v|mov)$/i.test(f.name);
+    var el = document.createElement(isVideo ? 'video' : 'img');
+    el.src = box._url;
+    el.className = 'intro-slot__video';
+    if (isVideo) { el.muted = true; el.controls = true; el.playsInline = true; el.preload = 'metadata'; } else { el.style.objectFit = 'contain'; }
+    var label = document.createElement('div');
+    label.className = 'intro-slot__file';
+    label.textContent = 'Xem trước (chưa tải lên): ' + f.name;
+    box.appendChild(el);
+    box.appendChild(label);
+  });
+})();
+</script>
+</body>
+</html>
