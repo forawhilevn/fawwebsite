@@ -5,6 +5,10 @@ const multer = require('multer');
 const settings = require('../../services/settings');
 const intro = require('../../services/intro');
 
+// Hosting plan cannot take big uploads: files above this are refused (browser checks first, server double-checks)
+const MAX_MEDIA_MB = 30;
+const MAX_MEDIA_BYTES = MAX_MEDIA_MB * 1024 * 1024;
+const TOO_BIG = 'File quá nặng (tối đa ' + MAX_MEDIA_MB + 'MB). Hãy nén video thành .mp4 (H.264) dưới ' + MAX_MEDIA_MB + 'MB rồi tải lại.';
 const VIDEO_DIR = path.join(storage.STORAGE_DIR, 'video', 'uploads');
 const VIDEO_EXT = ['.webm', '.mp4', '.m4v', '.mov'];
 const videoUpload = multer({
@@ -23,7 +27,7 @@ const videoUpload = multer({
     if (!VIDEO_EXT.includes(ext)) return cb(new Error('Chỉ nhận video .webm, .mp4, .m4v, .mov'));
     cb(null, true);
   },
-  limits: { fileSize: 500 * 1024 * 1024, files: 4 }
+  limits: { fileSize: MAX_MEDIA_BYTES, files: 4 }
 }).array('videos', 4);
 
 // Banner image / video shown on the "website closed" page (one per device)
@@ -44,7 +48,7 @@ const closedUpload = multer({
     if (!CLOSED_EXT.includes(ext)) return cb(new Error('Chỉ nhận ảnh (.jpg .png .webp .gif) hoặc video (.mp4 .webm .mov)'));
     cb(null, true);
   },
-  limits: { fileSize: 500 * 1024 * 1024, files: 1 }
+  limits: { fileSize: MAX_MEDIA_BYTES, files: 1 }
 }).single('media');
 
 function deviceOf(req) {
@@ -106,7 +110,7 @@ function uploadIntroVideo(req, res) {
   req.params.device = deviceOf(req);
   videoUpload(req, res, async (err) => {
     if (err) {
-      const msg = err.code === 'LIMIT_FILE_SIZE' ? 'File quá lớn (tối đa 500MB mỗi file)' : err.message;
+      const msg = err.code === 'LIMIT_FILE_SIZE' ? TOO_BIG : err.message;
       return res.redirect('/admin/cai-dat?saved=videoerror&msg=' + encodeURIComponent(msg));
     }
     try {
@@ -167,7 +171,7 @@ function uploadClosedMedia(req, res) {
   req.params.device = deviceOf(req);
   closedUpload(req, res, async (err) => {
     const back = (saved, msg) => res.redirect('/admin/cai-dat?saved=' + saved + (msg ? '&msg=' + encodeURIComponent(msg) : '') + '#closed-media');
-    if (err) return back('closedmediaerror', err.code === 'LIMIT_FILE_SIZE' ? 'File quá lớn (tối đa 500MB)' : err.message);
+    if (err) return back('closedmediaerror', err.code === 'LIMIT_FILE_SIZE' ? TOO_BIG : err.message);
     try {
       if (!req.file) return back('closedmediaerror', 'Bạn chưa chọn file nào');
       const key = 'closed_media_' + deviceOf(req);

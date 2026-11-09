@@ -168,6 +168,34 @@
 </div>
 <script>
 (function () {
+  // Refuse big videos in the browser, before they are uploaded and overload the server
+  var MAX = 30 * 1024 * 1024;
+  document.addEventListener('change', function (e) {
+    var input = e.target;
+    if (!input.matches || !input.matches('input[type="file"]') || !input.closest('form[action*="/tai-len"]')) return;
+    var warn = input.parentNode.querySelector('[data-size-warn]');
+    if (!warn) {
+      warn = document.createElement('p');
+      warn.setAttribute('data-size-warn', '');
+      warn.className = 'admin-error';
+      warn.style.cssText = 'background:#fee2e2; margin:6px 0 0;';
+      input.insertAdjacentElement('afterend', warn);
+    }
+    var big = Array.prototype.filter.call(input.files || [], function (f) { return f.size > MAX; });
+    if (big.length) {
+      warn.textContent = '"' + big[0].name + '" nặng ' + Math.round(big[0].size / 1048576) + 'MB, quá lớn (tối đa 30MB). Hãy nén thành .mp4 (H.264) dưới 30MB rồi chọn lại.';
+      warn.hidden = false;
+      input.value = '';
+      var prev = input.getAttribute('data-media-preview');
+      if (prev) { var box = document.querySelector(prev); if (box) { box.hidden = true; box.innerHTML = ''; } }
+    } else {
+      warn.hidden = true;
+    }
+  }, true);
+})();
+</script>
+<script>
+(function () {
   // preview of a chosen image / video before uploading
   document.addEventListener('change', function (e) {
     var input = e.target;
