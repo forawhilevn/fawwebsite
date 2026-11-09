@@ -78,11 +78,39 @@ window.FAWMotion.initVideoIntro = function initVideoIntro() {
   video.src = chosen;
   try { video.load(); } catch (e) {}
 
+  var hardStop = null;
   var blobTried = false;
   var blobUrl = '';
+  var playing = false;
+  var needsTap = false;
+  function armTap() {
+    // iPhone Low Power Mode / strict autoplay settings block the video until the visitor touches the screen:
+    // wait for a tap instead of dropping the intro.
+    if (needsTap || finished) return;
+    needsTap = true;
+    intro.classList.add('needs-tap');
+    var hint = document.createElement('div');
+    hint.className = 'video-intro__tap';
+    hint.textContent = document.documentElement.lang === 'en' ? 'Tap to play' : 'Chạm để xem';
+    intro.appendChild(hint);
+    var go = function () {
+      intro.removeEventListener('click', go);
+      intro.removeEventListener('touchend', go);
+      hint.remove();
+      intro.classList.remove('needs-tap');
+      var p2 = video.play();
+      if (p2 && p2.catch) p2.catch(finish);
+    };
+    intro.addEventListener('click', go);
+    intro.addEventListener('touchend', go);
+  }
   function tryPlay() {
+    if (playing) return;
     var pr = video.play();
-    if (pr && pr.catch) pr.catch(function () { if (blobTried) finish(); else useBlob(); });
+    if (pr && pr.catch) pr.catch(function (err) {
+      if (err && err.name === 'NotAllowedError') armTap();
+      else if (blobTried) finish(); else useBlob();
+    });
   }
   // Fallback: some Safari builds stall on streamed files behind proxies (no Range support);
   // downloading the whole clip and playing it from memory always works.
@@ -104,13 +132,18 @@ window.FAWMotion.initVideoIntro = function initVideoIntro() {
 
   video.addEventListener('loadeddata', tryPlay);
   video.addEventListener('canplay', tryPlay);
-  video.addEventListener('playing', function () { intro.classList.add('is-playing'); });
+  video.addEventListener('playing', function () {
+    playing = true;
+    intro.classList.add('is-playing');
+    clearTimeout(hardStop);
+    hardStop = setTimeout(finish, Math.max(4000, ((video.duration || 8) - video.currentTime) * 1000 + 2500));
+  });
   video.addEventListener('ended', finish);
   video.addEventListener('error', function () { if (blobTried) finish(); else useBlob(); });
 
   // Not playing after 2.5s -> switch to the in-memory copy once.
   setTimeout(function () {
-    if (!intro.classList.contains('is-playing') && !finished) useBlob();
+    if (!intro.classList.contains('is-playing') && !finished && !needsTap) useBlob();
   }, 2500);
 
   timer = setInterval(function () {
@@ -118,11 +151,11 @@ window.FAWMotion.initVideoIntro = function initVideoIntro() {
   }, 80);
 
   // Hard stop: the overlay can never outlive the clip by much.
-  setTimeout(finish, 12000);
+  hardStop = setTimeout(finish, 12000);
 
   // Never leave visitors stuck behind a video that does not start.
   setTimeout(function () {
-    if (!intro.classList.contains('is-playing')) finish();
+    if (!intro.classList.contains('is-playing') && !needsTap) finish();
   }, 9000);
 
   tryPlay();

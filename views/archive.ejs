@@ -20,7 +20,7 @@
       <% } else { %>
         <div class="lookbook-gallery">
           <% items.forEach(function(item) { %>
-            <% if (item.href) { %><a href="<%= item.href %>" class="lookbook-item" data-reveal><% } else { %><figure class="lookbook-item" data-reveal><% } %>
+            <% if (item.href) { %><a href="<%= item.href %>" class="lookbook-item"><% } else { %><figure class="lookbook-item"><% } %>
               <span class="lookbook-item__media"><img src="<%= item.url %>" alt="<%= item.caption %>" loading="lazy" /></span>
               <% if (item.caption) { %><span class="lookbook-item__cap"><%= item.caption %></span><% } %>
             <% if (item.href) { %></a><% } else { %></figure><% } %>

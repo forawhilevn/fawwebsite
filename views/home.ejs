@@ -29,7 +29,7 @@
   <section class="section section--alt">
     <div class="container">
       <div class="section__heading">
-        <h2 class="section__title" data-reveal><%= t('home.allProducts') %></h2>
+        <h2 class="section__title"><%= t('home.allProducts') %></h2>
       </div>
     </div>
     <div class="product-grid-wrap">
@@ -54,7 +54,7 @@
     </div>
     <div class="lookbook-grid">
       <% lookbookImages.forEach(function(img) { %>
-        <img src="<%= img %>" alt="" loading="lazy" data-reveal data-parallax="4" />
+        <img src="<%= img %>" alt="" loading="lazy" />
       <% }); %>
     </div>
   </section>
