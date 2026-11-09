@@ -5,12 +5,12 @@
 %>
 <% if (subOn && subItems.length) { %>
 <div class="sub-banners sub-banners--<%= subItems.length %>">
-  <% subItems.forEach(function (b) {
+  <% subItems.forEach(function (b, i) {
        var vid = /\.(mp4|webm|m4v|mov)(\?|$)/i.test(b.media);
        var tag = b.link ? 'a' : 'div'; %>
-    <<%= tag %> class="sub-banner" data-reveal<% if (b.link) { %> href="<%= b.link %>"<% if (/^https?:/i.test(b.link)) { %> target="_blank" rel="noopener"<% } %><% } %>>
+    <<%= tag %> class="sub-banner" style="--i: <%= i %>;"<% if (b.link) { %> href="<%= b.link %>"<% if (/^https?:/i.test(b.link)) { %> target="_blank" rel="noopener"<% } %><% } %>>
       <% if (vid) { %><video src="<%= b.media %>" autoplay muted loop playsinline preload="auto"></video>
-      <% } else { %><img src="<%= b.media %>" alt="" loading="lazy" /><% } %>
+      <% } else { %><img src="<%= b.media %>" alt="" /><% } %>
     </<%= tag %>>
   <% }); %>
 </div>

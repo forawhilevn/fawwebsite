@@ -2969,6 +2969,11 @@ a.lookbook-item:hover .lookbook-item__media img { transform: scale(1.03); }
 }
 @media (min-width: 901px) { .pdp__more { display: none; } }
 
+/* Sub-banners animate in on their own as soon as the page loads (no scrolling needed) */
+@keyframes subBannerIn { from { opacity: 0; transform: translateY(26px) scale(0.98); } to { opacity: 1; transform: none; } }
+.sub-banner { animation: subBannerIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: calc(0.25s + var(--i, 0) * 0.15s); }
+@media (prefers-reduced-motion: reduce) { .sub-banner { animation: none; } }
+
 /* About page photo on phones: run edge to edge and zoom in a little - the artwork sits inside a
    wide black margin, so the zoom only trims black border and the drawing reads much bigger */
 @media (max-width: 640px) {
