@@ -129,6 +129,8 @@
       row.classList.toggle('is-selected', !!rv && rv.id === v.id);
       row.classList.toggle('is-soldout', !!rv && rv.stock <= 0);
       row.setAttribute('aria-selected', !!rv && rv.id === v.id ? 'true' : 'false');
+      // colour first: the sheet only lists the sizes of the chosen colour
+      if (colorsOn && rv) row.hidden = rv.color !== v.color;
       var tag = row.querySelector('[data-row-tag]');
       if (tag && rv) {
         tag.hidden = !(rv.inCart || rv.stock <= 0);

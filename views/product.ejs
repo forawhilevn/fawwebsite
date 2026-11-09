@@ -136,12 +136,20 @@
     <div class="pdp-sheet" data-pdp-sheet aria-hidden="true">
       <div class="pdp-sheet__backdrop" data-pdp-sheet-close></div>
       <div class="pdp-sheet__panel" role="dialog" aria-modal="true" aria-label="<%= t('product.selectSize') %>">
+        <% if (hasColors) { %>
+        <span class="pdp-sheet__label"><%= t('product.selectColor') %></span>
+        <div class="pdp-sheet__colors" role="group" aria-label="<%= t('product.selectColor') %>">
+          <% colorOptions.forEach(function (opt) { %>
+            <button type="button" class="pdp-sheet__color<%= opt.selected ? ' is-selected' : '' %><%= opt.soldOut ? ' is-soldout' : '' %>" data-color-option data-value="<%= opt.value %>" style="--swatch: <%= opt.hex %>;" aria-pressed="<%= opt.selected ? 'true' : 'false' %>"><i class="pdp-sheet__dot"></i><%= opt.value %></button>
+          <% }); %>
+        </div>
+        <% } %>
         <span class="pdp-sheet__label"><%= t('product.selectSize') %></span>
         <ul class="pdp-sheet__list" data-lenis-prevent>
           <% variantData.forEach(function (v) { %>
           <li>
-            <div class="pdp-sheet__row<%= defaultVariant && defaultVariant.id === v.id ? ' is-selected' : '' %><%= v.stock <= 0 ? ' is-soldout' : '' %>" role="option" tabindex="0" data-variant-row data-variant-id="<%= v.id %>">
-              <span class="pdp-sheet__name"><% if (hasColors && v.hex) { %><i class="pdp-sheet__dot" style="--swatch: <%= v.hex %>;"></i><% } %><%= v.size %><% if (hasColors && v.color) { %> / <%= v.color %><% } %></span>
+            <div class="pdp-sheet__row<%= defaultVariant && defaultVariant.id === v.id ? ' is-selected' : '' %><%= v.stock <= 0 ? ' is-soldout' : '' %>" role="option" tabindex="0" data-variant-row data-variant-id="<%= v.id %>" data-color="<%= v.color || '' %>"<%= hasColors && defaultVariant && v.color !== defaultVariant.color ? ' hidden' : '' %>>
+              <span class="pdp-sheet__name"><%= v.size %></span>
               <button type="button" class="pdp-sheet__rm" data-row-remove data-variant-id="<%= v.id %>"<%= v.inCart ? '' : ' hidden' %>><%= t('cart.remove') %></button>
               <span class="pdp-sheet__meta">
                 <em class="pdp-sheet__tag" data-row-tag<%= (v.inCart || v.stock <= 0) ? '' : ' hidden' %>><%= v.stock <= 0 ? t('product.outOfStock') : t('product.inCart') %></em>

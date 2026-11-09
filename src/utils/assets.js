@@ -1,29 +1,36 @@
 const fs = require('fs');
 const path = require('path');
-
 const storage = require('./storage');
 
-const PUBLIC_DIR = storage.PUBLIC_DIR;
+const IMG = /\.(jpe?g|png|webp)$/i;
 
-// lookbook photos can sit in the app (bundled with the code) and in upload storage
+function listDir(dir) {
+  try {
+    return fs.readdirSync(dir);
+  } catch (err) {
+    return [];
+  }
+}
+
+// Lookbook photos of one product. Uploads live in the storage folder (outside the app in
+// production); files shipped inside the app's public/ folder are listed too.
 function getLookbookImages(slug) {
   const names = new Set();
-  [PUBLIC_DIR, storage.STORAGE_DIR].forEach((root) => {
-    const dir = path.join(root, 'images', 'lookbook', slug);
-    if (!fs.existsSync(dir)) return;
-    fs.readdirSync(dir).filter((f) => /\.(jpe?g|png|webp)$/i.test(f)).forEach((f) => names.add(f));
+  [storage.STORAGE_DIR, storage.PUBLIC_DIR].forEach((base) => {
+    listDir(path.join(base, 'images', 'lookbook', slug)).forEach((f) => {
+      if (IMG.test(f)) names.add(f);
+    });
   });
-  return Array.from(names).sort().map((f) => `/images/lookbook/${slug}/${f}`);
+  return Array.from(names)
+    .sort()
+    .map((f) => `/images/lookbook/${slug}/${f}`);
 }
 
 function getSizeChartUrl(slug) {
   const exts = ['jpg', 'jpeg', 'png', 'webp'];
   for (const ext of exts) {
-    const filePath = storage.locate(`/images/sizecharts/${slug}.${ext}`);
-    if (filePath) {
-      // ?v= makes browsers pick up a replaced chart straight away
-      return `/images/sizecharts/${slug}.${ext}?v=${Math.floor(fs.statSync(filePath).mtimeMs)}`;
-    }
+    const url = `/images/sizecharts/${slug}.${ext}`;
+    if (storage.locate(url)) return url;
   }
   return null;
 }

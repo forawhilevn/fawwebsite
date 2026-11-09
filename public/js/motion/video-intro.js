@@ -59,18 +59,59 @@ window.FAWMotion.initVideoIntro = function initVideoIntro() {
     intro.classList.add('is-hidden');
     setTimeout(function () {
       intro.style.display = 'none';
-      if (video) { video.pause(); video.removeAttribute('src'); video.load(); }
+      if (video) { video.pause(); video.removeAttribute('src'); video.load(); if (blobUrl) URL.revokeObjectURL(blobUrl); }
     }, 1800);
   }
 
   if (!video) { finish(); return; }
 
   if (!chosen) { finish(); return; }
-  video.src = chosen;
 
+  // Safari/iOS: autoplay only works with the muted + playsinline flags set from script too.
+  video.muted = true;
+  video.defaultMuted = true;
+  video.setAttribute('muted', '');
+  video.setAttribute('playsinline', '');
+  video.setAttribute('webkit-playsinline', '');
+  video.playsInline = true;
+  video.preload = 'auto';
+  video.src = chosen;
+  try { video.load(); } catch (e) {}
+
+  var blobTried = false;
+  var blobUrl = '';
+  function tryPlay() {
+    var pr = video.play();
+    if (pr && pr.catch) pr.catch(function () { if (blobTried) finish(); else useBlob(); });
+  }
+  // Fallback: some Safari builds stall on streamed files behind proxies (no Range support);
+  // downloading the whole clip and playing it from memory always works.
+  function useBlob() {
+    if (blobTried || finished) return;
+    blobTried = true;
+    if (!window.fetch || !window.URL || !URL.createObjectURL) { finish(); return; }
+    fetch(chosen, { credentials: 'same-origin' })
+      .then(function (r) { if (!r.ok) throw new Error('http'); return r.blob(); })
+      .then(function (b) {
+        if (finished) return;
+        blobUrl = URL.createObjectURL(b);
+        video.src = blobUrl;
+        try { video.load(); } catch (e) {}
+        tryPlay();
+      })
+      .catch(finish);
+  }
+
+  video.addEventListener('loadeddata', tryPlay);
+  video.addEventListener('canplay', tryPlay);
   video.addEventListener('playing', function () { intro.classList.add('is-playing'); });
   video.addEventListener('ended', finish);
-  video.addEventListener('error', finish);
+  video.addEventListener('error', function () { if (blobTried) finish(); else useBlob(); });
+
+  // Not playing after 2.5s -> switch to the in-memory copy once.
+  setTimeout(function () {
+    if (!intro.classList.contains('is-playing') && !finished) useBlob();
+  }, 2500);
 
   timer = setInterval(function () {
     if (video.currentTime >= REVEAL_AT) reveal();
@@ -82,10 +123,9 @@ window.FAWMotion.initVideoIntro = function initVideoIntro() {
   // Never leave visitors stuck behind a video that does not start.
   setTimeout(function () {
     if (!intro.classList.contains('is-playing')) finish();
-  }, 7000);
+  }, 9000);
 
-  var p = video.play();
-  if (p && p.catch) p.catch(finish);
+  tryPlay();
 
   if (skip) {
     setTimeout(function () { skip.classList.add('is-visible'); }, 1200);

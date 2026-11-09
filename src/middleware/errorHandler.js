@@ -7,13 +7,29 @@ function notFoundHandler(req, res) {
   });
 }
 
+function wantsJson(req) {
+  return req.headers['x-requested-with'] === 'fetch' || String(req.headers.accept || '').indexOf('application/json') !== -1;
+}
+
 function errorHandler(err, req, res, next) {
   console.error(err);
+  let status = err.status || 500;
+  let message = err.publicMessage;
+  if (err.code === 'LIMIT_FILE_SIZE') {
+    status = 413;
+    message = 'File quá lớn. Hãy giảm kích thước rồi thử lại.';
+  } else if (err.name === 'MulterError') {
+    status = 400;
+    message = 'Tải file thất bại (' + err.message + ').';
+  }
+  if (wantsJson(req)) {
+    return res.status(status).json({ ok: false, error: message || 'Có lỗi xảy ra, vui lòng thử lại.' });
+  }
   const t = res.locals.t || ((key) => key);
-  res.status(err.status || 500).render('error', {
+  res.status(status).render('error', {
     title: t('error.title'),
-    statusCode: err.status || 500,
-    message: err.publicMessage || t('error.message')
+    statusCode: status,
+    message: message || t('error.message')
   });
 }
 

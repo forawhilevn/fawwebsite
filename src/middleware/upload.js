@@ -4,12 +4,19 @@ const fs = require('fs');
 const multer = require('multer');
 const db = require('../db');
 
+const ALLOWED_EXT = ['.jpg', '.jpeg', '.jpe', '.jfif', '.png', '.gif', '.webp', '.heic', '.heif', '.avif'];
+const MAX_IMAGE_BYTES = 25 * 1024 * 1024;
+
+function badImage(cb) {
+  const err = new Error('Chỉ chấp nhận file ảnh (jpg, png, gif, webp, heic).');
+  err.status = 400;
+  err.publicMessage = err.message;
+  cb(err);
+}
+
 const IMAGE_FILE_FILTER = (req, file, cb) => {
-  const allowed = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
   const ext = path.extname(file.originalname).toLowerCase();
-  if (!allowed.includes(ext)) {
-    return cb(new Error('Chỉ chấp nhận file ảnh (jpg, png, gif, webp)'));
-  }
+  if (!ALLOWED_EXT.includes(ext)) return badImage(cb);
   cb(null, true);
 };
 
@@ -37,7 +44,7 @@ function makeSlugUploader(baseFolder) {
   return multer({
     storage,
     fileFilter: IMAGE_FILE_FILTER,
-    limits: { fileSize: 10 * 1024 * 1024 }
+    limits: { fileSize: MAX_IMAGE_BYTES }
   });
 }
 
@@ -54,19 +61,10 @@ function makeUploader(subfolder) {
     }
   });
 
-  const fileFilter = (req, file, cb) => {
-    const allowed = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
-    const ext = path.extname(file.originalname).toLowerCase();
-    if (!allowed.includes(ext)) {
-      return cb(new Error('Chỉ chấp nhận file ảnh (jpg, png, gif, webp)'));
-    }
-    cb(null, true);
-  };
-
   return multer({
     storage,
-    fileFilter,
-    limits: { fileSize: 8 * 1024 * 1024 }
+    fileFilter: IMAGE_FILE_FILTER,
+    limits: { fileSize: MAX_IMAGE_BYTES }
   });
 }
 

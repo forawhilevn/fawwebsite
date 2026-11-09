@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title><%= title %></title>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+  <%- include('../partials/admin-sidebar') %>
+  <main class="admin-main" data-saveall>
+    <h1>Lookbook</h1>
+    <div class="admin-card">
+      <h2 class="admin-card__title">Ảnh trang <a href="/archive" target="_blank">Lookbook</a> <span data-mm-count><%= items.length %> ảnh</span></h2>
+      <p class="admin-hint">
+        Thêm ảnh, kéo-thả (hoặc nút ‹ ›) để đổi thứ tự hiển thị, nhập chú thích, gắn sản phẩm (khách bấm vào ảnh sẽ tới sản phẩm đó) hoặc bỏ tick "Hiển thị" để ẩn.
+        Mọi thay đổi chỉ được lưu khi bấm <strong>Lưu toàn bộ trang</strong>.
+      </p>
+      <div data-mm="library" data-max="60"
+        data-add="/admin/lookbook/anh/them"
+        data-save="/admin/lookbook/luu"
+        data-products="<%= JSON.stringify(products.map(function (p) { return { id: p.id, name: p.name_vi }; })) %>"
+        data-items="<%= JSON.stringify(items.map(function (i) { return { id: i.id, url: i.image_url, captionVi: i.caption_vi || '', captionEn: i.caption_en || '', productId: i.product_id || '', active: !!i.is_active }; })) %>"></div>
+    </div>
+    <div class="savebar" data-savebar>
+      <span class="savebar__msg" data-savebar-msg>Chưa có thay đổi</span>
+      <button type="button" class="admin-btn savebar__btn" data-saveall-btn>Lưu toàn bộ trang</button>
+    </div>
+  </main>
+</div>
+</body>
+</html>

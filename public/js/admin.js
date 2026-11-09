@@ -243,7 +243,7 @@
   document.addEventListener('change', function (e) {
     var input = e.target;
     if (!input || !input.matches || !input.matches('input[type="file"]')) return;
-    if (input.hasAttribute('data-media-preview') || !isImageInput(input)) return;
+    if (input.hasAttribute('data-media-preview') || !isImageInput(input) || input.closest('[data-mm]')) return;
     if (input.hasAttribute('data-autosubmit')) {
       if (input.files && input.files.length) confirmUpload(input);
       return;
@@ -522,6 +522,270 @@
     apply();
   }
 
+
+  /* ---------- media manager: add / delete / reorder images, saved with the page's Save button ---------- */
+
+  var MM_MAX_SIDE = 2400;
+  var mmSavers = [];
+  var mmKey = 0;
+
+  function mmDirty(mm) {
+    mm.dirty = true;
+    document.dispatchEvent(new CustomEvent('faw:dirty'));
+  }
+
+  // shrink + convert to JPEG in the browser (server cannot read WebP/HEIC and big phone photos)
+  function mmPrepare(file) {
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () {
+        try {
+          var w = img.naturalWidth, h = img.naturalHeight;
+          var k = Math.min(1, MM_MAX_SIDE / Math.max(w, h));
+          var c = document.createElement('canvas');
+          c.width = Math.max(1, Math.round(w * k));
+          c.height = Math.max(1, Math.round(h * k));
+          var ctx = c.getContext('2d');
+          ctx.fillStyle = '#fff';
+          ctx.fillRect(0, 0, c.width, c.height);
+          ctx.drawImage(img, 0, 0, c.width, c.height);
+          c.toBlob(function (blob) {
+            URL.revokeObjectURL(url);
+            if (!blob) return reject(new Error('Không xử lý được ảnh "' + file.name + '".'));
+            var base = file.name.replace(/\.[^.]+$/, '') || 'anh';
+            resolve(new File([blob], base + '.jpg', { type: 'image/jpeg' }));
+          }, 'image/jpeg', 0.88);
+        } catch (e) {
+          URL.revokeObjectURL(url);
+          reject(new Error('Không xử lý được ảnh "' + file.name + '".'));
+        }
+      };
+      img.onerror = function () {
+        URL.revokeObjectURL(url);
+        reject(new Error('Không đọc được "' + file.name + '". Hãy dùng ảnh JPG/PNG/WebP (ảnh HEIC hãy xuất sang JPG).'));
+      };
+      img.src = url;
+    });
+  }
+
+  function mmEl(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  function initMediaManagers() {
+    document.querySelectorAll('[data-mm]').forEach(function (root) {
+      var kind = root.getAttribute('data-mm');
+      var max = parseInt(root.getAttribute('data-max'), 10) || 20;
+      var addUrl = root.getAttribute('data-add');
+      var saveUrl = root.getAttribute('data-save');
+      var products = [];
+      try { products = JSON.parse(root.getAttribute('data-products') || '[]'); } catch (e) { products = []; }
+      var initial = [];
+      try { initial = JSON.parse(root.getAttribute('data-items') || '[]'); } catch (e) { initial = []; }
+
+      var mm = { dirty: false, items: [], removed: [] };
+      initial.forEach(function (it) {
+        mm.items.push(Object.assign({ key: ++mmKey, file: null }, it));
+      });
+
+      var msg = mmEl('p', 'thumbs__warn');
+      msg.hidden = true;
+      var grid = mmEl('div', 'mm__grid');
+      var addLabel = mmEl('label', 'mm__add');
+      var input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.multiple = true;
+      input.hidden = true;
+      addLabel.appendChild(input);
+      addLabel.appendChild(mmEl('span', 'mm__plus', '+'));
+      addLabel.appendChild(mmEl('span', null, 'Thêm ảnh'));
+      root.innerHTML = '';
+      root.appendChild(msg);
+      root.appendChild(grid);
+
+      function say(text) { msg.textContent = text || ''; msg.hidden = !text; }
+      function updateCount() {
+        var card = root.closest('.admin-card');
+        var span = card && card.querySelector('[data-mm-count]');
+        if (span) span.textContent = mm.items.length + ' ảnh';
+      }
+
+      var dragKey = null;
+
+      function render() {
+        grid.innerHTML = '';
+        mm.items.forEach(function (it, i) {
+          var card = mmEl('div', 'mm__item' + (it.file ? ' mm__item--new' : ''));
+          card.draggable = true;
+          card.setAttribute('data-key', it.key);
+          var img = mmEl('img');
+          img.src = it.url;
+          img.alt = '';
+          img.draggable = false;
+          card.appendChild(img);
+          card.appendChild(mmEl('span', 'thumb__badge', String(i + 1)));
+          if (it.file) card.appendChild(mmEl('span', 'mm__new', 'Mới'));
+
+          var del = mmEl('button', 'admin-btn admin-btn--danger mm__del', '×');
+          del.type = 'button';
+          del.title = 'Xoá ảnh';
+          del.addEventListener('click', function () {
+            mm.items.splice(mm.items.indexOf(it), 1);
+            if (it.file) { if (it.url) URL.revokeObjectURL(it.url); } else mm.removed.push(it.id);
+            mmDirty(mm);
+            render();
+          });
+          card.appendChild(del);
+
+          var bar = mmEl('div', 'mm__move');
+          [['‹', -1, 'Dịch lên trước'], ['›', 1, 'Dịch ra sau']].forEach(function (b) {
+            var btn = mmEl('button', 'mm__arrow', b[0]);
+            btn.type = 'button';
+            btn.title = b[2];
+            btn.disabled = (b[1] < 0 && i === 0) || (b[1] > 0 && i === mm.items.length - 1);
+            btn.addEventListener('click', function () {
+              var j = i + b[1];
+              var t = mm.items[i]; mm.items[i] = mm.items[j]; mm.items[j] = t;
+              mmDirty(mm);
+              render();
+            });
+            bar.appendChild(btn);
+          });
+          card.appendChild(bar);
+
+          if (kind === 'library') {
+            var f = mmEl('div', 'mm__fields');
+            function field(ph, prop) {
+              var inp = document.createElement('input');
+              inp.type = 'text';
+              inp.placeholder = ph;
+              inp.maxLength = 200;
+              inp.value = it[prop] || '';
+              inp.addEventListener('input', function () { it[prop] = inp.value; mmDirty(mm); });
+              f.appendChild(inp);
+            }
+            field('Chú thích (VI)', 'captionVi');
+            field('Chú thích (EN)', 'captionEn');
+            var sel = document.createElement('select');
+            var o0 = document.createElement('option');
+            o0.value = ''; o0.textContent = '— Không gắn sản phẩm —';
+            sel.appendChild(o0);
+            products.forEach(function (p) {
+              var o = document.createElement('option');
+              o.value = p.id; o.textContent = p.name;
+              if (String(it.productId || '') === String(p.id)) o.selected = true;
+              sel.appendChild(o);
+            });
+            sel.addEventListener('change', function () { it.productId = sel.value; mmDirty(mm); });
+            f.appendChild(sel);
+            var lab = mmEl('label', 'mm__check');
+            var cb = document.createElement('input');
+            cb.type = 'checkbox';
+            cb.checked = it.active !== false;
+            cb.addEventListener('change', function () { it.active = cb.checked; mmDirty(mm); });
+            lab.appendChild(cb);
+            lab.appendChild(document.createTextNode(' Hiển thị'));
+            f.appendChild(lab);
+            card.appendChild(f);
+          }
+
+          card.addEventListener('dragstart', function (e) {
+            dragKey = it.key;
+            card.classList.add('is-drag');
+            try { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', String(it.key)); } catch (x) { /* ignore */ }
+          });
+          card.addEventListener('dragend', function () {
+            card.classList.remove('is-drag');
+            dragKey = null;
+          });
+          card.addEventListener('dragover', function (e) {
+            if (dragKey == null || dragKey === it.key) return;
+            e.preventDefault();
+            var from = mm.items.findIndex(function (x) { return x.key === dragKey; });
+            var to = mm.items.indexOf(it);
+            if (from < 0 || to < 0) return;
+            var r = card.getBoundingClientRect();
+            var after = e.clientX > r.left + r.width / 2;
+            var moved = mm.items.splice(from, 1)[0];
+            to = mm.items.indexOf(it);
+            mm.items.splice(after ? to + 1 : to, 0, moved);
+            mmDirty(mm);
+            render();
+          });
+          card.addEventListener('drop', function (e) { e.preventDefault(); });
+          grid.appendChild(card);
+        });
+        if (mm.items.length < max) grid.appendChild(addLabel);
+        updateCount();
+      }
+
+      input.addEventListener('change', async function () {
+        var files = Array.prototype.slice.call(input.files || []);
+        input.value = '';
+        say('');
+        var errors = [];
+        for (var i = 0; i < files.length; i++) {
+          if (mm.items.length >= max) { errors.push('Tối đa ' + max + ' ảnh, các ảnh dư đã được bỏ qua.'); break; }
+          try {
+            var prepared = await mmPrepare(files[i]);
+            mm.items.push({ key: ++mmKey, file: prepared, url: URL.createObjectURL(prepared), id: null });
+          } catch (err) {
+            errors.push(err.message);
+          }
+        }
+        if (errors.length) say(errors.join(' '));
+        mmDirty(mm);
+        render();
+      });
+
+      async function post(url, body, isForm) {
+        var res = await fetch(url, {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: Object.assign({ 'X-Requested-With': 'fetch', Accept: 'application/json' }, isForm ? {} : { 'Content-Type': 'application/json' }),
+          body: isForm ? body : JSON.stringify(body)
+        });
+        var data = null;
+        try { data = await res.json(); } catch (e) { /* not json */ }
+        if (!res.ok || !data || data.ok === false) {
+          throw new Error((data && data.error) || ('Máy chủ trả lỗi ' + res.status));
+        }
+        return data;
+      }
+
+      mm.save = async function (progress) {
+        var fresh = mm.items.filter(function (x) { return x.file; });
+        for (var i = 0; i < fresh.length; i++) {
+          progress('Đang tải ảnh ' + (i + 1) + '/' + fresh.length + '…');
+          var fd = new FormData();
+          fd.append('image', fresh[i].file, fresh[i].file.name);
+          var data = await post(addUrl, fd, true);
+          fresh[i].id = data.id;
+          fresh[i].file = null;
+        }
+        if (kind === 'library') {
+          await post(saveUrl, {
+            items: mm.items.map(function (x) {
+              return { id: x.id, captionVi: x.captionVi || '', captionEn: x.captionEn || '', productId: x.productId || '', active: x.active !== false };
+            }),
+            remove: mm.removed
+          });
+        } else {
+          await post(saveUrl, { order: mm.items.map(function (x) { return x.id; }), remove: mm.removed });
+        }
+        mm.dirty = false;
+      };
+
+      mmSavers.push(mm);
+      render();
+    });
+  }
+
   /* ---------- save-all + unsaved warning ---------- */
 
   function initSaveAll() {
@@ -534,8 +798,9 @@
     var saving = false;
 
     function render() {
-      bar.classList.toggle('is-dirty', dirty.size > 0);
-      msg.textContent = dirty.size ? 'Có thay đổi chưa lưu' : 'Chưa có thay đổi';
+      var any = dirty.size > 0 || mmSavers.some(function (m) { return m.dirty; });
+      bar.classList.toggle('is-dirty', any);
+      msg.textContent = any ? 'Có thay đổi chưa lưu' : 'Chưa có thay đổi';
     }
     function mark(e) {
       var f = e.target && e.target.form;
@@ -544,6 +809,7 @@
       dirty.add(f);
       render();
     }
+    document.addEventListener('faw:dirty', render);
     main.addEventListener('input', mark);
     main.addEventListener('change', mark);
 
@@ -553,7 +819,7 @@
     });
 
     window.addEventListener('beforeunload', function (e) {
-      if (dirty.size && !saving && !window.__skipUnload) {
+      if ((dirty.size || mmSavers.some(function (m) { return m.dirty; })) && !saving && !window.__skipUnload) {
         e.preventDefault();
         e.returnValue = '';
       }
@@ -568,7 +834,8 @@
         if (file && f.classList.contains('upload-box') && !file.files.length) return false;
         return true;
       });
-      if (!forms.length) { msg.textContent = 'Không có gì để lưu'; return; }
+      var dirtyMm = mmSavers.filter(function (m) { return m.dirty; });
+      if (!forms.length && !dirtyMm.length) { msg.textContent = 'Không có gì để lưu'; return; }
       for (var i = 0; i < forms.length; i++) {
         if (!forms[i].checkValidity()) { forms[i].reportValidity(); return; }
       }
@@ -583,6 +850,8 @@
           Array.prototype.forEach.call(f.elements, function (el) {
             if (el.hasAttribute && el.hasAttribute('data-money') && el.name) fd.set(el.name, String(el.value).replace(/\D/g, ''));
           });
+          var cov = f.querySelector('input[type="file"][name="coverImage"]');
+          if (cov && cov.files && cov.files[0]) fd.set('coverImage', await mmPrepare(cov.files[0]));
           var body = fd;
           var headers = {};
           if (f.enctype !== 'multipart/form-data') {
@@ -591,14 +860,18 @@
           var res = await fetch(f.action, { method: 'POST', body: body, headers: headers, credentials: 'same-origin' });
           if (!res.ok) throw new Error('HTTP ' + res.status);
         }
+        for (var q = 0; q < dirtyMm.length; q++) {
+          await dirtyMm[q].save(function (t) { btn.textContent = t; });
+        }
         dirty.clear();
         window.__skipUnload = true;
+        try { sessionStorage.setItem('faw-scroll', String(window.scrollY)); } catch (e2) { /* ignore */ }
         location.reload();
       } catch (err) {
         saving = false;
         btn.disabled = false;
         btn.textContent = 'Lưu toàn bộ trang';
-        msg.textContent = 'Lưu lỗi, thử lại hoặc lưu từng mục';
+        msg.textContent = 'Lưu lỗi: ' + (err && err.message ? err.message : 'thử lại') ;
       }
     });
     render();
@@ -607,7 +880,12 @@
   function init() {
     initMatrix();
     initInventory();
+    initMediaManagers();
     initSaveAll();
+    try {
+      var y = sessionStorage.getItem('faw-scroll');
+      if (y !== null) { sessionStorage.removeItem('faw-scroll'); window.scrollTo(0, parseInt(y, 10) || 0); }
+    } catch (e3) { /* ignore */ }
     initMoney(document);
     // highlight the current admin menu item
     var path = location.pathname.replace(/\/+$/, '') || '/';

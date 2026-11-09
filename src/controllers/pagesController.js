@@ -1,26 +1,20 @@
-const db = require('../db');
-const { localizeProduct } = require('../utils/i18n');
-const { getLookbookImages } = require('../utils/assets');
+const lookbookLibrary = require('../services/lookbookLibrary');
 const pageController = require('./pageController');
 
 async function showArchive(req, res, next) {
   try {
     const locale = res.locals.locale;
-    const banners = await db('banners').where({ type: 'archive', is_active: true }).orderBy('sort_order');
-    const products = await db('products').where({ is_active: true }).orderBy('created_at', 'desc');
-
-    const lookbookSections = products
-      .map((p) => ({
-        product: localizeProduct(p, locale),
-        images: getLookbookImages(p.slug)
-      }))
-      .filter((section) => section.images.length > 0);
+    const rows = await lookbookLibrary.listPublic();
+    const items = rows.map((row) => ({
+      url: row.image_url,
+      caption: (locale === 'en' ? row.caption_en || row.caption_vi : row.caption_vi || row.caption_en) || '',
+      href: row.product ? (locale === 'en' ? '/en/product/' : '/product/') + row.product.slug : ''
+    }));
 
     res.render('archive', {
       title: `Lookbook — FOR A WHILE`,
       bodyClass: 'page-archive',
-      banners,
-      lookbookSections
+      items
     });
   } catch (err) {
     next(err);

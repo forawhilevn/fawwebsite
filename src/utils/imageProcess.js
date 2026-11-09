@@ -15,6 +15,14 @@ async function cropToFixedSize(filePath, sizeKey) {
   if (!size) throw new Error('Unknown image size key: ' + sizeKey);
   const image = await Jimp.read(filePath);
   image.cover({ w: size.w, h: size.h });
+  if (/\.jpe?g$/i.test(filePath)) {
+    try {
+      await image.write(filePath, { quality: 85 });
+      return;
+    } catch (err) {
+      /* fall back to the default quality below */
+    }
+  }
   await image.write(filePath);
 }
 

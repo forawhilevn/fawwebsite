@@ -133,25 +133,12 @@
       </div>
 
       <div class="admin-card">
-        <h2 class="admin-card__title">Thư viện ảnh <span><%= galleryImages.length %> ảnh</span></h2>
-        <p class="admin-hint">Ảnh hiện ở trang sản phẩm theo đúng thứ tự dưới đây (ảnh đầu tiên là ảnh chính).</p>
-        <div class="thumbs__grid">
-          <% galleryImages.forEach(function(img, i) { %>
-            <div class="thumb">
-              <img src="<%= img.image_url %>" alt="" />
-              <span class="thumb__badge"><%= i + 1 %></span>
-              <form action="/admin/san-pham/<%= product.id %>/anh/<%= img.id %>/xoa" method="post" class="thumb__del" onsubmit="return confirm('Xoá ảnh này?');">
-                <button type="submit" class="admin-btn admin-btn--danger">&times;</button>
-              </form>
-            </div>
-          <% }); %>
-          <% if (galleryImages.length === 0) { %><p class="admin-hint">Chưa có ảnh nào.</p><% } %>
-        </div>
-        <form action="/admin/san-pham/<%= product.id %>/anh" method="post" enctype="multipart/form-data" class="upload-box">
-          <input type="file" name="images" accept="image/*" multiple data-preview="#preview-gallery" />
-          <div class="thumbs thumbs--preview" id="preview-gallery" hidden></div>
-          <button type="submit" class="admin-btn">Tải ảnh lên</button>
-        </form>
+        <h2 class="admin-card__title">Thư viện ảnh <span data-mm-count><%= galleryImages.length %> ảnh</span></h2>
+        <p class="admin-hint">Ảnh hiện ở trang sản phẩm theo đúng thứ tự dưới đây (ảnh đầu tiên là ảnh chính). Kéo-thả hoặc dùng nút ‹ › để đổi thứ tự, bấm × để xoá, "+ Thêm ảnh" để chọn ảnh mới. Mọi thay đổi chỉ được lưu khi bấm <strong>Lưu toàn bộ trang</strong>.</p>
+        <div data-mm="gallery" data-max="10"
+          data-add="/admin/san-pham/<%= product.id %>/anh/them"
+          data-save="/admin/san-pham/<%= product.id %>/anh/luu"
+          data-items="<%= JSON.stringify(galleryImages.map(function (g) { return { id: g.id, url: g.image_url }; })) %>"></div>
       </div>
 
       <div class="admin-card">
@@ -173,26 +160,12 @@
       </div>
 
       <div class="admin-card">
-        <h2 class="admin-card__title">Lookbook <span><%= lookbookImages.length %> ảnh</span></h2>
-        <p class="admin-hint">Ảnh lookbook hiển thị ở cuối trang chi tiết sản phẩm, trang Archive và trang chủ.</p>
-        <div class="thumbs__grid">
-          <% lookbookImages.forEach(function(imgUrl, i) { %>
-            <% const filename = imgUrl.split('/').pop(); %>
-            <div class="thumb">
-              <img src="<%= imgUrl %>" alt="" />
-              <span class="thumb__badge"><%= i + 1 %></span>
-              <form action="/admin/san-pham/<%= product.id %>/lookbook/<%= filename %>/xoa" method="post" class="thumb__del" onsubmit="return confirm('Xoá ảnh này?');">
-                <button type="submit" class="admin-btn admin-btn--danger">&times;</button>
-              </form>
-            </div>
-          <% }); %>
-          <% if (lookbookImages.length === 0) { %><p class="admin-hint">Chưa có ảnh lookbook.</p><% } %>
-        </div>
-        <form action="/admin/san-pham/<%= product.id %>/lookbook" method="post" enctype="multipart/form-data" class="upload-box">
-          <input type="file" name="lookbookImages" accept="image/*" data-max-mb="10" multiple data-preview="#preview-lookbook" />
-          <div class="thumbs thumbs--preview" id="preview-lookbook" hidden></div>
-          <button type="submit" class="admin-btn">Tải ảnh lookbook lên</button>
-        </form>
+        <h2 class="admin-card__title">Ảnh lookbook của sản phẩm <span data-mm-count><%= lookbookImages.length %> ảnh</span></h2>
+        <p class="admin-hint">Hiện ở cuối trang chi tiết sản phẩm. Kéo-thả để đổi thứ tự; lưu cùng nút <strong>Lưu toàn bộ trang</strong>. (Ảnh cho trang Lookbook chung quản lý ở menu "Lookbook".)</p>
+        <div data-mm="lookbook" data-max="20"
+          data-add="/admin/san-pham/<%= product.id %>/lookbook/them"
+          data-save="/admin/san-pham/<%= product.id %>/lookbook/luu"
+          data-items="<%= JSON.stringify(lookbookImages.map(function (u) { return { id: u.split('/').pop(), url: u }; })) %>"></div>
       </div>
     <% } %>
     <div class="savebar" data-savebar>

@@ -10,6 +10,7 @@ const productAdminController = require('../controllers/admin/productAdminControl
 const productVariantController = require('../controllers/admin/productVariantController');
 const productGalleryController = require('../controllers/admin/productGalleryController');
 const lookbookController = require('../controllers/admin/lookbookController');
+const lookbookLibraryController = require('../controllers/admin/lookbookLibraryController');
 const orderAdminController = require('../controllers/admin/orderAdminController');
 const bannerController = require('../controllers/admin/bannerController');
 const discountAdminController = require('../controllers/admin/discountAdminController');
@@ -28,6 +29,7 @@ const uploadStoreImage = makeUploader('stores');
 const uploadPageImage = makeUploader('pages');
 const uploadBackgroundImage = makeUploader('backgrounds');
 const uploadLookbookImage = makeSlugUploader('lookbook');
+const uploadLibraryImage = makeUploader('lookbook');
 
 router.use(authController.flashMiddleware);
 
@@ -80,10 +82,18 @@ router.post('/san-pham/:id/bien-the/:variantId/sua', productVariantController.up
 router.post('/san-pham/:id/bien-the/:variantId/xoa', productVariantController.deleteVariant);
 
 router.post('/san-pham/:id/anh', uploadProductImage.array('images', 10), productGalleryController.uploadImages);
+router.post('/san-pham/:id/anh/them', uploadProductImage.single('image'), productGalleryController.addImage);
+router.post('/san-pham/:id/anh/luu', productGalleryController.saveOrder);
 router.post('/san-pham/:id/anh/:imageId/xoa', productGalleryController.deleteImage);
 
 router.post('/san-pham/:id/lookbook', uploadLookbookImage.array('lookbookImages', 10), lookbookController.uploadImages);
+router.post('/san-pham/:id/lookbook/them', uploadLookbookImage.single('image'), lookbookController.addImage);
+router.post('/san-pham/:id/lookbook/luu', lookbookController.saveOrder);
 router.post('/san-pham/:id/lookbook/:filename/xoa', lookbookController.deleteImage);
+
+router.get('/lookbook', lookbookLibraryController.show);
+router.post('/lookbook/anh/them', uploadLibraryImage.single('image'), lookbookLibraryController.addImage);
+router.post('/lookbook/luu', lookbookLibraryController.saveAll);
 
 router.post('/san-pham/:id/size-chart', sizeChartController.uploadSizeChart);
 router.post('/san-pham/:id/size-chart/xoa', sizeChartController.deleteSizeChart);
@@ -146,6 +156,7 @@ router.get('/hinh-nen', backgroundController.showBackground);
 router.post('/hinh-nen/luu', backgroundController.saveBackground(uploadBackgroundImage.single('image')));
 router.get('/cai-dat', settingsController.showSettings);
 router.post('/cai-dat/dong-mo-web', settingsController.toggleSite);
+router.post('/cai-dat/xoa-sach', settingsController.wipeContent);
 router.post('/cai-dat/thong-bao', settingsController.saveClosedMessage);
 router.post('/cai-dat/dong-web/:device/tai-len', settingsController.uploadClosedMedia);
 router.post('/cai-dat/dong-web/:device/xoa', settingsController.removeClosedMedia);

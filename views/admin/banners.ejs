@@ -114,31 +114,9 @@
     </div>
 
     <div class="admin-card">
-      <h2 style="margin-top:0; font-size:16px;">Trang Lookbook — ảnh bổ sung</h2>
-      <p style="font-size:13px; color:#71717a; margin-top:-4px;">
-        Vị trí: cuối <a href="/archive" target="_blank">trang Lookbook</a>, hiện dạng lưới 2 cột bên dưới các bộ lookbook của sản phẩm. Ảnh vuông 800×800.
-      </p>
-      <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px;">
-        <% archiveBanners.forEach(function(b) { %>
-          <div style="width:140px;">
-            <img src="<%= b.image_url %>" alt="" style="width:100%; aspect-ratio:1/1; object-fit:cover;" />
-            <% if (b.title_vi) { %><div style="font-size:12px; margin-top:4px;"><%= b.title_vi %></div><% } %>
-            <form action="/admin/banner/archive/<%= b.id %>/xoa" method="post" style="margin-top:4px;" onsubmit="return confirm('Xoá ảnh này?');">
-              <button type="submit" class="admin-btn admin-btn--danger" style="font-size:11px; padding:4px 8px;">Xoá</button>
-            </form>
-          </div>
-        <% }); %>
-        <% if (archiveBanners.length === 0) { %><p style="font-size:13px; color:#71717a;">Chưa có ảnh bổ sung.</p><% } %>
-      </div>
-      <form action="/admin/banner/archive" method="post" enctype="multipart/form-data" class="admin-form">
-        <label>Ảnh</label>
-        <input type="file" name="image" accept="image/*" required />
-        <label>Chú thích (VI)</label>
-        <input type="text" name="titleVi" />
-        <label>Chú thích (EN)</label>
-        <input type="text" name="titleEn" />
-        <button type="submit" class="admin-btn" style="margin-top:12px;">Thêm ảnh archive</button>
-      </form>
+      <h2 style="margin-top:0; font-size:16px;">Trang Lookbook</h2>
+      <p style="font-size:13px; color:#71717a;">Ảnh Lookbook được quản lý ở trang riêng: thêm, xoá, sắp xếp thứ tự, chú thích và gắn sản phẩm.</p>
+      <a href="/admin/lookbook" class="admin-btn">Mở quản lý Lookbook</a>
     </div>
   </main>
 </div>

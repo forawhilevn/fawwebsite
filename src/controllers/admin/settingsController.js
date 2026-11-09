@@ -194,4 +194,60 @@ async function removeClosedMedia(req, res, next) {
   }
 }
 
-module.exports = { uploadClosedMedia, removeClosedMedia, showSettings, toggleSite, saveClosedMessage, uploadIntroVideo, removeIntroVideo, saveIntroOptions };
+// Xoa sach noi dung cua hang (san pham, danh muc, banner, lookbook, anh/video da tai len).
+// Giu lai: don hang, tai khoan admin, cai dat chung.
+async function wipeContent(req, res, next) {
+  try {
+    if (String(req.body.confirm || '').trim().toUpperCase() !== 'XOA') {
+      return res.redirect('/admin/cai-dat?saved=wipeerror&msg=' + encodeURIComponent('Hãy gõ đúng chữ XOA để xác nhận.'));
+    }
+    const db = require('../../db');
+    const tryDel = async (table, fn) => {
+      try {
+        if (await db.schema.hasTable(table)) await (fn ? fn(db(table)) : db(table).del());
+      } catch (err) {
+        console.error('Xoa ' + table + ' that bai:', err.message);
+      }
+    };
+    if (await db.schema.hasTable('orders')) {
+      try { await db('orders').update({ discount_code_id: null }); } catch (e) { /* bo qua */ }
+    }
+    for (const t of ['lookbook_images', 'product_images', 'banners', 'promotions', 'stores', 'pages', 'discount_codes']) {
+      await tryDel(t);
+    }
+    // san pham/bien the da co don hang thi giu lai (an di) de khong hong don
+    let used = [];
+    let usedVariants = [];
+    if (await db.schema.hasTable('order_items')) {
+      used = (await db('order_items').distinct('product_id')).map((x) => x.product_id).filter(Boolean);
+      usedVariants = (await db('order_items').distinct('variant_id')).map((x) => x.variant_id).filter(Boolean);
+    }
+    await tryDel('product_variants', (q) => q.whereNotIn('id', usedVariants).del());
+    await tryDel('products', (q) => q.whereNotIn('id', used).del());
+    if (used.length) {
+      try { await db('products').update({ is_active: 0 }); } catch (e) { /* bo qua */ }
+    }
+    await tryDel('categories', (q) => q.whereNotIn('id', db('products').select('category_id').whereNotNull('category_id')).del());
+
+    const fs2 = require('fs');
+    const path2 = require('path');
+    const dirs = [['images', 'uploads'], ['video', 'uploads']];
+    if (storage.SEPARATE) dirs.push(['images', 'lookbook'], ['images', 'sizecharts']);
+    dirs.forEach((d) => {
+      const dir = path2.join(storage.STORAGE_DIR, ...d);
+      try { fs2.rmSync(dir, { recursive: true, force: true }); } catch (e) { /* bo qua */ }
+    });
+
+    const all = await settings.getAll();
+    const clear = {};
+    Object.keys(all).forEach((k) => {
+      if (/^(intro_(desktop|mobile)_(webm|mp4)|closed_.*(image|video|media|url))$/.test(k)) clear[k] = '';
+    });
+    if (Object.keys(clear).length) await settings.setMany(clear);
+    res.redirect('/admin/cai-dat?saved=wiped&msg=' + encodeURIComponent(used.length ? 'Một số sản phẩm đã có đơn hàng nên chỉ bị ẩn.' : ''));
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { wipeContent, uploadClosedMedia, removeClosedMedia, showSettings, toggleSite, saveClosedMessage, uploadIntroVideo, removeIntroVideo, saveIntroOptions };
