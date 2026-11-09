@@ -2993,3 +2993,6 @@ html.intro-running:not(.intro-revealed) .section__title { animation-play-state: 
 
 .maintenance__contact { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
 .maintenance__note { margin: 0 0 2px; max-width: 90vw; font-size: 14px; font-weight: 600; letter-spacing: 0.03em; color: #fff; text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6); }
+
+/* Intro waiting for a tap: no auto-entry; "Bỏ qua" sits centred under the main button */
+.video-intro.needs-tap .video-intro__skip { left: 50%; right: auto; bottom: calc(18% - 72px); transform: translateX(-50%); padding: 12px 26px; font-size: 13px; letter-spacing: .12em; }

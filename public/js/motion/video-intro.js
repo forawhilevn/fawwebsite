@@ -88,10 +88,11 @@ window.FAWMotion.initVideoIntro = function initVideoIntro() {
     // wait for a tap instead of dropping the intro.
     if (needsTap || finished) return;
     needsTap = true;
+    clearTimeout(hardStop);
     intro.classList.add('needs-tap');
     var hint = document.createElement('div');
     hint.className = 'video-intro__tap';
-    hint.textContent = document.documentElement.lang === 'en' ? 'Tap to play' : 'Chạm để xem';
+    hint.textContent = document.documentElement.lang === 'en' ? 'Press this button' : 'Bấm nút này';
     intro.appendChild(hint);
     var go = function () {
       intro.removeEventListener('click', go);
@@ -151,7 +152,7 @@ window.FAWMotion.initVideoIntro = function initVideoIntro() {
   }, 80);
 
   // Hard stop: the overlay can never outlive the clip by much.
-  hardStop = setTimeout(finish, 12000);
+  hardStop = setTimeout(function () { if (!needsTap) finish(); }, 12000);
 
   // Never leave visitors stuck behind a video that does not start.
   setTimeout(function () {
@@ -161,7 +162,7 @@ window.FAWMotion.initVideoIntro = function initVideoIntro() {
   tryPlay();
 
   if (skip) {
-    setTimeout(function () { skip.classList.add('is-visible'); }, 1200);
+    setTimeout(function () { skip.classList.add('is-visible'); }, 1500);
     skip.addEventListener('click', finish);
   }
 };
