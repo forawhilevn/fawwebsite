@@ -141,19 +141,64 @@
     });
   })();
 
-  // Cart quantity stepper (+ / -): submits the row's form
-  document.addEventListener('click', function (e) {
-    var btn = e.target.closest('[data-qty-step]');
-    if (!btn) return;
-    var form = btn.closest('[data-qty-form]');
-    if (!form || btn.disabled) return;
-    var input = form.querySelector('input[name="quantity"]');
-    var next = (parseInt(input.value, 10) || 1) + parseInt(btn.getAttribute('data-qty-step'), 10);
-    if (next < 1 || next > 3) return;
-    input.value = String(next);
-    form.querySelectorAll('[data-qty-step]').forEach(function (b) { b.disabled = true; });
-    form.submit();
-  });
+  // Cart quantity stepper (+ / -) and remove: updated in place (no page reload, no extra history entries)
+  (function () {
+    var busy = false;
+
+    function refreshCart() {
+      return fetch(location.pathname, { credentials: 'same-origin', headers: { Accept: 'text/html' } })
+        .then(function (r) { return r.text(); })
+        .then(function (html) {
+          var doc = new DOMParser().parseFromString(html, 'text/html');
+          var fresh = doc.querySelector('.page-shell .container');
+          var cur = document.querySelector('.page-shell .container');
+          if (fresh && cur) cur.innerHTML = fresh.innerHTML;
+          var newCount = doc.querySelector('[data-cart-count]');
+          document.querySelectorAll('[data-cart-count]').forEach(function (el) {
+            if (!newCount) return;
+            el.textContent = newCount.textContent;
+            el.hidden = newCount.hidden;
+          });
+        });
+    }
+
+    function send(form, quantity) {
+      if (busy) return;
+      busy = true;
+      var body = new URLSearchParams(new FormData(form));
+      if (quantity != null) body.set('quantity', String(quantity));
+      form.classList.add('is-busy');
+      fetch(form.getAttribute('action'), {
+        method: 'POST',
+        body: body,
+        credentials: 'same-origin',
+        headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+      })
+        .then(function (r) { if (!r.ok) throw new Error('http'); return refreshCart(); })
+        .catch(function () { form.submit(); })
+        .then(function () { busy = false; form.classList.remove('is-busy'); });
+    }
+
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-qty-step]');
+      if (!btn) return;
+      e.preventDefault();
+      var form = btn.closest('[data-qty-form]');
+      if (!form || btn.disabled || busy) return;
+      var input = form.querySelector('input[name="quantity"]');
+      var next = (parseInt(input.value, 10) || 1) + parseInt(btn.getAttribute('data-qty-step'), 10);
+      if (next < 1 || next > 3) return;
+      send(form, next);
+    });
+
+    document.addEventListener('submit', function (e) {
+      var form = e.target;
+      if (!form.matches || !form.matches('.cart-table form')) return;
+      if (!/\/cart\/remove$/.test(form.getAttribute('action') || '')) return;
+      e.preventDefault();
+      send(form, null);
+    });
+  })();
 
   // Announcement bar: rotate the promo lines
   (function () {

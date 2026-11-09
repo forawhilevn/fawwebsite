@@ -2940,3 +2940,31 @@ a.lookbook-item:hover .lookbook-item__media img { transform: scale(1.03); }
 .pdp-sheet__color.is-selected { border-color: var(--color-red); background: rgba(235, 37, 42, 0.12); box-shadow: inset 0 0 0 1px var(--color-red); }
 .pdp-sheet__color.is-soldout { opacity: 0.4; cursor: not-allowed; }
 .pdp-sheet__row[hidden] { display: none; }
+
+/* Mobile product page: colour + size picked on the page, fixed add-to-cart block above the Lookbook */
+@media (max-width: 900px) {
+  .pdp__group--size { display: block; }
+  .pdp__desktop .pdp__actions { display: none; }
+  .pdp-sheet { display: none !important; }
+  .pdp-bar {
+    position: static;
+    left: auto; right: auto; bottom: auto;
+    margin: var(--space-5) 0 0;
+    padding: 0;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .pdp { padding-bottom: var(--space-5); }
+  .pdp__desc.is-collapsible:not(.is-open) .pdp__bullets,
+  .pdp__desc.is-collapsible:not(.is-open) .pdp__text {
+    max-height: 9.5em;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(#000 60%, transparent);
+    mask-image: linear-gradient(#000 60%, transparent);
+  }
+  .pdp__more { display: block; margin: 10px 0 0; padding: 4px 0; background: none; border: 0; color: var(--color-fg); font: inherit; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+}
+@media (min-width: 901px) { .pdp__more { display: none; } }

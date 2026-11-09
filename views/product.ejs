@@ -106,6 +106,8 @@
 
       <p class="pdp__error" data-pdp-error role="alert" hidden></p>
 
+      <% var descLong = descLines.join(' ').length > 260 || descLines.length > 5; %>
+      <div class="pdp__desc<%= descLong ? ' is-collapsible' : '' %>" data-desc>
       <% if (descLines.length > 1) { %>
       <ul class="pdp__bullets">
         <% descLines.forEach(function (line) { %><li><%= line %></li><% }); %>
@@ -113,6 +115,10 @@
       <% } else if (descLines.length === 1) { %>
       <p class="pdp__text"><%= descLines[0] %></p>
       <% } %>
+      <% if (descLong) { %>
+      <button type="button" class="pdp__more" data-desc-toggle data-more="<%= locale === 'en' ? 'Show more' : 'Xem thêm' %>" data-less="<%= locale === 'en' ? 'Show less' : 'Thu gọn' %>"><%= locale === 'en' ? 'Show more' : 'Xem thêm' %></button>
+      <% } %>
+      </div>
 
       <% if (sizeChartUrl) { %>
       <button type="button" class="pdp__row" data-open-size-guide>
@@ -124,47 +130,10 @@
 
     <%# Mobile: sticky bottom bar + bottom sheet (Palace-style size picker) %>
     <div class="pdp-bar">
-      <% if (multiVariant) { %>
-        <button type="button" class="pdp-btn pdp-bar__main" data-pdp-open-sheet><%= t('product.selectSizeBtn') %></button>
-      <% } else { %>
-        <button type="submit" class="pdp-btn pdp-bar__main" data-pdp-add><%= t('product.addToCart') %></button>
-      <% } %>
+      <button type="submit" class="pdp-btn pdp-bar__main" data-pdp-add><%= t('product.addToCart') %></button>
       <a href="<%= cartUrl %>" class="pdp-bar__cartlink" data-cart-link><%= t('product.checkCart') %></a>
     </div>
 
-    <% if (multiVariant) { %>
-    <div class="pdp-sheet" data-pdp-sheet aria-hidden="true">
-      <div class="pdp-sheet__backdrop" data-pdp-sheet-close></div>
-      <div class="pdp-sheet__panel" role="dialog" aria-modal="true" aria-label="<%= t('product.selectSize') %>">
-        <% if (hasColors) { %>
-        <span class="pdp-sheet__label"><%= t('product.selectColor') %></span>
-        <div class="pdp-sheet__colors" role="group" aria-label="<%= t('product.selectColor') %>">
-          <% colorOptions.forEach(function (opt) { %>
-            <button type="button" class="pdp-sheet__color<%= opt.selected ? ' is-selected' : '' %><%= opt.soldOut ? ' is-soldout' : '' %>" data-color-option data-value="<%= opt.value %>" style="--swatch: <%= opt.hex %>;" aria-pressed="<%= opt.selected ? 'true' : 'false' %>"><i class="pdp-sheet__dot"></i><%= opt.value %></button>
-          <% }); %>
-        </div>
-        <% } %>
-        <span class="pdp-sheet__label"><%= t('product.selectSize') %></span>
-        <ul class="pdp-sheet__list" data-lenis-prevent>
-          <% variantData.forEach(function (v) { %>
-          <li>
-            <div class="pdp-sheet__row<%= defaultVariant && defaultVariant.id === v.id ? ' is-selected' : '' %><%= v.stock <= 0 ? ' is-soldout' : '' %>" role="option" tabindex="0" data-variant-row data-variant-id="<%= v.id %>" data-color="<%= v.color || '' %>"<%= hasColors && defaultVariant && v.color !== defaultVariant.color ? ' hidden' : '' %>>
-              <span class="pdp-sheet__name"><%= v.size %></span>
-              <button type="button" class="pdp-sheet__rm" data-row-remove data-variant-id="<%= v.id %>"<%= v.inCart ? '' : ' hidden' %>><%= t('cart.remove') %></button>
-              <span class="pdp-sheet__meta">
-                <em class="pdp-sheet__tag" data-row-tag<%= (v.inCart || v.stock <= 0) ? '' : ' hidden' %>><%= v.stock <= 0 ? t('product.outOfStock') : t('product.inCart') %></em>
-                <span class="pdp-sheet__price"><%= v.priceLabel %></span>
-              </span>
-            </div>
-          </li>
-          <% }); %>
-        </ul>
-        <div class="pdp-sheet__actions">
-          <button type="submit" class="pdp-btn" data-pdp-add><%= t('product.addToCart') %></button>
-        </div>
-      </div>
-    </div>
-    <% } %>
   </form>
 
   <% if (lookbookImages.length > 0 || relatedProducts.length > 0) { %>

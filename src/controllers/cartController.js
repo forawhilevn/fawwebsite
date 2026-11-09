@@ -77,6 +77,7 @@ async function updateCart(req, res, next) {
     const variantId = Number(req.body.variantId);
     const quantity = Number(req.body.quantity);
     cartService.setQuantity(req, variantId, quantity);
+    if (wantsJson(req)) return res.json({ ok: true });
     res.redirect('/cart');
   } catch (err) {
     next(err);

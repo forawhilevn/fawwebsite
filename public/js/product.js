@@ -493,6 +493,14 @@
       return;
     }
 
+    var descBtn = target.closest('[data-desc-toggle]');
+    if (descBtn) {
+      var box = descBtn.closest('[data-desc]');
+      var open = box.classList.toggle('is-open');
+      descBtn.textContent = descBtn.getAttribute(open ? 'data-less' : 'data-more');
+      return;
+    }
+
     // Mobile bottom sheet
     if (target.closest('[data-pdp-open-sheet]')) {
       setSheet(true);
