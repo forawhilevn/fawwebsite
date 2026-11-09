@@ -38,7 +38,9 @@
                 <% if (isVideo) { %><video src="<%= url %>" muted controls playsinline preload="metadata" class="intro-slot__video"></video>
                 <% } else { %><img src="<%= url %>" alt="" class="intro-slot__video" style="object-fit:contain;" /><% } %>
                 <div class="intro-slot__file"><%= url.split('/').pop() %></div>
-                <label style="text-transform:none; letter-spacing:0; display:flex; gap:6px; align-items:center; font-size:12px;"><input type="checkbox" name="remove<%= n %>" value="1" style="width:auto;" /> Xoá banner này</label>
+                <input type="checkbox" name="remove<%= n %>" value="1" hidden data-remove-flag />
+                <button type="button" class="admin-btn admin-btn--danger" data-remove-toggle style="margin-top:6px;">Xoá banner này</button>
+                <span class="admin-hint" data-remove-note hidden style="display:none; margin-left:8px;">Sẽ bị xoá khi bấm "Lưu tất cả"</span>
               </div>
             <% } else { %><div class="intro-slot"><div class="intro-slot__empty">Chưa có</div></div><% } %>
             <label style="margin-top:8px;"><%= url ? 'Thay bằng file mới' : 'Chọn ảnh / video' %></label>
@@ -55,6 +57,22 @@
   </main>
 </div>
 <script>
+(function () {
+  // "Xoá banner này" button: marks the banner for removal (applied on "Lưu tất cả"); click again to undo
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest && e.target.closest('[data-remove-toggle]');
+    if (!btn) return;
+    var slot = btn.closest('.intro-slot');
+    var flag = slot.querySelector('[data-remove-flag]');
+    var note = slot.querySelector('[data-remove-note]');
+    flag.checked = !flag.checked;
+    btn.textContent = flag.checked ? 'Hoàn tác' : 'Xoá banner này';
+    btn.classList.toggle('admin-btn--danger', !flag.checked);
+    btn.classList.toggle('admin-btn--outline', flag.checked);
+    note.style.display = flag.checked ? 'inline' : 'none';
+    slot.style.opacity = flag.checked ? '0.45' : '';
+  });
+})();
 (function () {
   // preview of a chosen image / video before uploading
   document.addEventListener('change', function (e) {
