@@ -1,4 +1,23 @@
 <meta charset="UTF-8" />
+<script>
+// Reloading a page always starts at the top (no leftover scroll position / half-played animations).
+// Back/forward still restore the previous position as usual.
+(function () {
+  try {
+    var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+    var isReload = nav ? nav.type === 'reload' : (performance.navigation && performance.navigation.type === 1);
+    if (!('scrollRestoration' in history)) return;
+    if (isReload) {
+      history.scrollRestoration = 'manual';
+      window.scrollTo(0, 0);
+      document.addEventListener('DOMContentLoaded', function () { window.scrollTo(0, 0); });
+      window.addEventListener('load', function () { window.scrollTo(0, 0); setTimeout(function () { window.scrollTo(0, 0); }, 60); });
+    } else {
+      history.scrollRestoration = 'auto';
+    }
+  } catch (e) { /* ignore */ }
+})();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title><%= title %></title>
 <meta name="description" content="FOR A WHILE (FAW) — streetwear brand. From another world." />
