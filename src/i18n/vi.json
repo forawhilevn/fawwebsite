@@ -1,6 +1,6 @@
 {
   "nav.menu": "Menu",
-  "nav.shop": "Shops",
+  "nav.shop": "Shop",
   "nav.archive": "Lookbook",
   "nav.lookbook": "Lookbook",
   "nav.cart": "Giỏ hàng",
@@ -48,7 +48,7 @@
   "cart.checkout": "THANH TOÁN",
   "cart.remove": "Xoá",
   "cart.update": "Cập nhật",
-  "product.inCart": "TRONG GIỎ",
+  "product.inCart": "ĐÃ CÓ TRONG GIỎ HÀNG",
   "product.checkCart": "Kiểm tra giỏ hàng",
   "product.selectSizeBtn": "CHỌN SIZE",
   "product.zoom": "Phóng to ảnh",

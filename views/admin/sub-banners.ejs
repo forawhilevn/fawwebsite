@@ -17,7 +17,7 @@
     <div class="admin-card">
       <h2 style="margin-top:0; font-size:16px;">Hai banner nằm ngang dưới header</h2>
       <p style="font-size:13px; color:#71717a;">
-        Hiển thị ở <a href="/" target="_blank">trang chủ</a> (dưới banner chính) và <a href="/shop" target="_blank">trang Shops</a> (trên danh sách sản phẩm).
+        Hiển thị ở <a href="/" target="_blank">trang chủ</a> (dưới banner chính) và <a href="/shop" target="_blank">trang Shop</a> (trên danh sách sản phẩm).
         Máy tính: 2 banner nằm ngang cạnh nhau. Điện thoại: xếp dọc, mỗi banner full chiều rộng.
       </p>
       <p style="font-size:13px; background:#fef3c7; color:#92400e; padding:8px 12px; border-radius:6px;">
@@ -27,7 +27,7 @@
       <form action="/admin/banner-phu/luu" method="post" enctype="multipart/form-data" class="admin-form">
         <label style="display:flex; align-items:center; gap:8px; text-transform:none; letter-spacing:0;"><input type="checkbox" name="enabled" value="1" <%= s.subbanner_enabled !== '0' ? 'checked' : '' %> style="width:auto;" /> Bật banner phụ</label>
         <label style="display:flex; align-items:center; gap:8px; text-transform:none; letter-spacing:0;"><input type="checkbox" name="home" value="1" <%= s.subbanner_home !== '0' ? 'checked' : '' %> style="width:auto;" /> Hiện ở trang chủ</label>
-        <label style="display:flex; align-items:center; gap:8px; text-transform:none; letter-spacing:0;"><input type="checkbox" name="shop" value="1" <%= s.subbanner_shop !== '0' ? 'checked' : '' %> style="width:auto;" /> Hiện ở trang Shops</label>
+        <label style="display:flex; align-items:center; gap:8px; text-transform:none; letter-spacing:0;"><input type="checkbox" name="shop" value="1" <%= s.subbanner_shop !== '0' ? 'checked' : '' %> style="width:auto;" /> Hiện ở trang Shop</label>
 
         <div class="intro-grid" style="margin-top:16px;">
         <% [1, 2].forEach(function(n) { var url = s['subbanner_' + n + '_media']; var isVideo = /\.(mp4|webm|m4v|mov)$/i.test(url || ''); %>

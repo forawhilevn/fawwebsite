@@ -1,6 +1,6 @@
 {
   "nav.menu": "Menu",
-  "nav.shop": "Shops",
+  "nav.shop": "Shop",
   "nav.archive": "Lookbook",
   "nav.lookbook": "Lookbook",
   "nav.cart": "Cart",
@@ -48,7 +48,7 @@
   "cart.checkout": "CHECKOUT",
   "cart.remove": "Remove",
   "cart.update": "Update",
-  "product.inCart": "IN CART",
+  "product.inCart": "ALREADY IN CART",
   "product.checkCart": "View cart",
   "product.selectSizeBtn": "SELECT SIZE",
   "product.zoom": "Zoom image",
