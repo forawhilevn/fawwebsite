@@ -2968,3 +2968,10 @@ a.lookbook-item:hover .lookbook-item__media img { transform: scale(1.03); }
   .pdp__more { display: block; margin: 10px 0 0; padding: 4px 0; background: none; border: 0; color: var(--color-fg); font: inherit; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 }
 @media (min-width: 901px) { .pdp__more { display: none; } }
+
+/* About page photo on phones: run edge to edge and zoom in a little - the artwork sits inside a
+   wide black margin, so the zoom only trims black border and the drawing reads much bigger */
+@media (max-width: 640px) {
+  .about-image { width: calc(100% + 32px); margin-left: -16px; margin-right: -16px; overflow: hidden; }
+  .about-image img { transform: scale(1.3); transform-origin: center; }
+}
