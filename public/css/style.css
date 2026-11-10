@@ -2996,3 +2996,6 @@ html.intro-running:not(.intro-revealed) .section__title { animation-play-state: 
 
 /* Intro waiting for a tap: no auto-entry; "Bỏ qua" sits centred under the main button */
 .video-intro.needs-tap .video-intro__skip { left: 50%; right: auto; bottom: calc(18% - 72px); transform: translateX(-50%); padding: 12px 26px; font-size: 13px; letter-spacing: .12em; }
+
+/* Closed page: the two Instagram accounts side by side on one row (wraps only on very narrow screens) */
+.maintenance__igs { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; column-gap: 24px; row-gap: 8px; }
