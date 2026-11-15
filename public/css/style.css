@@ -3003,5 +3003,4 @@ html.intro-running:not(.intro-revealed) .section__title { animation-play-state: 
 
 /* low stock / sold out */
 .badge-low-stock { background: var(--color-orange); color: #0a0a0a; }
-.product-card__media img.is-soldout { opacity: 0.55; filter: grayscale(0.6); }
 .pdp__badge { display: inline-block; margin: 6px 0 2px; }
