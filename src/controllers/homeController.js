@@ -12,8 +12,7 @@ async function showHome(req, res, next) {
       .orderBy('sort_order');
 
     await stock.ensureProductStockSchema();
-    const newArrivals = await stock.orderProducts(db('products').where({ is_active: true }), 'home')
-      .limit(8);
+    const newArrivals = await stock.orderProducts(db('products').where({ is_active: true }), 'home');
 
     const lookbookImages = newArrivals
       .map((p) => getLookbookImages(p.slug)[0])
