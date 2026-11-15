@@ -28,6 +28,7 @@
   "shop.sort.priceDesc": "Price: High to Low",
   "shop.itemsCount": "items",
   "shop.soldOut": "SOLD OUT",
+  "shop.lowStock": "LOW STOCK",
   "shop.empty": "No products in this category yet.",
   "product.selectSize": "Select size",
   "product.selectColor": "Select color",

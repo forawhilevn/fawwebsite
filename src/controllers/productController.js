@@ -2,6 +2,7 @@ const db = require('../db');
 const { localizeProduct, localizeCategory } = require('../utils/i18n');
 const { getLookbookImages, getSizeChartUrl } = require('../utils/assets');
 const { formatVND } = require('../utils/format');
+const stock = require('../services/productStock');
 
 // Fallback swatch colours when the admin has not picked a hex code yet.
 const COLOR_FALLBACK = {
@@ -42,6 +43,8 @@ async function showProduct(req, res, next) {
     // Public variant payload for the product page script: effective price,
     // stock and whether the variant is already in this visitor's cart.
     const cartMap = (req.session && req.session.cart) || {};
+    const stockStatus = stock.computeStatus(product, variants);
+    const handSoldOut = product.stock_label === 'soldout';
     const variantData = variants.map((v) => {
       const unit = v.price_override || product.sale_price || product.price;
       return {
@@ -49,7 +52,7 @@ async function showProduct(req, res, next) {
         size: v.size,
         color: v.color || null,
         hex: v.color ? swatchHex(v.color, v.color_hex) : null,
-        stock: v.stock,
+        stock: handSoldOut ? 0 : v.stock,
         price: unit,
         priceLabel: formatVND(unit),
         override: !!v.price_override,
@@ -98,7 +101,8 @@ async function showProduct(req, res, next) {
       hasColors,
       images: images.length ? images : [{ image_url: product.cover_image_url, sort_order: 0 }],
       category: category ? localizeCategory(category, locale) : null,
-      relatedProducts: related.map((p) => localizeProduct(p, locale)),
+      relatedProducts: await stock.attachStatus(related.map((p) => localizeProduct(p, locale))),
+      stockStatus,
       lookbookImages: getLookbookImages(product.slug),
       sizeChartUrl: getSizeChartUrl(product.slug)
     });

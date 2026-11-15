@@ -64,6 +64,8 @@
       <div class="pdp__head">
         <div>
           <h1 class="pdp__name"><%= product.name %></h1>
+          <% if (stockStatus === 'soldout') { %><span class="badge badge-sold-out pdp__badge"><%= t('shop.soldOut') %></span>
+          <% } else if (stockStatus === 'low') { %><span class="badge badge-low-stock pdp__badge"><%= t('shop.lowStock') %></span><% } %>
           <div class="pdp__price" data-pdp-price>
             <% if (product.sale_price) { %>
               <span class="product-card__price--sale"><%= formatVND(product.sale_price) %></span>

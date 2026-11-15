@@ -60,6 +60,7 @@ router.post('/danh-muc/:id/sua', categoryAdminController.updateCategory);
 router.post('/danh-muc/:id/xoa', categoryAdminController.deleteCategory);
 
 router.get('/san-pham', productAdminController.listProducts);
+router.post('/san-pham/thu-tu', productAdminController.reorderProducts);
 router.get('/san-pham/moi', productAdminController.newProductForm);
 router.post(
   '/san-pham/moi',

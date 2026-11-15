@@ -1,8 +1,10 @@
 <a href="<%= locale === 'en' ? '/en/product/' + product.slug : '/product/' + product.slug %>" class="product-card" data-reveal>
   <div class="product-card__media">
-    <img src="<%= product.cover_image_url || '/images/logo/logo-mark.png' %>" alt="<%= product.name %>" loading="lazy" />
-    <% if (typeof product.inStock !== 'undefined' && !product.inStock) { %>
+    <img class="<%= product.stockStatus === 'soldout' ? 'is-soldout' : '' %>" src="<%= product.cover_image_url || '/images/logo/logo-mark.png' %>" alt="<%= product.name %>" loading="lazy" />
+    <% if (product.stockStatus === 'soldout') { %>
       <span class="badge badge-sold-out product-card__badge"><%= t('shop.soldOut') %></span>
+    <% } else if (product.stockStatus === 'low') { %>
+      <span class="badge badge-low-stock product-card__badge"><%= t('shop.lowStock') %></span>
     <% } %>
   </div>
   <div class="product-card__body">

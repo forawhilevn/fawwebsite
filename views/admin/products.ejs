@@ -16,15 +16,28 @@
     </div>
 
     <div class="admin-card">
+      <div class="prodorder__bar">
+        <span>Thứ tự hiển thị trên:</span>
+        <a href="/admin/san-pham?mode=home" class="admin-btn <%= mode === 'home' ? '' : 'admin-btn--outline' %>">Trang chủ</a>
+        <a href="/admin/san-pham?mode=shop" class="admin-btn <%= mode === 'shop' ? '' : 'admin-btn--outline' %>">Shop / danh mục</a>
+        <small>Kéo ⠿ hoặc dùng mũi tên để đổi chỗ, tự lưu. Sản phẩm mới thêm sẽ nằm trên cùng.<% if (mode === 'home') { %> Trang chủ hiện 8 sản phẩm đầu.<% } %></small>
+        <span class="prodorder__msg" data-order-msg></span>
+      </div>
       <table class="admin-table">
-        <thead><tr><th>Ảnh</th><th>Tên</th><th>Danh mục</th><th>Giá</th><th>Trạng thái</th><th></th></tr></thead>
-        <tbody>
+        <thead><tr><th></th><th>Ảnh</th><th>Tên</th><th>Danh mục</th><th>Giá</th><th>Tồn kho</th><th>Trạng thái</th><th></th></tr></thead>
+        <tbody data-order-list data-mode="<%= mode %>">
           <% products.forEach(function(p) { %>
-            <tr>
+            <tr data-id="<%= p.id %>" draggable="true">
+              <td class="prodorder__handle"><span title="Kéo để đổi chỗ">⠿</span><button type="button" data-up aria-label="Lên">▲</button><button type="button" data-down aria-label="Xuống">▼</button></td>
               <td><img src="<%= p.cover_image_url || '/images/logo/logo-mark.png' %>" alt="" style="width:40px; height:50px; object-fit:cover;" /></td>
               <td><%= p.name_vi %></td>
               <td><%= p.category_name %></td>
               <td><%= formatVND(p.price) %></td>
+              <td>
+                <%= p.stockTotal %>
+                <% if (p.stockStatus === 'soldout') { %><span class="admin-badge admin-badge--cancelled">Hết hàng</span><% } else if (p.stockStatus === 'low') { %><span class="admin-badge admin-badge--pending">Sắp hết</span><% } %>
+                <% if (p.stock_label === 'soldout' || p.stock_label === 'low') { %><small style="display:block;color:#888;">đặt tay</small><% } %>
+              </td>
               <td><%= p.is_active ? 'Đang bán' : 'Ẩn' %></td>
               <td>
                 <a href="/admin/san-pham/<%= p.id %>/sua" class="admin-btn admin-btn--outline">Sửa</a>
@@ -35,12 +48,81 @@
             </tr>
           <% }); %>
           <% if (products.length === 0) { %>
-            <tr><td colspan="6">Chưa có sản phẩm nào.</td></tr>
+            <tr><td colspan="8">Chưa có sản phẩm nào.</td></tr>
           <% } %>
         </tbody>
       </table>
     </div>
   </main>
 </div>
+<style>
+.prodorder__bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px}
+.prodorder__bar small{flex-basis:100%;color:#888}
+.prodorder__msg{margin-left:auto;font-size:13px;color:#166534}
+.prodorder__handle{white-space:nowrap;cursor:grab;user-select:none}
+.prodorder__handle span{font-size:18px;margin-right:6px;color:#888}
+.prodorder__handle button{border:1px solid #ddd;background:#fff;border-radius:4px;width:26px;height:26px;cursor:pointer;margin-right:2px;font-size:10px}
+tr.is-dragging{opacity:.4}
+tr.is-over{outline:2px dashed #888}
+</style>
+<script>
+(function () {
+  var body = document.querySelector('[data-order-list]');
+  if (!body) return;
+  var mode = body.getAttribute('data-mode');
+  var msg = document.querySelector('[data-order-msg]');
+  var drag = null;
+  function rows() { return Array.prototype.slice.call(body.querySelectorAll('tr[data-id]')); }
+  function save() {
+    var ids = rows().map(function (r) { return r.getAttribute('data-id'); }).join(',');
+    if (msg) { msg.style.color = '#888'; msg.textContent = 'Đang lưu…'; }
+    fetch('/admin/san-pham/thu-tu', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'fetch', Accept: 'application/json' },
+      body: new URLSearchParams({ mode: mode, ids: ids }).toString()
+    }).then(function (r) { if (!r.ok) throw new Error(); return r.json(); }).then(function () {
+      if (msg) { msg.style.color = '#166534'; msg.textContent = 'Đã lưu thứ tự'; setTimeout(function () { msg.textContent = ''; }, 2000); }
+    }).catch(function () {
+      if (msg) { msg.style.color = '#b91c1c'; msg.textContent = 'Lưu thất bại, thử lại'; }
+    });
+  }
+  body.addEventListener('dragstart', function (e) {
+    var tr = e.target.closest && e.target.closest('tr[data-id]');
+    if (!tr) return;
+    drag = tr; tr.classList.add('is-dragging');
+    if (e.dataTransfer) { e.dataTransfer.effectAllowed = 'move'; try { e.dataTransfer.setData('text/plain', tr.getAttribute('data-id')); } catch (x) {} }
+  });
+  body.addEventListener('dragover', function (e) {
+    if (!drag) return;
+    e.preventDefault();
+    var tr = e.target.closest('tr[data-id]');
+    rows().forEach(function (r) { r.classList.remove('is-over'); });
+    if (tr && tr !== drag) tr.classList.add('is-over');
+  });
+  body.addEventListener('drop', function (e) {
+    if (!drag) return;
+    e.preventDefault();
+    var tr = e.target.closest('tr[data-id]');
+    if (tr && tr !== drag) {
+      var list = rows();
+      if (list.indexOf(drag) < list.indexOf(tr)) tr.after(drag); else tr.before(drag);
+      save();
+    }
+  });
+  body.addEventListener('dragend', function () {
+    rows().forEach(function (r) { r.classList.remove('is-dragging', 'is-over'); });
+    drag = null;
+  });
+  body.addEventListener('click', function (e) {
+    var up = e.target.closest('[data-up]'), down = e.target.closest('[data-down]');
+    if (!up && !down) return;
+    var tr = e.target.closest('tr[data-id]');
+    if (up && tr.previousElementSibling && tr.previousElementSibling.hasAttribute('data-id')) tr.previousElementSibling.before(tr);
+    else if (down && tr.nextElementSibling && tr.nextElementSibling.hasAttribute('data-id')) tr.nextElementSibling.after(tr);
+    else return;
+    save();
+  });
+})();
+</script>
 </body>
 </html>

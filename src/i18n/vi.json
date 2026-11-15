@@ -28,6 +28,7 @@
   "shop.sort.priceDesc": "Giá giảm dần",
   "shop.itemsCount": "sản phẩm",
   "shop.soldOut": "SOLD OUT",
+  "shop.lowStock": "SẮP HẾT HÀNG",
   "shop.empty": "Chưa có sản phẩm nào trong danh mục này.",
   "product.selectSize": "Chọn size",
   "product.selectColor": "Chọn màu",

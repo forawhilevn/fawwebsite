@@ -1,5 +1,6 @@
 const db = require('../db');
 const { localizeProduct, localizeCategory } = require('../utils/i18n');
+const stock = require('../services/productStock');
 
 async function showShop(req, res, next) {
   try {
@@ -21,27 +22,16 @@ async function showShop(req, res, next) {
       query = query.andWhere({ category_id: category.id });
     }
 
-    query = query.orderBy('created_at', 'desc');
+    await stock.ensureProductStockSchema();
+    query = stock.orderProducts(query, 'shop');
 
     const products = await query;
-    const productIds = products.map((p) => p.id);
-
-    const variants = productIds.length
-      ? await db('product_variants').whereIn('product_id', productIds)
-      : [];
-    const stockByProduct = new Map();
-    for (const v of variants) {
-      stockByProduct.set(v.product_id, (stockByProduct.get(v.product_id) || 0) + v.stock);
-    }
-
+    const withStatus = await stock.attachStatus(products);
 
     res.render('shop', {
       title: `${res.locals.t('shop.title')} — FOR A WHILE`,
       bodyClass: 'page-shop',
-      products: products.map((p) => ({
-        ...localizeProduct(p, locale),
-        inStock: (stockByProduct.get(p.id) || 0) > 0
-      })),
+      products: withStatus.map((p) => localizeProduct(p, locale)),
       activeCategory: category ? localizeCategory(category, locale) : null
     });
   } catch (err) {

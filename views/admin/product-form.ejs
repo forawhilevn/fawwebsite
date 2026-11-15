@@ -63,6 +63,21 @@
         <label>Mô tả (EN)</label>
         <textarea name="descriptionEn" rows="3"><%= product.description_en || '' %></textarea>
 
+        <div style="display:flex; gap:16px;">
+          <div style="flex:1;">
+            <label>Nhãn tồn kho</label>
+            <select name="stockLabel">
+              <option value="" <%= !product.stock_label ? 'selected' : '' %>>Tự động (theo tồn kho)</option>
+              <option value="low" <%= product.stock_label === 'low' ? 'selected' : '' %>>Luôn hiện "Sắp hết"</option>
+              <option value="soldout" <%= product.stock_label === 'soldout' ? 'selected' : '' %>>Luôn hiện "Hết hàng" (khóa mua)</option>
+            </select>
+          </div>
+          <div style="flex:1;">
+            <label>Báo "Sắp hết" khi tổng tồn ≤ (tự động)</label>
+            <input type="text" inputmode="numeric" name="lowThreshold" placeholder="5" value="<%= product.low_threshold === null || product.low_threshold === undefined ? '' : product.low_threshold %>" />
+          </div>
+        </div>
+
         <label>Ảnh bìa</label>
         <input type="file" name="coverImage" accept="image/*" />
         <% if (product.cover_image_url) { %>

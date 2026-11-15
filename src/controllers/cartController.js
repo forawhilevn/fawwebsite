@@ -56,7 +56,8 @@ async function addToCart(req, res, next) {
       if (wantsJson(req)) return res.status(404).json({ ok: false });
       return res.status(404).redirect('/shop');
     }
-    if (variant.stock <= 0) {
+    const owner = await db('products').where({ id: variant.product_id }).first();
+    if (variant.stock <= 0 || (owner && owner.stock_label === 'soldout')) {
       if (wantsJson(req)) return res.status(409).json({ ok: false });
       return res.redirect(req.get('Referer') || '/shop');
     }
