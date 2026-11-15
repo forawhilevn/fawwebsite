@@ -40,14 +40,16 @@
     });
   }, true);
 
-  // product cover: shrink + convert to JPEG in the browser before a normal submit,
-  // so big / WebP / odd photos never fail on the server
+  // images chosen in a normal form (product cover, Lifestyle...): shrink + convert to WebP in the
+  // browser before the submit, so big / odd photos never fail on the server
   document.addEventListener('submit', function (e) {
     var form = e.target;
-    if (!form || !form.querySelector || form.__fawCoverDone) return;
-    var input = form.querySelector('input[type="file"][name="coverImage"]');
-    if (!input || !input.files || !input.files.length) return;
-    var file = input.files[0];
+    if (!form || !form.querySelectorAll || form.__fawCoverDone) return;
+    var inputs = Array.prototype.filter.call(
+      form.querySelectorAll('input[type="file"][name="coverImage"], input[type="file"][data-webp]'),
+      function (i) { return i.files && i.files.length; }
+    );
+    if (!inputs.length) return;
     e.preventDefault();
     e.stopImmediatePropagation();
     var submitBtn = form.querySelector('button[type="submit"]');
@@ -58,15 +60,78 @@
       form.submit();
     };
     if (typeof window.__fawPrepareImage !== 'function') return finish();
-    window.__fawPrepareImage(file).then(function (out) {
-      try {
-        var dt = new DataTransfer();
-        dt.items.add(out);
-        input.files = dt.files;
-      } catch (err) { /* keep original file */ }
-      finish();
-    }, function () { finish(); });
+    var jobs = inputs.map(function (input) {
+      var opts = input.name === 'coverImage' ? { crop: [1200, 1500] } : null;
+      return Promise.all(Array.prototype.map.call(input.files, function (f) {
+        return window.__fawPrepareImage(f, opts).catch(function () { return f; });
+      })).then(function (outs) {
+        try {
+          var dt = new DataTransfer();
+          outs.forEach(function (o) { dt.items.add(o); });
+          input.files = dt.files;
+        } catch (err) { /* keep original files */ }
+      });
+    });
+    Promise.all(jobs).then(finish, finish);
   }, true);
+
+  // generic drag / arrow reorder: <div data-sort-list data-sort-url="..."> with children [data-id]
+  (function () {
+    function rowsOf(list) { return Array.prototype.slice.call(list.children).filter(function (c) { return c.hasAttribute('data-id'); }); }
+    function save(list) {
+      var msg = document.querySelector('[data-sort-msg]');
+      var ids = rowsOf(list).map(function (r) { return r.getAttribute('data-id'); }).join(',');
+      if (msg) { msg.style.color = '#888'; msg.textContent = 'Đang lưu…'; }
+      fetch(list.getAttribute('data-sort-url'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'fetch', Accept: 'application/json' },
+        body: new URLSearchParams({ ids: ids }).toString()
+      }).then(function (r) { if (!r.ok) throw new Error(); return r.json(); }).then(function () {
+        if (msg) { msg.style.color = '#166534'; msg.textContent = 'Đã lưu thứ tự'; setTimeout(function () { msg.textContent = ''; }, 2000); }
+      }).catch(function () {
+        if (msg) { msg.style.color = '#b91c1c'; msg.textContent = 'Lưu thất bại, thử lại'; }
+      });
+    }
+    var dragging = null, dragList = null;
+    document.addEventListener('dragstart', function (e) {
+      var item = e.target.closest && e.target.closest('[data-sort-list] > [data-id]');
+      if (!item) return;
+      dragging = item; dragList = item.parentNode; item.classList.add('is-dragging');
+      if (e.dataTransfer) { e.dataTransfer.effectAllowed = 'move'; try { e.dataTransfer.setData('text/plain', item.getAttribute('data-id')); } catch (x) {} }
+    });
+    document.addEventListener('dragover', function (e) {
+      if (!dragging) return;
+      var over = e.target.closest && e.target.closest('[data-sort-list] > [data-id]');
+      if (!over || over.parentNode !== dragList) return;
+      e.preventDefault();
+      rowsOf(dragList).forEach(function (r) { r.classList.remove('is-over'); });
+      if (over !== dragging) over.classList.add('is-over');
+    });
+    document.addEventListener('drop', function (e) {
+      if (!dragging) return;
+      var over = e.target.closest && e.target.closest('[data-sort-list] > [data-id]');
+      if (!over || over === dragging || over.parentNode !== dragList) return;
+      e.preventDefault();
+      var list = rowsOf(dragList);
+      if (list.indexOf(dragging) < list.indexOf(over)) over.after(dragging); else over.before(dragging);
+      save(dragList);
+    });
+    document.addEventListener('dragend', function () {
+      if (dragList) rowsOf(dragList).forEach(function (r) { r.classList.remove('is-dragging', 'is-over'); });
+      dragging = null; dragList = null;
+    });
+    document.addEventListener('click', function (e) {
+      var b = e.target.closest && e.target.closest('[data-sort-list] [data-up], [data-sort-list] [data-down]');
+      if (!b) return;
+      var item = b.closest('[data-sort-list] > [data-id]');
+      if (!item) return;
+      var list = item.parentNode;
+      if (b.hasAttribute('data-up') && item.previousElementSibling && item.previousElementSibling.hasAttribute('data-id')) item.previousElementSibling.before(item);
+      else if (b.hasAttribute('data-down') && item.nextElementSibling && item.nextElementSibling.hasAttribute('data-id')) item.nextElementSibling.after(item);
+      else return;
+      save(list);
+    });
+  })();
 
   /* ---------- colour palette ---------- */
 
@@ -563,27 +628,44 @@
   }
 
   // shrink + convert to JPEG in the browser (server cannot read WebP/HEIC and big phone photos)
-  function mmPrepare(file) {
+  function mmPrepare(file, opts) {
     return new Promise(function (resolve, reject) {
       var url = URL.createObjectURL(file);
       var img = new Image();
       img.onload = function () {
         try {
           var w = img.naturalWidth, h = img.naturalHeight;
-          var k = Math.min(1, MM_MAX_SIDE / Math.max(w, h));
           var c = document.createElement('canvas');
-          c.width = Math.max(1, Math.round(w * k));
-          c.height = Math.max(1, Math.round(h * k));
           var ctx = c.getContext('2d');
-          ctx.fillStyle = '#fff';
-          ctx.fillRect(0, 0, c.width, c.height);
-          ctx.drawImage(img, 0, 0, c.width, c.height);
-          c.toBlob(function (blob) {
-            URL.revokeObjectURL(url);
-            if (!blob) return reject(new Error('Không xử lý được ảnh "' + file.name + '".'));
-            var base = file.name.replace(/\.[^.]+$/, '') || 'anh';
-            resolve(new File([blob], base + '.jpg', { type: 'image/jpeg' }));
-          }, 'image/jpeg', 0.88);
+          var crop = opts && opts.crop;
+          if (crop) {
+            // cover-crop to the exact size (centred), like the server used to do
+            var tw = crop[0], th = crop[1];
+            var sc = Math.max(tw / w, th / h);
+            var sw = tw / sc, sh = th / sc;
+            c.width = tw; c.height = th;
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 0, tw, th);
+            ctx.drawImage(img, (w - sw) / 2, (h - sh) / 2, sw, sh, 0, 0, tw, th);
+          } else {
+            var k = Math.min(1, MM_MAX_SIDE / Math.max(w, h));
+            c.width = Math.max(1, Math.round(w * k));
+            c.height = Math.max(1, Math.round(h * k));
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 0, c.width, c.height);
+            ctx.drawImage(img, 0, 0, c.width, c.height);
+          }
+          // WebP (smaller); browsers that cannot encode it return PNG, so fall back to JPEG
+          c.toBlob(function (wb) {
+            var done = function (blob, ext, type) {
+              URL.revokeObjectURL(url);
+              if (!blob) return reject(new Error('Không xử lý được ảnh "' + file.name + '".'));
+              var base = file.name.replace(/\.[^.]+$/, '') || 'anh';
+              resolve(new File([blob], base + ext, { type: type }));
+            };
+            if (wb && wb.type === 'image/webp') return done(wb, '.webp', 'image/webp');
+            c.toBlob(function (jb) { done(jb, '.jpg', 'image/jpeg'); }, 'image/jpeg', 0.88);
+          }, 'image/webp', 0.86);
         } catch (e) {
           URL.revokeObjectURL(url);
           reject(new Error('Không xử lý được ảnh "' + file.name + '".'));
@@ -760,7 +842,7 @@
         for (var i = 0; i < files.length; i++) {
           if (mm.items.length >= max) { errors.push('Tối đa ' + max + ' ảnh, các ảnh dư đã được bỏ qua.'); break; }
           try {
-            var prepared = await mmPrepare(files[i]);
+            var prepared = await mmPrepare(files[i], kind === 'gallery' ? { crop: [1200, 1500] } : null);
             mm.items.push({ key: ++mmKey, file: prepared, url: URL.createObjectURL(prepared), id: null });
           } catch (err) {
             errors.push(err.message);
@@ -881,7 +963,7 @@
             if (el.hasAttribute && el.hasAttribute('data-money') && el.name) fd.set(el.name, String(el.value).replace(/\D/g, ''));
           });
           var cov = f.querySelector('input[type="file"][name="coverImage"]');
-          if (cov && cov.files && cov.files[0]) fd.set('coverImage', await mmPrepare(cov.files[0]));
+          if (cov && cov.files && cov.files[0]) fd.set('coverImage', await mmPrepare(cov.files[0], { crop: [1200, 1500] }));
           var body = fd;
           var headers = {};
           if (f.enctype !== 'multipart/form-data') {

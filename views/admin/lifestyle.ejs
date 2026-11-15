@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title><%= title %></title>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+  <%- include('../partials/admin-sidebar') %>
+  <main class="admin-main">
+    <h1>Lifestyle</h1>
+
+    <% if (error === 'thumb') { %><div class="admin-card"><p class="admin-error">Hãy chọn ảnh thumb cho mục mới.</p></div><% } %>
+    <% if (error === 'max') { %><div class="admin-card"><p class="admin-error">Đã đạt tối đa 60 mục Lifestyle.</p></div><% } %>
+
+    <div class="admin-card">
+      <h2 class="admin-card__title">Tên hiển thị trên web</h2>
+      <% if (namesSaved) { %><p style="color:#166534;">Đã lưu.</p><% } %>
+      <p class="admin-hint">Đổi chữ "Lifestyle" bất cứ lúc nào: <strong>tên trên menu</strong> (đầu trang) và <strong>tiêu đề</strong> (trang chủ + trang Lifestyle), tách riêng tiếng Việt / tiếng Anh.</p>
+      <form action="/admin/lifestyle/ten" method="post" class="admin-form">
+        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+          <div style="flex:1; min-width:200px;"><label>Tên trên menu (VI)</label><input type="text" name="menuVi" maxlength="60" value="<%= names.lifestyle_menu_vi %>" /></div>
+          <div style="flex:1; min-width:200px;"><label>Tên trên menu (EN)</label><input type="text" name="menuEn" maxlength="60" value="<%= names.lifestyle_menu_en %>" /></div>
+        </div>
+        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+          <div style="flex:1; min-width:200px;"><label>Tiêu đề trang (VI)</label><input type="text" name="titleVi" maxlength="60" value="<%= names.lifestyle_title_vi %>" /></div>
+          <div style="flex:1; min-width:200px;"><label>Tiêu đề trang (EN)</label><input type="text" name="titleEn" maxlength="60" value="<%= names.lifestyle_title_en %>" /></div>
+        </div>
+        <button type="submit" class="admin-btn" style="margin-top:12px;">Lưu tên</button>
+      </form>
+    </div>
+
+    <div class="admin-card">
+      <h2 class="admin-card__title">Thêm mục Lifestyle</h2>
+      <p class="admin-hint">Mỗi mục có 1 ảnh <strong>thumb</strong> hiển thị ngoài trang chủ. Khách bấm vào sẽ mở pop up với các ảnh khác — bạn thêm các ảnh đó ở bước tiếp theo.</p>
+      <form action="/admin/lifestyle/moi" method="post" enctype="multipart/form-data" class="admin-form">
+        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+          <div style="flex:1; min-width:200px;"><label>Tiêu đề (VI)</label><input type="text" name="titleVi" /></div>
+          <div style="flex:1; min-width:200px;"><label>Tiêu đề (EN)</label><input type="text" name="titleEn" /></div>
+        </div>
+        <label>Ảnh thumb</label>
+        <input type="file" name="thumb" accept="image/*" data-webp required />
+        <button type="submit" class="admin-btn" style="margin-top:12px;">Tạo mục</button>
+      </form>
+    </div>
+
+    <div class="admin-card">
+      <h2 class="admin-card__title">Các mục <span><%= sets.length %></span></h2>
+      <p class="admin-hint">Kéo ⠿ (hoặc dùng ▲ ▼) để đổi thứ tự, tự lưu. Thứ tự này là thứ tự trên <a href="/archive" target="_blank">trang chủ và trang Lifestyle</a>.</p>
+      <span class="prodorder__msg" data-sort-msg></span>
+      <div class="life-admin" data-sort-list data-sort-url="/admin/lifestyle/thu-tu">
+        <% sets.forEach(function (s) { %>
+          <div class="life-admin__item" data-id="<%= s.id %>" draggable="true">
+            <span class="life-admin__handle"><span>⠿</span><button type="button" data-up aria-label="Lên">▲</button><button type="button" data-down aria-label="Xuống">▼</button></span>
+            <img src="<%= s.thumb_url %>" alt="" />
+            <div class="life-admin__meta">
+              <strong><%= s.title_vi || s.title_en || '(chưa có tiêu đề)' %></strong>
+              <small><%= s.imageCount %> ảnh thêm · <%= s.is_active ? 'Đang hiện' : 'Đang ẩn' %></small>
+            </div>
+            <a href="/admin/lifestyle/<%= s.id %>/sua" class="admin-btn admin-btn--outline">Sửa</a>
+            <form action="/admin/lifestyle/<%= s.id %>/xoa" method="post" onsubmit="return confirm('Xoá mục này và toàn bộ ảnh của nó?');">
+              <button type="submit" class="admin-btn admin-btn--danger">Xoá</button>
+            </form>
+          </div>
+        <% }); %>
+        <% if (sets.length === 0) { %><p>Chưa có mục nào.</p><% } %>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

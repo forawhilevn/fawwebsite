@@ -11,19 +11,16 @@
 <main>
   <div class="page-shell page-shell--light">
     <div class="container">
-      <h1 class="page-title"><%= t('nav.archive') %></h1>
+      <h1 class="page-title"><%= lifeTitle %></h1>
 
-      <% if (items.length === 0) { %>
+      <% if (sets.length === 0) { %>
         <p style="color: var(--color-fg-muted-on-alt);">
-          <% if (locale === 'en') { %>Lookbook coming soon.<% } else { %>Lookbook sắp ra mắt.<% } %>
+          <% if (locale === 'en') { %>Coming soon.<% } else { %>Sắp ra mắt.<% } %>
         </p>
       <% } else { %>
-        <div class="lookbook-gallery">
-          <% items.forEach(function(item) { %>
-            <% if (item.href) { %><a href="<%= item.href %>" class="lookbook-item"><% } else { %><figure class="lookbook-item"><% } %>
-              <span class="lookbook-item__media"><img src="<%= item.url %>" alt="<%= item.caption %>" loading="lazy" /></span>
-              <% if (item.caption) { %><span class="lookbook-item__cap"><%= item.caption %></span><% } %>
-            <% if (item.href) { %></a><% } else { %></figure><% } %>
+        <div class="life-grid">
+          <% sets.forEach(function(set) { %>
+            <%- include('partials/lifestyle-card', { set: set }) %>
           <% }); %>
         </div>
       <% } %>

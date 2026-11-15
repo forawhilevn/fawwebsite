@@ -1,8 +1,8 @@
 {
   "nav.menu": "Menu",
   "nav.shop": "Shop",
-  "nav.archive": "Lookbook",
-  "nav.lookbook": "Lookbook",
+  "nav.archive": "Lifestyle",
+  "nav.lookbook": "Lifestyle",
   "nav.cart": "Cart",
   "nav.search": "Search",
   "nav.account": "Account",
@@ -15,6 +15,7 @@
   "home.featured": "FEATURED",
   "home.shopNow": "SHOP NOW",
   "home.viewAll": "VIEW ALL",
+  "home.loadMore": "LOAD MORE",
   "home.taglineLine1": "FROM ANOTHER WORLD",
   "home.taglineLine2": "Where perspective is personal.",
   "home.videoIntroEnter": "SHOP NOW",

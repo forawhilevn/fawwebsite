@@ -11,6 +11,7 @@ const productVariantController = require('../controllers/admin/productVariantCon
 const productGalleryController = require('../controllers/admin/productGalleryController');
 const lookbookController = require('../controllers/admin/lookbookController');
 const lookbookLibraryController = require('../controllers/admin/lookbookLibraryController');
+const lifestyleController = require('../controllers/admin/lifestyleController');
 const orderAdminController = require('../controllers/admin/orderAdminController');
 const bannerController = require('../controllers/admin/bannerController');
 const discountAdminController = require('../controllers/admin/discountAdminController');
@@ -30,6 +31,7 @@ const uploadPageImage = makeUploader('pages');
 const uploadBackgroundImage = makeUploader('backgrounds');
 const uploadLookbookImage = makeSlugUploader('lookbook');
 const uploadLibraryImage = makeUploader('lookbook');
+const uploadLifestyle = makeUploader('lifestyle');
 
 router.use(authController.flashMiddleware);
 
@@ -92,6 +94,16 @@ router.post('/san-pham/:id/lookbook/them', uploadLookbookImage.single('image'), 
 router.post('/san-pham/:id/lookbook/luu', lookbookController.saveOrder);
 router.post('/san-pham/:id/lookbook/:filename/xoa', lookbookController.deleteImage);
 
+router.get('/lifestyle', lifestyleController.list);
+router.post('/lifestyle/ten', lifestyleController.saveNames);
+router.post('/lifestyle/moi', uploadLifestyle.single('thumb'), lifestyleController.create);
+router.post('/lifestyle/thu-tu', lifestyleController.reorderSets);
+router.get('/lifestyle/:id/sua', lifestyleController.editForm);
+router.post('/lifestyle/:id/sua', uploadLifestyle.single('thumb'), lifestyleController.update);
+router.post('/lifestyle/:id/anh', uploadLifestyle.array('images', 40), lifestyleController.addImages);
+router.post('/lifestyle/:id/anh/thu-tu', lifestyleController.reorderImages);
+router.post('/lifestyle/:id/anh/:imageId/xoa', lifestyleController.deleteImage);
+router.post('/lifestyle/:id/xoa', lifestyleController.deleteSet);
 router.get('/lookbook', lookbookLibraryController.show);
 router.post('/lookbook/anh/them', uploadLibraryImage.single('image'), lookbookLibraryController.addImage);
 router.post('/lookbook/luu', lookbookLibraryController.saveAll);

@@ -25,7 +25,7 @@
 
     <nav class="site-header__nav">
       <a href="<%= pfx %>/shop" class="<%= shopActive ? 'is-active' : '' %>"><%= t('nav.shop') %></a>
-      <a href="<%= pfx %>/archive" class="<%= navActive('/archive') ? 'is-active' : '' %>"><%= t('nav.lookbook') %></a>
+      <a href="<%= pfx %>/archive" class="<%= navActive('/archive') ? 'is-active' : '' %>"><%= lifeMenu %></a>
       <a href="<%= pfx %>/stores" class="<%= navActive('/stores') ? 'is-active' : '' %>"><%= t('nav.stores') %></a>
       <a href="<%= pfx %>/about" class="<%= navActive('/about') ? 'is-active' : '' %>"><%= t('nav.about') %></a>
     </nav>
@@ -44,7 +44,7 @@
 
   <nav class="site-header__mobile-nav" id="mobileNav" data-mobile-nav>
     <a href="<%= pfx %>/shop" class="<%= shopActive ? 'is-active' : '' %>"><%= t('nav.shop') %></a>
-    <a href="<%= pfx %>/archive" class="<%= navActive('/archive') ? 'is-active' : '' %>"><%= t('nav.lookbook') %></a>
+    <a href="<%= pfx %>/archive" class="<%= navActive('/archive') ? 'is-active' : '' %>"><%= lifeMenu %></a>
     <a href="<%= pfx %>/stores" class="<%= navActive('/stores') ? 'is-active' : '' %>"><%= t('nav.stores') %></a>
     <a href="<%= pfx %>/about" class="<%= navActive('/about') ? 'is-active' : '' %>"><%= t('nav.about') %></a>
   </nav>

@@ -1,6 +1,6 @@
 const db = require('../db');
 const { localizeProduct, localizeBanner } = require('../utils/i18n');
-const { getLookbookImages } = require('../utils/assets');
+const lifestyle = require('../services/lifestyle');
 const stock = require('../services/productStock');
 
 async function showHome(req, res, next) {
@@ -14,17 +14,15 @@ async function showHome(req, res, next) {
     await stock.ensureProductStockSchema();
     const newArrivals = await stock.orderProducts(db('products').where({ is_active: true }), 'home');
 
-    const lookbookImages = newArrivals
-      .map((p) => getLookbookImages(p.slug)[0])
-      .filter(Boolean)
-      .slice(0, 4);
+    const lifestyleSets = await lifestyle.listPublic(locale);
 
     res.render('home', {
       title: 'FOR A WHILE — FROM ANOTHER WORLD',
       bodyClass: 'page-home',
       heroBanners: heroBanners.map((b) => localizeBanner(b, locale)),
       newArrivals: await stock.attachStatus(newArrivals.map((p) => localizeProduct(p, locale))),
-      lookbookImages
+      lifestyleSets,
+      homeLimit: 8
     });
   } catch (err) {
     next(err);

@@ -62,6 +62,125 @@
   // sheet) now lives in /js/product.js.
 
   // Mobile header hamburger menu
+  // Lifestyle: thumbnails open a pop up with the other photos of that set
+  var lifeModal = null;
+  function lifeBuild() {
+    if (lifeModal) return lifeModal;
+    var m = document.createElement('div');
+    m.className = 'life-modal';
+    m.hidden = true;
+    m.innerHTML =
+      '<div class="life-modal__backdrop" data-life-close></div>' +
+      '<div class="life-modal__box" role="dialog" aria-modal="true">' +
+        '<div class="life-modal__head"><h3 class="life-modal__title"></h3>' +
+        '<a class="life-modal__product" hidden></a>' +
+        '<button type="button" class="life-modal__close" data-life-close aria-label="Close">&times;</button></div>' +
+        '<div class="life-modal__scroll" data-lenis-prevent><div class="life-modal__grid"></div></div>' +
+      '</div>' +
+      '<div class="life-zoom" hidden>' +
+        '<button type="button" class="life-zoom__btn life-zoom__close" data-zoom-close aria-label="Close">&times;</button>' +
+        '<button type="button" class="life-zoom__btn life-zoom__nav life-zoom__nav--prev" data-zoom-step="-1" aria-label="Prev">&lsaquo;</button>' +
+        '<button type="button" class="life-zoom__btn life-zoom__nav life-zoom__nav--next" data-zoom-step="1" aria-label="Next">&rsaquo;</button>' +
+        '<img class="life-zoom__img" alt="" draggable="false" />' +
+      '</div>';
+    document.body.appendChild(m);
+    lifeModal = m;
+    return m;
+  }
+  var lifeImages = [];
+  var lifeIndex = 0;
+  function lifeZoomShow(i) {
+    var m = lifeModal; if (!m || !lifeImages.length) return;
+    lifeIndex = (i + lifeImages.length) % lifeImages.length;
+    m.querySelector('.life-zoom__img').src = lifeImages[lifeIndex];
+    m.querySelector('.life-zoom').hidden = false;
+    var multi = lifeImages.length > 1;
+    Array.prototype.forEach.call(m.querySelectorAll('.life-zoom__nav'), function (b) { b.hidden = !multi; });
+  }
+  function lifeClose() {
+    if (!lifeModal) return;
+    lifeModal.hidden = true;
+    lifeModal.querySelector('.life-zoom').hidden = true;
+    document.documentElement.classList.remove('life-open');
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    if (!t || !t.closest) return;
+    var openBtn = t.closest('[data-life-open]');
+    if (openBtn) {
+      var data;
+      try { data = JSON.parse(openBtn.getAttribute('data-life-open')); } catch (err) { return; }
+      var m = lifeBuild();
+      lifeImages = data.images || [];
+      m.querySelector('.life-modal__title').textContent = data.title || '';
+      var pa = m.querySelector('.life-modal__product');
+      if (data.product && data.product.url) {
+        pa.href = data.product.url;
+        pa.textContent = (document.documentElement.lang === 'en' ? 'View product' : 'Xem sản phẩm') + ' →';
+        pa.hidden = false;
+      } else { pa.hidden = true; }
+      var grid = m.querySelector('.life-modal__grid');
+      grid.innerHTML = '';
+      lifeImages.forEach(function (src, i) {
+        var b = document.createElement('button');
+        b.type = 'button'; b.className = 'life-modal__item'; b.setAttribute('data-life-img', String(i));
+        var im = document.createElement('img'); im.src = src; im.alt = data.title || ''; im.loading = 'lazy';
+        b.appendChild(im); grid.appendChild(b);
+      });
+      m.querySelector('.life-modal__scroll').scrollTop = 0;
+      m.hidden = false;
+      document.documentElement.classList.add('life-open');
+      return;
+    }
+    if (!lifeModal || lifeModal.hidden) {
+      var sc = t.closest('[data-life-scroll]');
+      if (sc) {
+        var row = document.querySelector('[data-life-row]');
+        if (row) row.scrollBy({ left: Number(sc.getAttribute('data-life-scroll')) * row.clientWidth * 0.8, behavior: 'smooth' });
+      }
+      return;
+    }
+    if (t.closest('[data-zoom-close]')) { lifeModal.querySelector('.life-zoom').hidden = true; return; }
+    var step = t.closest('[data-zoom-step]');
+    if (step) { lifeZoomShow(lifeIndex + Number(step.getAttribute('data-zoom-step'))); return; }
+    var img = t.closest('[data-life-img]');
+    if (img) { lifeZoomShow(Number(img.getAttribute('data-life-img'))); return; }
+    if (t.closest('.life-zoom__img')) { lifeZoomShow(lifeIndex + 1); return; }
+    if (t.closest('.life-modal__product') || t.closest('[data-life-close]')) lifeClose();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (!lifeModal || lifeModal.hidden) return;
+    var z = lifeModal.querySelector('.life-zoom');
+    if (e.key === 'Escape') { if (!z.hidden) z.hidden = true; else lifeClose(); }
+    else if (!z.hidden && e.key === 'ArrowRight') lifeZoomShow(lifeIndex + 1);
+    else if (!z.hidden && e.key === 'ArrowLeft') lifeZoomShow(lifeIndex - 1);
+  });
+  // page changes (Barba) close the pop up
+  window.addEventListener('popstate', lifeClose);
+
+  // home: "Xem thêm" reveals the next batch of products
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest && e.target.closest('[data-home-more]');
+    if (!btn) return;
+    var step = parseInt(btn.getAttribute('data-step'), 10) || 8;
+    var hidden = Array.prototype.slice.call(document.querySelectorAll('[data-home-extra][hidden]'));
+    hidden.slice(0, step).forEach(function (box) {
+      box.hidden = false;
+      var card = box.querySelector('.product-card');
+      if (card) {
+        card.removeAttribute('data-reveal');
+        card.style.opacity = '';
+        card.style.transform = '';
+        card.style.visibility = '';
+      }
+      box.classList.add('is-fresh');
+    });
+    if (hidden.length <= step) {
+      var wrap = btn.closest('.home-more-wrap');
+      if (wrap) wrap.hidden = true;
+    }
+  });
+
   document.addEventListener('click', function (e) {
     const toggle = e.target.closest('[data-menu-toggle]');
     if (toggle) {

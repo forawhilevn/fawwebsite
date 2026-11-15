@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title><%= title %></title>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+  <%- include('../partials/admin-sidebar') %>
+  <main class="admin-main">
+    <p><a href="/admin/lifestyle">← Về danh sách Lifestyle</a></p>
+    <h1>Sửa mục Lifestyle</h1>
+    <% if (saved) { %><div class="admin-card"><p style="color:#166534;margin:0;">Đã lưu.</p></div><% } %>
+
+    <div class="admin-card">
+      <h2 class="admin-card__title">Thông tin</h2>
+      <form action="/admin/lifestyle/<%= set.id %>/sua" method="post" enctype="multipart/form-data" class="admin-form">
+        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+          <div style="flex:1; min-width:200px;"><label>Tiêu đề (VI)</label><input type="text" name="titleVi" value="<%= set.title_vi || '' %>" /></div>
+          <div style="flex:1; min-width:200px;"><label>Tiêu đề (EN)</label><input type="text" name="titleEn" value="<%= set.title_en || '' %>" /></div>
+        </div>
+        <label>Sản phẩm liên kết (nút "Xem sản phẩm" trong pop up)</label>
+        <select name="productId">
+          <option value="">— Không gắn —</option>
+          <% products.forEach(function (p) { %><option value="<%= p.id %>" <%= set.product_id === p.id ? 'selected' : '' %>><%= p.name_vi %></option><% }); %>
+        </select>
+        <label>Ảnh thumb hiện tại</label>
+        <img src="<%= set.thumb_url %>" alt="" style="width:120px; border-radius:6px; display:block; margin-bottom:8px;" />
+        <label>Đổi ảnh thumb (không bắt buộc)</label>
+        <input type="file" name="thumb" accept="image/*" data-webp />
+        <label style="display:flex; align-items:center; gap:6px; font-weight:400; margin-top:12px;">
+          <input type="checkbox" name="isActive" <%= set.is_active ? 'checked' : '' %> style="width:auto;" /> Hiển thị trên web
+        </label>
+        <button type="submit" class="admin-btn" style="margin-top:12px;">Lưu thông tin</button>
+      </form>
+    </div>
+
+    <div class="admin-card">
+      <h2 class="admin-card__title">Ảnh trong pop up <span><%= set.images.length %> ảnh</span></h2>
+      <p class="admin-hint">Ảnh thumb luôn là ảnh đầu tiên trong pop up. Các ảnh dưới đây hiện sau nó. Kéo ⠿ hoặc dùng ▲ ▼ để đổi thứ tự (tự lưu).</p>
+      <span class="prodorder__msg" data-sort-msg></span>
+      <div class="life-admin life-admin--imgs" data-sort-list data-sort-url="/admin/lifestyle/<%= set.id %>/anh/thu-tu">
+        <% set.images.forEach(function (im) { %>
+          <div class="life-admin__item" data-id="<%= im.id %>" draggable="true">
+            <span class="life-admin__handle"><span>⠿</span><button type="button" data-up aria-label="Lên">▲</button><button type="button" data-down aria-label="Xuống">▼</button></span>
+            <img src="<%= im.image_url %>" alt="" />
+            <div class="life-admin__meta"></div>
+            <form action="/admin/lifestyle/<%= set.id %>/anh/<%= im.id %>/xoa" method="post">
+              <button type="submit" class="admin-btn admin-btn--danger">Xoá</button>
+            </form>
+          </div>
+        <% }); %>
+        <% if (set.images.length === 0) { %><p>Chưa có ảnh nào ngoài thumb.</p><% } %>
+      </div>
+
+      <form action="/admin/lifestyle/<%= set.id %>/anh" method="post" enctype="multipart/form-data" class="admin-form" style="margin-top:16px;">
+        <label>Thêm ảnh (chọn được nhiều ảnh cùng lúc)</label>
+        <input type="file" name="images" accept="image/*" multiple data-webp required />
+        <button type="submit" class="admin-btn" style="margin-top:12px;">Tải ảnh lên</button>
+      </form>
+    </div>
+  </main>
+</div>
+</body>
+</html>

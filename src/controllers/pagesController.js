@@ -1,20 +1,13 @@
-const lookbookLibrary = require('../services/lookbookLibrary');
+const lifestyle = require('../services/lifestyle');
 const pageController = require('./pageController');
 
 async function showArchive(req, res, next) {
   try {
-    const locale = res.locals.locale;
-    const rows = await lookbookLibrary.listPublic();
-    const items = rows.map((row) => ({
-      url: row.image_url,
-      caption: (locale === 'en' ? row.caption_en || row.caption_vi : row.caption_vi || row.caption_en) || '',
-      href: row.product ? (locale === 'en' ? '/en/product/' : '/product/') + row.product.slug : ''
-    }));
-
+    const sets = await lifestyle.listPublic(res.locals.locale);
     res.render('archive', {
-      title: `Lookbook — FOR A WHILE`,
+      title: `${res.locals.lifeTitle} — FOR A WHILE`,
       bodyClass: 'page-archive',
-      items
+      sets
     });
   } catch (err) {
     next(err);

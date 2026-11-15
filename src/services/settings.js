@@ -29,7 +29,11 @@ const DEFAULTS = {
   gridbg_mode: 'image',
   gridbg_image: '',
   gridbg_color: '#0a0a0a',
-  gridbg_fixed: '1'
+  gridbg_fixed: '1',
+  lifestyle_menu_vi: 'Lifestyle',
+  lifestyle_menu_en: 'Lifestyle',
+  lifestyle_title_vi: 'Lifestyle',
+  lifestyle_title_en: 'Lifestyle'
 };
 
 let tableReady = false;

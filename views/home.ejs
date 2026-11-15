@@ -35,27 +35,40 @@
     <div class="product-grid-wrap">
       <div class="container">
         <div class="product-grid">
-          <% newArrivals.forEach(function(product) { %>
-            <%- include('partials/product-card', { product: product }) %>
+          <% newArrivals.forEach(function(product, idx) { %>
+            <% if (idx < homeLimit) { %>
+              <%- include('partials/product-card', { product: product }) %>
+            <% } else { %>
+              <div class="product-grid__more" data-home-extra hidden><%- include('partials/product-card', { product: product }) %></div>
+            <% } %>
           <% }); %>
         </div>
+        <% if (newArrivals.length > homeLimit) { %>
+        <div class="home-more-wrap">
+          <button type="button" class="home-more" data-home-more data-step="<%= homeLimit %>"><%= t('home.loadMore') %></button>
+        </div>
+        <% } %>
       </div>
     </div>
   </section>
   <% } %>
 
-  <% if (lookbookImages.length > 0) { %>
+  <% if (lifestyleSets.length > 0) { %>
   <section class="section">
     <div class="container">
       <div class="section__heading">
-        <h2 class="section__title">Lookbook</h2>
+        <h2 class="section__title"><%= lifeTitle %></h2>
         <a href="<%= locale === 'en' ? '/en/archive' : '/archive' %>" class="section__viewall"><%= t('home.viewAll') %></a>
       </div>
     </div>
-    <div class="lookbook-grid">
-      <% lookbookImages.forEach(function(img) { %>
-        <img src="<%= img %>" alt="" loading="lazy" />
-      <% }); %>
+    <div class="life-row-wrap">
+      <button type="button" class="life-arrow life-arrow--prev" data-life-scroll="-1" aria-label="Prev">&lsaquo;</button>
+      <div class="life-row" data-life-row>
+        <% lifestyleSets.forEach(function(set) { %>
+          <%- include('partials/lifestyle-card', { set: set }) %>
+        <% }); %>
+      </div>
+      <button type="button" class="life-arrow life-arrow--next" data-life-scroll="1" aria-label="Next">&rsaquo;</button>
     </div>
   </section>
   <% } %>

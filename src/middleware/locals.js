@@ -35,6 +35,10 @@ async function attachLocals(req, res, next) {
     res.locals.getSizeChartUrl = getSizeChartUrl;
     res.locals.introConfig = intro.buildConfig(res.locals.siteSettings);
     res.locals.gridBgCss = gridBackground.buildCss(res.locals.siteSettings);
+    const st = res.locals.siteSettings;
+    const en = locale === 'en';
+    res.locals.lifeTitle = (en ? st.lifestyle_title_en || st.lifestyle_title_vi : st.lifestyle_title_vi || st.lifestyle_title_en) || 'Lifestyle';
+    res.locals.lifeMenu = (en ? st.lifestyle_menu_en || st.lifestyle_menu_vi : st.lifestyle_menu_vi || st.lifestyle_menu_en) || res.locals.lifeTitle;
     res.locals.siteClosed = res.locals.siteSettings.site_closed === '1';
     res.locals.assetVersion = assetVersion();
     res.locals.storeName = 'FOR A WHILE';
