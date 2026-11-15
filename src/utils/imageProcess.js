@@ -13,7 +13,14 @@ const IMAGE_SIZES = {
 async function cropToFixedSize(filePath, sizeKey) {
   const size = IMAGE_SIZES[sizeKey];
   if (!size) throw new Error('Unknown image size key: ' + sizeKey);
-  const image = await Jimp.read(filePath);
+  let image;
+  try {
+    image = await Jimp.read(filePath);
+  } catch (err) {
+    // Jimp cannot decode WebP: the admin pages already crop those in the browser, keep as-is
+    if (/\.webp$/i.test(filePath)) return;
+    throw err;
+  }
   image.cover({ w: size.w, h: size.h });
   if (/\.jpe?g$/i.test(filePath)) {
     try {

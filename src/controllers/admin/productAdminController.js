@@ -9,6 +9,24 @@ const { getLookbookImages } = require('../../utils/assets');
 
 const IMAGE_ERROR_MESSAGE = 'Ảnh không hợp lệ hoặc bị lỗi khi xử lý. Vui lòng thử lại với file JPG/PNG/GIF/WEBP khác.';
 
+// the form posts camelCase fields but the template reads DB-style columns:
+// map them so nothing typed is lost when the form is shown again after an error
+function formToProduct(b, base) {
+  b = b || {};
+  return Object.assign({}, base || {}, {
+    name_vi: b.nameVi || '',
+    name_en: b.nameEn || '',
+    category_id: b.categoryId ? Number(b.categoryId) : null,
+    price: b.price || '',
+    sale_price: b.salePrice || '',
+    sku: b.sku || '',
+    description_vi: b.descriptionVi || '',
+    description_en: b.descriptionEn || '',
+    is_featured: b.isFeatured === 'on',
+    is_active: b.isActive === 'on' || b.isActive === 'true'
+  });
+}
+
 function removeUploadedFile(imageUrl) {
   if (imageUrl && imageUrl.startsWith('/images/uploads/')) {
     const filePath = path.join(storage.STORAGE_DIR, imageUrl);
@@ -68,7 +86,7 @@ async function createProduct(req, res, next) {
       return res.status(400).render('admin/product-form', {
         title: 'Thêm sản phẩm - FAW Admin',
         categories,
-        product: req.body,
+        product: formToProduct(req.body),
         errors: errors.array(),
         isEdit: false,
         galleryImages: [],
@@ -90,17 +108,8 @@ async function createProduct(req, res, next) {
       try {
         await cropToFixedSize(destPath, 'product');
       } catch (imgErr) {
-        removeUploadedFile('/images/uploads/products/' + req.file.filename);
-        return res.status(400).render('admin/product-form', {
-          title: 'Thêm sản phẩm - FAW Admin',
-          categories,
-          product: req.body,
-          errors: [{ msg: IMAGE_ERROR_MESSAGE }],
-          isEdit: false,
-          galleryImages: [],
-          variants: [],
-          lookbookImages: []
-        });
+        // could not crop: keep the original upload instead of failing the whole product
+        console.warn('cover crop failed, keeping original:', imgErr && imgErr.message);
       }
       coverImageUrl = '/images/uploads/products/' + req.file.filename;
     }
@@ -118,7 +127,7 @@ async function createProduct(req, res, next) {
         sale_price: req.body.salePrice ? Number(req.body.salePrice) : null,
         cover_image_url: coverImageUrl,
         is_featured: req.body.isFeatured === 'on',
-        is_active: req.body.isActive !== 'off'
+        is_active: req.body.isActive === 'on'
       })
       .returning('id');
 
@@ -170,7 +179,7 @@ async function updateProduct(req, res, next) {
       return res.status(400).render('admin/product-form', {
         title: 'Sửa sản phẩm - FAW Admin',
         categories,
-        product: { ...product, ...req.body, id: product.id },
+        product: formToProduct(req.body, product),
         errors: errors.array(),
         isEdit: true,
         galleryImages,
@@ -185,17 +194,8 @@ async function updateProduct(req, res, next) {
       try {
         await cropToFixedSize(destPath, 'product');
       } catch (imgErr) {
-        removeUploadedFile('/images/uploads/products/' + req.file.filename);
-        return res.status(400).render('admin/product-form', {
-          title: 'Sửa sản phẩm - FAW Admin',
-          categories,
-          product: { ...product, ...req.body, id: product.id },
-          errors: [{ msg: IMAGE_ERROR_MESSAGE }],
-          isEdit: true,
-          galleryImages,
-          variants,
-          lookbookImages
-        });
+        // could not crop: keep the original upload instead of failing the whole product
+        console.warn('cover crop failed, keeping original:', imgErr && imgErr.message);
       }
       removeUploadedFile(product.cover_image_url);
       coverImageUrl = '/images/uploads/products/' + req.file.filename;
@@ -214,7 +214,7 @@ async function updateProduct(req, res, next) {
         sale_price: req.body.salePrice ? Number(req.body.salePrice) : null,
         cover_image_url: coverImageUrl,
         is_featured: req.body.isFeatured === 'on',
-        is_active: req.body.isActive !== 'off'
+        is_active: req.body.isActive === 'on'
       });
 
     res.redirect(`/admin/san-pham/${product.id}/sua`);

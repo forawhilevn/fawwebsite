@@ -40,6 +40,34 @@
     });
   }, true);
 
+  // product cover: shrink + convert to JPEG in the browser before a normal submit,
+  // so big / WebP / odd photos never fail on the server
+  document.addEventListener('submit', function (e) {
+    var form = e.target;
+    if (!form || !form.querySelector || form.__fawCoverDone) return;
+    var input = form.querySelector('input[type="file"][name="coverImage"]');
+    if (!input || !input.files || !input.files.length) return;
+    var file = input.files[0];
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    var submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.dataset.t = submitBtn.textContent; submitBtn.textContent = 'Đang xử lý ảnh…'; }
+    var finish = function () {
+      form.__fawCoverDone = true;
+      window.__skipUnload = true;
+      form.submit();
+    };
+    if (typeof window.__fawPrepareImage !== 'function') return finish();
+    window.__fawPrepareImage(file).then(function (out) {
+      try {
+        var dt = new DataTransfer();
+        dt.items.add(out);
+        input.files = dt.files;
+      } catch (err) { /* keep original file */ }
+      finish();
+    }, function () { finish(); });
+  }, true);
+
   /* ---------- colour palette ---------- */
 
   var PALETTE = [
@@ -787,6 +815,8 @@
   }
 
   /* ---------- save-all + unsaved warning ---------- */
+
+  window.__fawPrepareImage = mmPrepare;
 
   function initSaveAll() {
     var main = document.querySelector('[data-saveall]');
