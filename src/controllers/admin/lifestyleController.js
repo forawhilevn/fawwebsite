@@ -34,9 +34,7 @@ async function saveNames(req, res, next) {
     const v = (x, fb) => String(x || '').trim().slice(0, 60) || fb;
     await settings.setMany({
       lifestyle_title_vi: v(req.body.titleVi, 'Lifestyle'),
-      lifestyle_title_en: v(req.body.titleEn, 'Lifestyle'),
-      lifestyle_menu_vi: v(req.body.menuVi, v(req.body.titleVi, 'Lifestyle')),
-      lifestyle_menu_en: v(req.body.menuEn, v(req.body.titleEn, 'Lifestyle'))
+      lifestyle_title_en: v(req.body.titleEn, 'Lifestyle')
     });
     res.redirect('/admin/lifestyle?ten=1');
   } catch (err) { next(err); }

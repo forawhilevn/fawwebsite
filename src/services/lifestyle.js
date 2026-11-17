@@ -16,20 +16,6 @@ function ensureSchema() {
           t.integer('sort_order').notNullable().defaultTo(0);
           t.timestamp('created_at').defaultTo(db.fn.now());
         });
-        // one-time: every old Lookbook photo becomes a Lifestyle set (thumb = that photo)
-        if (await db.schema.hasTable('lookbook_images')) {
-          const old = await db('lookbook_images').orderBy('sort_order').orderBy('id');
-          for (let i = 0; i < old.length; i += 1) {
-            await db('lifestyle_sets').insert({
-              title_vi: old[i].caption_vi || null,
-              title_en: old[i].caption_en || null,
-              thumb_url: old[i].image_url,
-              product_id: old[i].product_id || null,
-              is_active: !!old[i].is_active,
-              sort_order: i + 1
-            });
-          }
-        }
       }
       if (!(await db.schema.hasTable('lifestyle_images'))) {
         await db.schema.createTable('lifestyle_images', (t) => {

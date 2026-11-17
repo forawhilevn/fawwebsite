@@ -16,19 +16,15 @@
     <% if (error === 'max') { %><div class="admin-card"><p class="admin-error">Đã đạt tối đa 60 mục Lifestyle.</p></div><% } %>
 
     <div class="admin-card">
-      <h2 class="admin-card__title">Tên hiển thị trên web</h2>
+      <h2 class="admin-card__title">Tiêu đề mục trên trang chủ</h2>
       <% if (namesSaved) { %><p style="color:#166534;">Đã lưu.</p><% } %>
-      <p class="admin-hint">Đổi chữ "Lifestyle" bất cứ lúc nào: <strong>tên trên menu</strong> (đầu trang) và <strong>tiêu đề</strong> (trang chủ + trang Lifestyle), tách riêng tiếng Việt / tiếng Anh.</p>
+      <p class="admin-hint">Đổi chữ "Lifestyle" hiển thị làm tiêu đề mục ở trang chủ, tách riêng tiếng Việt / tiếng Anh. Trang Lookbook là mục khác, không bị ảnh hưởng.</p>
       <form action="/admin/lifestyle/ten" method="post" class="admin-form">
         <div style="display:flex; gap:16px; flex-wrap:wrap;">
-          <div style="flex:1; min-width:200px;"><label>Tên trên menu (VI)</label><input type="text" name="menuVi" maxlength="60" value="<%= names.lifestyle_menu_vi %>" /></div>
-          <div style="flex:1; min-width:200px;"><label>Tên trên menu (EN)</label><input type="text" name="menuEn" maxlength="60" value="<%= names.lifestyle_menu_en %>" /></div>
+          <div style="flex:1; min-width:200px;"><label>Tiêu đề (VI)</label><input type="text" name="titleVi" maxlength="60" value="<%= names.lifestyle_title_vi %>" /></div>
+          <div style="flex:1; min-width:200px;"><label>Tiêu đề (EN)</label><input type="text" name="titleEn" maxlength="60" value="<%= names.lifestyle_title_en %>" /></div>
         </div>
-        <div style="display:flex; gap:16px; flex-wrap:wrap;">
-          <div style="flex:1; min-width:200px;"><label>Tiêu đề trang (VI)</label><input type="text" name="titleVi" maxlength="60" value="<%= names.lifestyle_title_vi %>" /></div>
-          <div style="flex:1; min-width:200px;"><label>Tiêu đề trang (EN)</label><input type="text" name="titleEn" maxlength="60" value="<%= names.lifestyle_title_en %>" /></div>
-        </div>
-        <button type="submit" class="admin-btn" style="margin-top:12px;">Lưu tên</button>
+        <button type="submit" class="admin-btn" style="margin-top:12px;">Lưu tiêu đề</button>
       </form>
     </div>
 
@@ -48,7 +44,7 @@
 
     <div class="admin-card">
       <h2 class="admin-card__title">Các mục <span><%= sets.length %></span></h2>
-      <p class="admin-hint">Kéo ⠿ (hoặc dùng ▲ ▼) để đổi thứ tự, tự lưu. Thứ tự này là thứ tự trên <a href="/archive" target="_blank">trang chủ và trang Lifestyle</a>.</p>
+      <p class="admin-hint">Kéo ⠿ (hoặc dùng ▲ ▼) để đổi thứ tự, tự lưu. Thứ tự này là thứ tự trên <a href="/" target="_blank">trang chủ</a>.</p>
       <span class="prodorder__msg" data-sort-msg></span>
       <div class="life-admin" data-sort-list data-sort-url="/admin/lifestyle/thu-tu">
         <% sets.forEach(function (s) { %>

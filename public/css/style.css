@@ -3008,7 +3008,7 @@ html.intro-running:not(.intro-revealed) .section__title { animation-play-state: 
 /* home: load more */
 .product-grid__more { display: contents; }
 .product-grid__more[hidden] { display: none; }
-.product-grid__more.is-fresh .product-card { animation: moreIn 0.45s ease both; }
+.product-card.is-fresh { animation: moreIn 0.45s ease both; }
 @keyframes moreIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 .home-more-wrap { display: flex; justify-content: center; padding: 28px 0 8px; }
 .home-more-wrap[hidden] { display: none; }
