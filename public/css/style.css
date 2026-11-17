@@ -3100,3 +3100,25 @@ html.intro-running:not(.intro-revealed) .section__title { animation-play-state: 
 .life-modal__grid { columns: auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
 .life-modal__item { margin: 0; }
 @media (max-width: 640px) { .life-modal__box { width: 100vw; max-height: 100vh; } .life-modal__grid { grid-template-columns: 1fr; gap: 12px; } }
+
+/* Lifestyle row: same card width as the product grid (3 per row, 2 on phones) */
+.life-row-wrap { padding: 0 var(--space-5); }
+.life-row { gap: var(--space-4); padding: 0 0 12px; }
+.life-row .life-card { flex: 0 0 calc((100% - 2 * var(--space-4)) / 3); scroll-snap-align: start; }
+.life-card__media { border-radius: 16px; }
+@media (max-width: 700px) {
+  .life-row { gap: var(--space-3); }
+  .life-row .life-card { flex-basis: calc((100% - var(--space-3)) / 2); }
+}
+/* small plain arrows, no round background */
+.life-arrow {
+  width: 32px; height: 44px; border-radius: 0; background: none; color: #fff;
+  font-size: 30px; line-height: 1; padding: 0; text-shadow: 0 1px 8px rgba(0,0,0,0.85);
+  top: 38%;
+}
+.life-arrow--prev { left: calc(var(--space-5) + 4px); }
+.life-arrow--next { right: calc(var(--space-5) + 4px); }
+.life-arrow:hover { background: none; opacity: 0.8; }
+
+/* product card: name always reserves 2 lines so the price sits at the same place */
+.product-card__name { line-height: 1.35; min-height: calc(1.35em * 2); }

@@ -59,15 +59,15 @@
       <div class="section__heading">
         <h2 class="section__title"><%= lifeTitle %></h2>
       </div>
-    </div>
-    <div class="life-row-wrap">
-      <button type="button" class="life-arrow life-arrow--prev" data-life-scroll="-1" aria-label="Prev">&lsaquo;</button>
-      <div class="life-row" data-life-row>
-        <% lifestyleSets.forEach(function(set) { %>
-          <%- include('partials/lifestyle-card', { set: set }) %>
-        <% }); %>
+      <div class="life-row-wrap">
+        <button type="button" class="life-arrow life-arrow--prev" data-life-scroll="-1" aria-label="Prev">&lsaquo;</button>
+        <div class="life-row" data-life-row>
+          <% lifestyleSets.forEach(function(set) { %>
+            <%- include('partials/lifestyle-card', { set: set }) %>
+          <% }); %>
+        </div>
+        <button type="button" class="life-arrow life-arrow--next" data-life-scroll="1" aria-label="Next">&rsaquo;</button>
       </div>
-      <button type="button" class="life-arrow life-arrow--next" data-life-scroll="1" aria-label="Next">&rsaquo;</button>
     </div>
   </section>
   <% } %>
