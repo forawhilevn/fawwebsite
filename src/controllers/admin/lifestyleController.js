@@ -74,21 +74,39 @@ async function editForm(req, res, next) {
   } catch (err) { next(err); }
 }
 
+async function saveImages(set, files) {
+  let room = MAX_IMAGES - set.images.length;
+  const max = await db('lifestyle_images').where({ set_id: set.id }).max('sort_order as m').first();
+  let sort = Number(max.m) || 0;
+  for (const f of files || []) {
+    if (room <= 0) { removeFile(urlOf(f)); continue; }
+    sort += 1; room -= 1;
+    await db('lifestyle_images').insert({ set_id: set.id, image_url: urlOf(f), sort_order: sort });
+  }
+}
+
+// one form: info + (optional) new thumb + (optional) new photos
 async function update(req, res, next) {
   try {
     const set = await lifestyle.getSet(Number(req.params.id));
     if (!set) return res.redirect('/admin/lifestyle');
+    const files = req.files || {};
+    const thumb = files.thumb && files.thumb[0];
     const patch = {
       title_vi: clean(req.body.titleVi, 200),
       title_en: clean(req.body.titleEn, 200),
+      desc_vi: String(req.body.descVi || '').trim().slice(0, 2000) || null,
+      desc_en: String(req.body.descEn || '').trim().slice(0, 2000) || null,
+      credit: String(req.body.credit || '').trim().slice(0, 500) || null,
       product_id: productIdOf(req.body.productId),
       is_active: req.body.isActive === 'on'
     };
-    if (req.file) {
-      patch.thumb_url = urlOf(req.file);
+    if (thumb) {
+      patch.thumb_url = urlOf(thumb);
       removeFile(set.thumb_url);
     }
     await db('lifestyle_sets').where({ id: set.id }).update(patch);
+    await saveImages(set, files.images);
     res.redirect('/admin/lifestyle/' + set.id + '/sua?ok=1');
   } catch (err) { next(err); }
 }
@@ -97,15 +115,7 @@ async function addImages(req, res, next) {
   try {
     const set = await lifestyle.getSet(Number(req.params.id));
     if (!set) return res.redirect('/admin/lifestyle');
-    const files = req.files || [];
-    let room = MAX_IMAGES - set.images.length;
-    const max = await db('lifestyle_images').where({ set_id: set.id }).max('sort_order as m').first();
-    let sort = Number(max.m) || 0;
-    for (const f of files) {
-      if (room <= 0) { removeFile(urlOf(f)); continue; }
-      sort += 1; room -= 1;
-      await db('lifestyle_images').insert({ set_id: set.id, image_url: urlOf(f), sort_order: sort });
-    }
+    await saveImages(set, req.files);
     res.redirect('/admin/lifestyle/' + set.id + '/sua?ok=1');
   } catch (err) { next(err); }
 }

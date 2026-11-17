@@ -75,7 +75,9 @@
         '<div class="life-modal__head"><h3 class="life-modal__title"></h3>' +
         '<a class="life-modal__product" hidden></a>' +
         '<button type="button" class="life-modal__close" data-life-close aria-label="Close">&times;</button></div>' +
-        '<div class="life-modal__scroll" data-lenis-prevent><div class="life-modal__grid"></div></div>' +
+        '<div class="life-modal__scroll" data-lenis-prevent>' +
+          '<div class="life-modal__info"><p class="life-modal__desc" hidden></p><p class="life-modal__credit" hidden></p></div>' +
+          '<div class="life-modal__grid"></div></div>' +
       '</div>' +
       '<div class="life-zoom" hidden>' +
         '<button type="button" class="life-zoom__btn life-zoom__close" data-zoom-close aria-label="Close">&times;</button>' +
@@ -119,6 +121,24 @@
         pa.textContent = (document.documentElement.lang === 'en' ? 'View product' : 'Xem sản phẩm') + ' →';
         pa.hidden = false;
       } else { pa.hidden = true; }
+      var descEl = m.querySelector('.life-modal__desc');
+      descEl.textContent = data.desc || '';
+      descEl.hidden = !data.desc;
+      // credit: @handles become Instagram links
+      var credEl = m.querySelector('.life-modal__credit');
+      credEl.innerHTML = '';
+      (data.credit || '').split(/(@[A-Za-z0-9._]+)/g).forEach(function (part) {
+        if (!part) return;
+        if (part.charAt(0) === '@' && part.length > 1) {
+          var a = document.createElement('a');
+          a.href = 'https://www.instagram.com/' + part.slice(1).replace(/\.+$/, '') + '/';
+          a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = part;
+          credEl.appendChild(a);
+        } else {
+          credEl.appendChild(document.createTextNode(part));
+        }
+      });
+      credEl.hidden = !data.credit;
       var grid = m.querySelector('.life-modal__grid');
       grid.innerHTML = '';
       lifeImages.forEach(function (src, i) {

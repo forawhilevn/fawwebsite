@@ -14,54 +14,70 @@
     <h1>Sửa mục Lifestyle</h1>
     <% if (saved) { %><div class="admin-card"><p style="color:#166534;margin:0;">Đã lưu.</p></div><% } %>
 
-    <div class="admin-card">
-      <h2 class="admin-card__title">Thông tin</h2>
-      <form action="/admin/lifestyle/<%= set.id %>/sua" method="post" enctype="multipart/form-data" class="admin-form">
+    <form action="/admin/lifestyle/<%= set.id %>/sua" method="post" enctype="multipart/form-data" class="admin-form">
+      <div class="admin-card">
+        <h2 class="admin-card__title">Thông tin</h2>
         <div style="display:flex; gap:16px; flex-wrap:wrap;">
           <div style="flex:1; min-width:200px;"><label>Tiêu đề (VI)</label><input type="text" name="titleVi" value="<%= set.title_vi || '' %>" /></div>
           <div style="flex:1; min-width:200px;"><label>Tiêu đề (EN)</label><input type="text" name="titleEn" value="<%= set.title_en || '' %>" /></div>
         </div>
+        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+          <div style="flex:1; min-width:200px;"><label>Mô tả ngắn (VI) — hiện trong pop up</label><textarea name="descVi" rows="4" maxlength="2000"><%= set.desc_vi || '' %></textarea></div>
+          <div style="flex:1; min-width:200px;"><label>Mô tả ngắn (EN)</label><textarea name="descEn" rows="4" maxlength="2000"><%= set.desc_en || '' %></textarea></div>
+        </div>
+        <label>Credit (người chụp, người vẽ, Instagram...)</label>
+        <textarea name="credit" rows="2" maxlength="500" placeholder="Ví dụ: Photo: @ten_nguoi_chup · Art: @ten_nguoi_ve"><%= set.credit || '' %></textarea>
+        <p class="admin-hint">Chữ bắt đầu bằng @ sẽ tự thành link tới Instagram người đó.</p>
         <label>Sản phẩm liên kết (nút "Xem sản phẩm" trong pop up)</label>
         <select name="productId">
           <option value="">— Không gắn —</option>
           <% products.forEach(function (p) { %><option value="<%= p.id %>" <%= set.product_id === p.id ? 'selected' : '' %>><%= p.name_vi %></option><% }); %>
         </select>
-        <label>Ảnh thumb hiện tại</label>
+        <label>Ảnh thumb hiện tại (ảnh ngoài trang chủ)</label>
         <img src="<%= set.thumb_url %>" alt="" style="width:120px; border-radius:6px; display:block; margin-bottom:8px;" />
         <label>Đổi ảnh thumb (không bắt buộc)</label>
         <input type="file" name="thumb" accept="image/*" data-webp />
         <label style="display:flex; align-items:center; gap:6px; font-weight:400; margin-top:12px;">
           <input type="checkbox" name="isActive" <%= set.is_active ? 'checked' : '' %> style="width:auto;" /> Hiển thị trên web
         </label>
-        <button type="submit" class="admin-btn" style="margin-top:12px;">Lưu thông tin</button>
-      </form>
-    </div>
-
-    <div class="admin-card">
-      <h2 class="admin-card__title">Ảnh trong pop up <span><%= set.images.length %> ảnh</span></h2>
-      <p class="admin-hint">Ảnh thumb luôn là ảnh đầu tiên trong pop up. Các ảnh dưới đây hiện sau nó. Kéo ⠿ hoặc dùng ▲ ▼ để đổi thứ tự (tự lưu).</p>
-      <span class="prodorder__msg" data-sort-msg></span>
-      <div class="life-admin life-admin--imgs" data-sort-list data-sort-url="/admin/lifestyle/<%= set.id %>/anh/thu-tu">
-        <% set.images.forEach(function (im) { %>
-          <div class="life-admin__item" data-id="<%= im.id %>" draggable="true">
-            <span class="life-admin__handle"><span>⠿</span><button type="button" data-up aria-label="Lên">▲</button><button type="button" data-down aria-label="Xuống">▼</button></span>
-            <img src="<%= im.image_url %>" alt="" />
-            <div class="life-admin__meta"></div>
-            <form action="/admin/lifestyle/<%= set.id %>/anh/<%= im.id %>/xoa" method="post">
-              <button type="submit" class="admin-btn admin-btn--danger">Xoá</button>
-            </form>
-          </div>
-        <% }); %>
-        <% if (set.images.length === 0) { %><p>Chưa có ảnh nào ngoài thumb.</p><% } %>
       </div>
 
-      <form action="/admin/lifestyle/<%= set.id %>/anh" method="post" enctype="multipart/form-data" class="admin-form" style="margin-top:16px;">
-        <label>Thêm ảnh (chọn được nhiều ảnh cùng lúc)</label>
-        <input type="file" name="images" accept="image/*" multiple data-webp required />
-        <button type="submit" class="admin-btn" style="margin-top:12px;">Tải ảnh lên</button>
-      </form>
-    </div>
+      <div class="admin-card">
+        <h2 class="admin-card__title">Ảnh trong pop up <span><%= set.images.length %> ảnh</span></h2>
+        <p class="admin-hint">Pop up chỉ hiện các ảnh dưới đây (không có ảnh thumb). Kéo ⠿ hoặc dùng ▲ ▼ để đổi thứ tự (tự lưu). Bấm Xoá để xoá ngay một ảnh.</p>
+        <span class="prodorder__msg" data-sort-msg></span>
+        <div class="life-admin life-admin--imgs" data-sort-list data-sort-url="/admin/lifestyle/<%= set.id %>/anh/thu-tu">
+          <% set.images.forEach(function (im) { %>
+            <div class="life-admin__item" data-id="<%= im.id %>" draggable="true">
+              <span class="life-admin__handle"><span>⠿</span><button type="button" data-up aria-label="Lên">▲</button><button type="button" data-down aria-label="Xuống">▼</button></span>
+              <img src="<%= im.image_url %>" alt="" />
+              <div class="life-admin__meta"></div>
+              <button type="button" class="admin-btn admin-btn--danger" data-post="/admin/lifestyle/<%= set.id %>/anh/<%= im.id %>/xoa">Xoá</button>
+            </div>
+          <% }); %>
+          <% if (set.images.length === 0) { %><p>Chưa có ảnh nào. Pop up sẽ hiện ảnh thumb.</p><% } %>
+        </div>
+        <label style="margin-top:16px;">Thêm ảnh (không bắt buộc, chọn được nhiều ảnh cùng lúc)</label>
+        <input type="file" name="images" accept="image/*" multiple data-webp />
+      </div>
+
+      <div class="life-savebar">
+        <button type="submit" class="admin-btn">Lưu</button>
+        <span>Lưu thông tin, ảnh thumb và ảnh mới (nếu có).</span>
+      </div>
+    </form>
   </main>
 </div>
+<script>
+// "Xoá" buttons post their own tiny form, so the big form can stay a single one
+document.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('[data-post]');
+  if (!b) return;
+  if (!confirm('Xoá ảnh này?')) return;
+  var f = document.createElement('form');
+  f.method = 'post'; f.action = b.getAttribute('data-post');
+  document.body.appendChild(f); f.submit();
+});
+</script>
 </body>
 </html>

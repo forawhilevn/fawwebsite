@@ -1,4 +1,4 @@
-<button type="button" class="life-card" data-life-open="<%= JSON.stringify({ title: set.title, images: set.images, product: set.product }) %>" aria-label="<%= set.title || 'Lifestyle' %>">
+<button type="button" class="life-card" data-life-open="<%= JSON.stringify({ title: set.title, desc: set.desc, credit: set.credit, images: set.images, product: set.product }) %>" aria-label="<%= set.title || 'Lifestyle' %>">
   <span class="life-card__media"><img src="<%= set.thumb %>" alt="<%= set.title %>" loading="lazy" /></span>
   <% if (set.title) { %><span class="life-card__title"><%= set.title %></span><% } %>
 </button>

@@ -25,6 +25,12 @@ function ensureSchema() {
           t.integer('sort_order').notNullable().defaultTo(0);
         });
       }
+      // extra text: short description (VI/EN) and credit line (photographer, artist, @instagram...)
+      for (const col of ['desc_vi', 'desc_en', 'credit']) {
+        if (!(await db.schema.hasColumn('lifestyle_sets', col))) {
+          await db.schema.alterTable('lifestyle_sets', (t) => { t.text(col).nullable(); });
+        }
+      }
     })().catch((err) => { ready = null; throw err; });
   }
   return ready;
@@ -65,7 +71,13 @@ async function listPublic(locale) {
       id: s.id,
       title: (en ? s.title_en || s.title_vi : s.title_vi || s.title_en) || '',
       thumb: s.thumb_url,
-      images: [s.thumb_url].concat(imgs.filter((i) => i.set_id === s.id).map((i) => i.image_url)),
+      // the thumb is the cover only; the pop up shows the extra photos (the thumb itself if there are none)
+      images: (function () {
+        const extra = imgs.filter((i) => i.set_id === s.id).map((i) => i.image_url);
+        return extra.length ? extra : [s.thumb_url];
+      })(),
+      desc: (en ? s.desc_en || s.desc_vi : s.desc_vi || s.desc_en) || '',
+      credit: s.credit || '',
       product: p ? { name: en ? p.name_en || p.name_vi : p.name_vi || p.name_en, url: (en ? '/en/product/' : '/product/') + p.slug } : null
     };
   });

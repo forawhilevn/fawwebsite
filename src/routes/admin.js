@@ -99,7 +99,7 @@ router.post('/lifestyle/ten', lifestyleController.saveNames);
 router.post('/lifestyle/moi', uploadLifestyle.single('thumb'), lifestyleController.create);
 router.post('/lifestyle/thu-tu', lifestyleController.reorderSets);
 router.get('/lifestyle/:id/sua', lifestyleController.editForm);
-router.post('/lifestyle/:id/sua', uploadLifestyle.single('thumb'), lifestyleController.update);
+router.post('/lifestyle/:id/sua', uploadLifestyle.fields([{ name: 'thumb', maxCount: 1 }, { name: 'images', maxCount: 40 }]), lifestyleController.update);
 router.post('/lifestyle/:id/anh', uploadLifestyle.array('images', 40), lifestyleController.addImages);
 router.post('/lifestyle/:id/anh/thu-tu', lifestyleController.reorderImages);
 router.post('/lifestyle/:id/anh/:imageId/xoa', lifestyleController.deleteImage);
