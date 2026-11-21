@@ -72,7 +72,7 @@
     m.innerHTML =
       '<div class="life-modal__backdrop" data-life-close></div>' +
       '<div class="life-modal__box" role="dialog" aria-modal="true">' +
-        '<div class="life-modal__head"><h3 class="life-modal__title"></h3>' +
+        '<div class="life-modal__head"><button type="button" class="life-modal__back" data-life-close aria-label="Back">&lsaquo;</button><h3 class="life-modal__title"></h3>' +
         '<a class="life-modal__product" hidden></a>' +
         '<button type="button" class="life-modal__close" data-life-close aria-label="Close">&times;</button></div>' +
         '<div class="life-modal__scroll" data-lenis-prevent>' +
@@ -81,6 +81,7 @@
       '</div>' +
       '<div class="life-zoom" hidden>' +
         '<button type="button" class="life-zoom__btn life-zoom__close" data-zoom-close aria-label="Close">&times;</button>' +
+        '<button type="button" class="life-zoom__btn life-zoom__back" data-zoom-close aria-label="Back">&lsaquo;</button>' +
         '<button type="button" class="life-zoom__btn life-zoom__nav life-zoom__nav--prev" data-zoom-step="-1" aria-label="Prev">&lsaquo;</button>' +
         '<button type="button" class="life-zoom__btn life-zoom__nav life-zoom__nav--next" data-zoom-step="1" aria-label="Next">&rsaquo;</button>' +
         '<img class="life-zoom__img" alt="" draggable="false" />' +

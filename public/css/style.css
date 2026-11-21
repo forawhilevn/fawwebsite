@@ -3156,3 +3156,12 @@ html.intro-running:not(.intro-revealed) .section__title { animation-play-state: 
   .life-arrow--prev { left: 8px; }
   .life-arrow--next { right: 8px; }
 }
+
+/* Lifestyle pop-up: nút quay lại "<" góc trái trên (mobile) */
+.life-modal__back, .life-zoom__back { display: none; }
+@media (max-width: 900px) {
+  .life-modal__box { padding-top: env(safe-area-inset-top, 0); }
+  .life-modal__head { position: relative; z-index: 3; padding-top: 14px; }
+  .life-modal__back { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; margin-left: -8px; background: none; border: 0; color: #fff; font-size: 40px; line-height: 1; padding: 0 0 4px; cursor: pointer; text-shadow: 0 1px 8px rgba(0,0,0,0.8); }
+  .life-zoom__back { display: block; left: 4px; top: calc(env(safe-area-inset-top, 0px) + 8px); font-size: 44px; text-shadow: 0 1px 8px rgba(0,0,0,0.8); }
+}
