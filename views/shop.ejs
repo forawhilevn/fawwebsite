@@ -24,15 +24,17 @@
         <div class="container">
           <div class="product-grid">
             <% products.forEach(function(product, idx) { %>
-              <% if (idx < shopLimit) { %>
+              <% if (idx < 6) { %>
                 <%- include('partials/product-card', { product: product }) %>
+              <% } else if (idx < shopLimit) { %>
+                <div class="product-grid__mx"><%- include('partials/product-card', { product: product }) %></div>
               <% } else { %>
                 <div class="product-grid__more" data-home-extra hidden><%- include('partials/product-card', { product: product }) %></div>
               <% } %>
             <% }); %>
           </div>
-          <% if (products.length > shopLimit) { %>
-          <div class="home-more-wrap">
+          <% if (products.length > 6) { %>
+          <div class="home-more-wrap<%= products.length > shopLimit ? '' : ' home-more-wrap--mobile' %>">
             <button type="button" class="home-more" data-home-more data-step="<%= shopLimit %>"><%= t('home.loadMore') %></button>
           </div>
           <% } %>
