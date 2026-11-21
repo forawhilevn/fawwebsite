@@ -3184,3 +3184,8 @@ html.intro-running:not(.intro-revealed) .section__title { animation-play-state: 
 /* fewer than 3 stores: 2 wider columns (becomes 3 columns automatically from the 3rd store) */
 .stores-list--two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 @media (max-width: 600px) { .stores-list--two { grid-template-columns: 1fr; } }
+
+/* Lifestyle: hình luôn nằm cùng một vị trí, có hay không có title (button tự căn giữa nội dung nên phải ép lên trên) */
+.life-row { align-items: flex-start; }
+.life-card { display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; align-self: flex-start; }
+.life-card__media { width: 100%; flex: 0 0 auto; }

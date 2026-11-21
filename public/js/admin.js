@@ -255,7 +255,7 @@
 
   function maxMb(input) {
     var v = parseFloat(input.getAttribute('data-max-mb'));
-    return v > 0 ? v : 8;
+    return v > 0 ? v : 25;
   }
 
   // renders thumbnails of the chosen files into target; returns true when every file is within the limit
