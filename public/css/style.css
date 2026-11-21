@@ -3122,3 +3122,29 @@ html.intro-running:not(.intro-revealed) .section__title { animation-play-state: 
 
 /* product card: name always reserves 2 lines so the price sits at the same place */
 .product-card__name { line-height: 1.35; min-height: calc(1.35em * 2); }
+
+/* phone banner: show the whole mobile image at its suggested 900x1100 ratio (no crop, no parallax zoom) */
+@media (max-width: 640px) {
+  .hero.hero--has-mobile { min-height: 0; height: auto; max-height: none; aspect-ratio: 900 / 1100; }
+  .hero--has-mobile .hero__bg,
+  .hero--has-mobile .hero__bg[data-parallax] { inset: 0; top: 0; height: 100%; transform: none !important; }
+}
+
+/* "Bỏ qua" is plain underlined text, not a button */
+.video-intro__skip,
+.video-intro.needs-tap .video-intro__skip {
+  padding: 6px 4px; border: 0; border-radius: 0; background: none;
+  -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none;
+  text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.7);
+}
+.video-intro__skip:hover, .video-intro__skip:active { border: 0; box-shadow: none; opacity: 0.8; }
+.video-intro.needs-tap .video-intro__skip { bottom: calc(18% - 56px); }
+/* once the visitor has pressed to watch the video, no skip */
+.video-intro.tap-started .video-intro__skip { display: none; }
+
+/* Admin banner: xem trước ảnh desktop hiển thị ngang (2:1), mobile giữ dọc */
+#preview-hero-d .thumb { width: min(100%, 520px); }
+#preview-hero-d .thumb img { height: auto; aspect-ratio: 2 / 1; object-fit: contain; background: #e4e4e7; }
+#preview-hero-m .thumb img { height: auto; aspect-ratio: 900 / 1100; object-fit: contain; background: #e4e4e7; }
+#preview-hero-m .thumb { width: 180px; }

@@ -10,7 +10,7 @@
 
 <main>
   <% if (heroBanners.length > 0) { %>
-  <section class="hero">
+  <section class="hero<%= heroBanners[0].image_mobile_url ? ' hero--has-mobile' : '' %>">
     <picture>
       <% if (heroBanners[0].image_mobile_url) { %><source media="(max-width: 640px)" srcset="<%= heroBanners[0].image_mobile_url %>" /><% } %>
       <img class="hero__bg" data-parallax="12" data-reveal data-reveal-slow src="<%= heroBanners[0].image_url %>" alt="" />

@@ -99,6 +99,7 @@ window.FAWMotion.initVideoIntro = function initVideoIntro() {
       intro.removeEventListener('touchend', go);
       hint.remove();
       intro.classList.remove('needs-tap');
+      intro.classList.add('tap-started'); // the visitor chose to watch: no "skip" any more
       var p2 = video.play();
       if (p2 && p2.catch) p2.catch(finish);
     };
@@ -163,6 +164,6 @@ window.FAWMotion.initVideoIntro = function initVideoIntro() {
 
   if (skip) {
     setTimeout(function () { skip.classList.add('is-visible'); }, 1500);
-    skip.addEventListener('click', finish);
+    skip.addEventListener('click', function (e) { e.stopPropagation(); finish(); });
   }
 };
