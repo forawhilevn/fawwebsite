@@ -3331,3 +3331,17 @@ html.intro-running:not(.intro-revealed) .section__title { animation-play-state: 
   .life-arrow--prev { left: 1.5vw; }
   .life-arrow--next { right: 1.5vw; }
 }
+
+/* menu mobile: Lifestyle / Lookbook xếp dọc */
+.mnav-dd__list { flex-direction: column; }
+.mnav-dd.is-open .mnav-dd__list { display: flex; }
+.mnav-dd__list a { display: block; width: 100%; }
+
+/* dropdown Hình ảnh: nền đậm hơn cho dễ đọc trên banner */
+.nav-dd__menu {
+  background-color: rgba(24, 24, 27, 0.88);
+  background-image: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+  -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%);
+  border-color: rgba(255,255,255,0.22);
+}
+.mnav-dd__list { background: rgba(0,0,0,0.32); }
