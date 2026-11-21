@@ -3181,3 +3181,6 @@ html.intro-running:not(.intro-revealed) .section__title { animation-play-state: 
 .store-slider__nav { width: 32px; height: 32px; font-size: 17px; }
 @media (max-width: 1000px) { .stores-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 600px) { .stores-list { grid-template-columns: 1fr; gap: var(--space-6); } }
+/* fewer than 3 stores: 2 wider columns (becomes 3 columns automatically from the 3rd store) */
+.stores-list--two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 600px) { .stores-list--two { grid-template-columns: 1fr; } }

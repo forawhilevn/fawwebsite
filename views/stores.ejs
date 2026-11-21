@@ -18,18 +18,7 @@
       <% } else { %>
         <p class="stores-intro"><%= t('stores.intro') %></p>
 
-        <% if (cities.length > 1) { %>
-          <div class="stores-filter" role="tablist">
-            <button type="button" class="stores-chip is-active" data-store-city="">
-              <%= t('stores.all') %>
-            </button>
-            <% cities.forEach(function(c) { %>
-              <button type="button" class="stores-chip" data-store-city="<%= c %>"><%= c %></button>
-            <% }); %>
-          </div>
-        <% } %>
-
-        <div class="stores-list">
+        <div class="stores-list<%= stores.length < 3 ? ' stores-list--two' : '' %>">
           <% stores.forEach(function(s) { %>
             <article class="store-card" data-store-card data-city="<%= s.city || '' %>">
               <div class="store-media">
