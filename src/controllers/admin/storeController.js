@@ -132,7 +132,12 @@ async function updateStore(req, res, next) {
       discard(files);
       return render(res, { editing: store, error: 'Vui lòng nhập tên cửa hàng.', prefill: data });
     }
-    const existing = imageList(store);
+    let existing = imageList(store);
+    // order chosen with the ‹ › buttons (only images that already belong to this store)
+    let order = req.body.imgOrder || [];
+    if (!Array.isArray(order)) order = [order];
+    order = order.filter((u, i) => existing.indexOf(u) !== -1 && order.indexOf(u) === i);
+    if (order.length) existing = order.concat(existing.filter((u) => order.indexOf(u) === -1));
     let removeList = req.body.removeImg || [];
     if (!Array.isArray(removeList)) removeList = [removeList];
     let all;
