@@ -3422,3 +3422,6 @@ html.intro-running:not(.intro-revealed) .section__title { animation-play-state: 
 .life-card__more { display: inline-block; align-self: flex-start; margin-top: 8px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; opacity: 0.85; border-bottom: 1px solid currentColor; padding-bottom: 1px; transition: opacity .2s ease, color .2s ease; }
 .life-card__title + .life-card__more { margin-top: 4px; }
 .life-card:hover .life-card__more { opacity: 1; color: var(--color-red); }
+
+/* Lifestyle product list: SOLD OUT badge centred at the bottom of the thumbnail */
+.life-prod__soldout { left: 50%; right: auto; bottom: 6px; transform: translateX(-50%); display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; line-height: 1; padding: 4px 8px; text-align: center; }
