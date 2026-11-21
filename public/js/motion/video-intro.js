@@ -31,6 +31,8 @@ window.FAWMotion.initVideoIntro = function initVideoIntro() {
   var appleWebKit = /iP(hone|ad|od)/.test(ua) || (/Safari/.test(ua) && !/Chrome|Chromium|CriOS|FxiOS|Edg|Android/.test(ua));
   var canWebm = !!(video && video.canPlayType && video.canPlayType('video/webm; codecs="vp9"'));
   // Transparent WebM where supported; otherwise the flat/HEVC mp4-mov (fade-out ending).
+  // Safari: the default clip has a Safari-safe twin (single plain H.264 track).
+  if (appleWebKit && mp4Src === '/video/WEB_INTRO.mp4') mp4Src = '/video/WEB_INTRO_SAFARI.mp4';
   var useWebm = !appleWebKit && canWebm && !!webmSrc;
   var chosen = useWebm ? webmSrc : (mp4Src || (canWebm ? webmSrc : ''));
   var canAlpha = useWebm || (!mp4Src && !!chosen);
@@ -124,6 +126,9 @@ window.FAWMotion.initVideoIntro = function initVideoIntro() {
       .then(function (r) { if (!r.ok) throw new Error('http'); return r.blob(); })
       .then(function (b) {
         if (finished) return;
+        // Safari refuses a blob whose type is missing/wrong: force the right video type.
+        var typ = /\.webm(\?|$)/i.test(chosen) ? 'video/webm' : (/\.mov(\?|$)/i.test(chosen) ? 'video/quicktime' : 'video/mp4');
+        try { b = new Blob([b], { type: typ }); } catch (e2) {}
         blobUrl = URL.createObjectURL(b);
         video.src = blobUrl;
         try { video.load(); } catch (e) {}
@@ -135,18 +140,20 @@ window.FAWMotion.initVideoIntro = function initVideoIntro() {
   video.addEventListener('loadeddata', tryPlay);
   video.addEventListener('canplay', tryPlay);
   video.addEventListener('playing', function () {
+    if (!video.videoWidth && !blobTried) { setTimeout(function () { if (!video.videoWidth) useBlob(); }, 400); }
     playing = true;
     intro.classList.add('is-playing');
     clearTimeout(hardStop);
     hardStop = setTimeout(finish, Math.max(4000, ((video.duration || 8) - video.currentTime) * 1000 + 2500));
   });
   video.addEventListener('ended', finish);
+  video.addEventListener('stalled', function () { if (!playing) useBlob(); });
   video.addEventListener('error', function () { if (blobTried) finish(); else useBlob(); });
 
   // Not playing after 2.5s -> switch to the in-memory copy once.
   setTimeout(function () {
     if (!intro.classList.contains('is-playing') && !finished && !needsTap) useBlob();
-  }, 2500);
+  }, 1200);
 
   timer = setInterval(function () {
     if (video.currentTime >= REVEAL_AT) reveal();
