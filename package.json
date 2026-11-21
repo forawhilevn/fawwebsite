@@ -18,16 +18,23 @@
     "connect-session-knex": "^4.0.2",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
-    "express": "^4.19.2",
+    "express": "^4.22.2",
     "express-session": "^1.18.0",
     "express-validator": "^7.2.0",
     "jimp": "^1.6.1",
     "knex": "^3.1.0",
     "multer": "^2.2.0",
     "mysql2": "^3.11.3",
-    "nodemailer": "^6.9.16"
+    "nodemailer": "^10.1.4"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"
+  },
+  "overrides": {
+    "proxy-addr": "^2.0.8",
+    "body-parser": "^1.20.9",
+    "qs": "^6.16.1",
+    "brace-expansion@^2": "^2.1.7",
+    "brace-expansion@^5": "^5.0.12"
   }
 }
