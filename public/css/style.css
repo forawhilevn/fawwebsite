@@ -3425,3 +3425,26 @@ html.intro-running:not(.intro-revealed) .section__title { animation-play-state: 
 
 /* Lifestyle product list: SOLD OUT badge centred at the bottom of the thumbnail */
 .life-prod__soldout { left: 50%; right: auto; bottom: 6px; transform: translateX(-50%); display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; line-height: 1; padding: 4px 8px; text-align: center; }
+
+/* Lifestyle zoom: sits above the pop-up's top bar, so only its own X shows (that X closes the photo, not the set) */
+.life-zoom { z-index: 20; }
+
+/* Lifestyle pop-up, desktop: same frosted strip as on phones, across the whole screen top, photos scroll underneath */
+@media (min-width: 901px) {
+  .life-modal__box, .life-modal.has-products .life-modal__box { position: relative; grid-template-rows: minmax(0, 1fr); }
+  .life-modal__head {
+    position: fixed !important; top: 0; left: 0; right: 0; z-index: 5;
+    width: auto !important; height: calc(env(safe-area-inset-top, 0px) + 76px) !important; margin: 0 !important;
+    padding: env(safe-area-inset-top, 0px) max(2vw, calc((100vw - 1500px) / 2 + 2vw)) 12px !important;
+    border: 0 !important; border-radius: 0 !important; box-shadow: none !important; background: none !important;
+    -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+  }
+  .life-modal__head::before {
+    content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background: linear-gradient(180deg, rgba(20,20,22,0.6), rgba(20,20,22,0.25));
+    -webkit-backdrop-filter: blur(16px) saturate(160%); backdrop-filter: blur(16px) saturate(160%);
+    -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent); mask-image: linear-gradient(180deg, #000 60%, transparent);
+  }
+  .life-modal__scroll { grid-row: 1; padding-top: calc(env(safe-area-inset-top, 0px) + 84px) !important; }
+  .life-modal__side { grid-row: 1; margin-top: calc(env(safe-area-inset-top, 0px) + 84px); max-height: calc(100% - 84px); }
+}
