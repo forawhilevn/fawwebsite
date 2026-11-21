@@ -3398,3 +3398,22 @@ html.intro-running:not(.intro-revealed) .section__title { animation-play-state: 
 .product-grid__mx { display: contents; }
 @media (max-width: 768px) { .product-grid__mx:not(.is-open) { display: none; } }
 @media (min-width: 769px) { .home-more-wrap--mobile { display: none; } }
+
+/* cards inside the "Xem thêm" wrappers (display: contents) must size like direct grid items */
+.product-grid:not(.product-grid--compact) > .product-grid__mx > *,
+.product-grid:not(.product-grid--compact) > .product-grid__more > * {
+  flex: 0 0 calc((100% - (var(--cols) - 1) * var(--space-4)) / var(--cols));
+  max-width: calc((100% - (var(--cols) - 1) * var(--space-4)) / var(--cols));
+  min-width: 0;
+}
+@media (max-width: 700px) {
+  .product-grid:not(.product-grid--compact) > .product-grid__mx > *,
+  .product-grid:not(.product-grid--compact) > .product-grid__more > * {
+    flex-basis: calc((100% - var(--space-3)) / 2);
+    max-width: calc((100% - var(--space-3)) / 2);
+  }
+}
+/* "Xem thêm" button: darker fill + red border so it reads over the pattern */
+.home-more { background: rgba(10,10,12,0.82) !important; border: 1.5px solid var(--color-red) !important; color: #fff !important;
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); box-shadow: 0 6px 20px rgba(0,0,0,0.45); }
+.home-more:hover { background: var(--color-red) !important; }
