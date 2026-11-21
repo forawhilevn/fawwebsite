@@ -3363,3 +3363,10 @@ html.intro-running:not(.intro-revealed) .section__title { animation-play-state: 
 @media (max-width: 900px) {
   .life-modal__head { height: 44px; margin: calc(env(safe-area-inset-top, 0px) + 4px) 10px 4px; padding: 0; }
 }
+
+/* back button: small frosted circle so it stays readable over any photo */
+.life-modal__back {
+  width: 42px !important; height: 42px !important; margin-left: 0 !important; padding: 0 0 3px !important; border-radius: 50% !important;
+  background: rgba(20,20,22,0.5) !important; border: 1px solid rgba(255,255,255,0.28) !important; text-shadow: none !important; font-size: 30px !important;
+  -webkit-backdrop-filter: blur(12px) saturate(160%); backdrop-filter: blur(12px) saturate(160%); box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+}
