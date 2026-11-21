@@ -92,7 +92,7 @@ function imageFields(all) {
 function imageError(err) {
   return err && err.code === 'TOO_MANY'
     ? 'Tối đa ' + MAX_IMAGES + ' ảnh cho mỗi cửa hàng. Hãy xoá bớt ảnh cũ hoặc chọn ít ảnh hơn.'
-    : 'Ảnh không hợp lệ, hãy dùng JPG/PNG/WEBP khác.';
+    : 'Ảnh không hợp lệ hoặc không đọc được (ảnh HEIC của iPhone cần đổi sang JPG). Thông tin đã nhập được giữ lại, chỉ cần chọn lại ảnh.';
 }
 
 async function createStore(req, res, next) {
@@ -102,13 +102,13 @@ async function createStore(req, res, next) {
     const data = fromBody(req.body);
     if (!data.name_vi) {
       discard(files);
-      return render(res, { error: 'Vui lòng nhập tên cửa hàng.' });
+      return render(res, { error: 'Vui lòng nhập tên cửa hàng.', prefill: data });
     }
     try {
       Object.assign(data, imageFields(await buildImages([], files, [])));
     } catch (e) {
       discard(files);
-      return render(res, { error: imageError(e) });
+      return render(res, { error: imageError(e), prefill: data });
     }
     const max = await db('stores').max({ m: 'sort_order' }).first();
     data.sort_order = ((max && max.m) || 0) + 1;
@@ -130,7 +130,7 @@ async function updateStore(req, res, next) {
     const data = fromBody(req.body);
     if (!data.name_vi) {
       discard(files);
-      return render(res, { editing: store, error: 'Vui lòng nhập tên cửa hàng.' });
+      return render(res, { editing: store, error: 'Vui lòng nhập tên cửa hàng.', prefill: data });
     }
     const existing = imageList(store);
     let removeList = req.body.removeImg || [];
@@ -140,7 +140,7 @@ async function updateStore(req, res, next) {
       all = await buildImages(existing, files, removeList);
     } catch (e) {
       discard(files);
-      return render(res, { editing: store, error: imageError(e) });
+      return render(res, { editing: store, error: imageError(e), prefill: data });
     }
     existing.filter((u) => all.indexOf(u) === -1).forEach(removeUploadedFile);
     Object.assign(data, imageFields(all));

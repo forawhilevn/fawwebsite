@@ -60,10 +60,16 @@
       form.submit();
     };
     if (typeof window.__fawPrepareImage !== 'function') return finish();
+    var blocked = null; // an image the browser cannot read (HEIC on desktop): stop here, keep everything typed
     var jobs = inputs.map(function (input) {
       var opts = input.name === 'coverImage' ? { crop: [1200, 1500] } : null;
+      var dc = (input.getAttribute('data-crop') || '').match(/^(\d+)x(\d+)$/);
+      if (dc) opts = { crop: [parseInt(dc[1], 10), parseInt(dc[2], 10)] };
       return Promise.all(Array.prototype.map.call(input.files, function (f) {
-        return window.__fawPrepareImage(f, opts).catch(function () { return f; });
+        return window.__fawPrepareImage(f, opts).catch(function () {
+          if (/\.(heic|heif)$/i.test(f.name) || /heic|heif/i.test(f.type || '')) blocked = blocked || { input: input, name: f.name };
+          return f;
+        });
       })).then(function (outs) {
         try {
           var dt = new DataTransfer();
@@ -72,7 +78,20 @@
         } catch (err) { /* keep original files */ }
       });
     });
-    Promise.all(jobs).then(finish, finish);
+    Promise.all(jobs).then(function () {
+      if (!blocked) return finish();
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = submitBtn.dataset.t || submitBtn.textContent; }
+      var warn = blocked.input.parentNode.querySelector('.heic-warn');
+      if (!warn) {
+        warn = document.createElement('p');
+        warn.className = 'admin-error heic-warn';
+        blocked.input.insertAdjacentElement('afterend', warn);
+      }
+      warn.textContent = 'Trình duyệt này không đọc được ảnh HEIC "' + blocked.name + '". Mọi thông tin đã nhập vẫn còn nguyên. ' +
+        'Hãy chọn lại ảnh dạng JPG: trên iPhone vào Cài đặt > Camera > Định dạng > "Tương thích nhất", hoặc xuất ảnh sang JPG, hoặc mở trang này bằng Safari.';
+      blocked.input.value = '';
+      warn.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }, finish);
   }, true);
 
   // generic drag / arrow reorder: <div data-sort-list data-sort-url="..."> with children [data-id]

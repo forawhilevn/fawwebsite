@@ -12,7 +12,7 @@
   <main class="admin-main">
     <h1>Cửa hàng</h1>
     <% if (error) { %><p class="admin-error"><%= error %></p><% } %>
-    <% var e = editing || {}; %>
+    <% var e = Object.assign({}, editing || {}, (typeof prefill !== 'undefined' && prefill) ? prefill : {}); %>
 
     <div class="admin-card" id="store-form">
       <h2 class="admin-card__title"><%= editing ? 'Sửa cửa hàng' : 'Thêm cửa hàng' %> <span>Hiển thị ở trang <a href="/stores" target="_blank">/stores</a></span></h2>
@@ -54,7 +54,7 @@
             <% }); %>
           </div>
         <% } %>
-        <input type="file" name="images" accept="image/*" multiple data-preview="#preview-store" />
+        <input type="file" name="images" accept="image/*,.heic,.heif" multiple data-webp data-crop="800x1000" data-preview="#preview-store" />
         <div class="thumbs thumbs--preview" id="preview-store" hidden></div>
         <p class="admin-hint">Ảnh mới sẽ được thêm vào sau các ảnh hiện có. Ảnh đầu tiên là ảnh hiển thị đầu slide.</p>
         <label style="display:flex; align-items:center; gap:8px; text-transform:none; letter-spacing:0; margin-top:12px;">
