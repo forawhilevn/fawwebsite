@@ -11,7 +11,8 @@
 <main>
   <div class="page-shell page-shell--light">
     <div class="container order-confirmation">
-      <h1 class="page-title"><%= t('order.confirmationTitle') %></h1>
+      <% var _w = String(t('order.confirmationTitle')).trim().split(/\s+/); var _h = Math.ceil(_w.length / 2); %>
+      <h1 class="page-title"><span class="oc-line"><%= _w.slice(0, _h).join(' ') %></span><% if (_w.length > _h) { %> <span class="oc-line"><%= _w.slice(_h).join(' ') %></span><% } %></h1>
       <p><%= t('order.code') %>: <strong><%= order.order_code %></strong></p>
 
       <% if (instructions.method === 'vietqr') { %>
