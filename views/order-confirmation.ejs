@@ -24,6 +24,7 @@
           <div><span><%= t('order.transferNote') %></span><span><%= instructions.note %></span></div>
           <div><span><%= t('cart.total') %></span><span><%= formatVND(order.total) %></span></div>
         </div>
+        <p class="order-confirmation__verify"><%= t('order.verifyNote') %></p>
       <% } else { %>
         <div class="order-confirmation__details">
           <% instructions.lines.forEach(function(line) { %>

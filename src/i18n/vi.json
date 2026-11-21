@@ -118,5 +118,6 @@
   "life.products": "Sản phẩm trong bộ ảnh",
   "life.viewProducts": "Xem sản phẩm",
   "life.viewAll": "Xem tất cả",
-  "life.soldOut": "SOLD OUT"
+  "life.soldOut": "SOLD OUT",
+  "order.verifyNote": "FAW sẽ kiểm tra thông tin chuyển khoản và gọi điện xác nhận."
 }

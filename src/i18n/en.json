@@ -118,5 +118,6 @@
   "life.products": "Products in this set",
   "life.viewProducts": "View products",
   "life.viewAll": "View all",
-  "life.soldOut": "SOLD OUT"
+  "life.soldOut": "SOLD OUT",
+  "order.verifyNote": "FAW will check your transfer and call you to confirm."
 }

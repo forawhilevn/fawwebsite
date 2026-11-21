@@ -6,6 +6,7 @@ const discountService = require('../services/discount');
 const pricingService = require('../services/pricing');
 const { ensurePromoSchema } = require('../services/promoSchema');
 const { generateOrderCode } = require('../utils/format');
+const mailer = require('../services/mailer');
 
 async function showCheckout(req, res, next) {
   try {
@@ -132,6 +133,9 @@ async function submitOrder(req, res, next) {
     }
 
     cartService.clearCart(req);
+
+    // e-mail the owner + the customer (does not wait, never breaks checkout)
+    mailer.sendNewOrder(insertedOrderId);
 
     const prefix = res.locals.locale === 'en' ? '/en' : '';
     res.redirect(`${prefix}/order/${orderCode}`);
