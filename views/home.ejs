@@ -26,10 +26,12 @@
     </div>
     <% }); %>
     <% if (heroSlides.length > 1) { %>
-    <button type="button" class="hero__arrow hero__arrow--prev" data-hero-step="-1" aria-label="Previous">&lsaquo;</button>
-    <button type="button" class="hero__arrow hero__arrow--next" data-hero-step="1" aria-label="Next">&rsaquo;</button>
-    <div class="hero__dots">
-      <% heroSlides.forEach(function (b, i) { %><button type="button" class="hero__dot<%= i === 0 ? ' is-active' : '' %>" data-hero-dot="<%= i %>" aria-label="Banner <%= i + 1 %>"></button><% }); %>
+    <div class="hero__nav">
+      <button type="button" class="hero__arrow hero__arrow--prev" data-hero-step="-1" aria-label="Previous">&lsaquo;</button>
+      <div class="hero__dots">
+        <% heroSlides.forEach(function (b, i) { %><button type="button" class="hero__dot<%= i === 0 ? ' is-active' : '' %>" data-hero-dot="<%= i %>" aria-label="Banner <%= i + 1 %>"></button><% }); %>
+      </div>
+      <button type="button" class="hero__arrow hero__arrow--next" data-hero-step="1" aria-label="Next">&rsaquo;</button>
     </div>
     <% } %>
   </section>

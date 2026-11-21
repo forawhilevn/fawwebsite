@@ -3491,3 +3491,9 @@ html.intro-running:not(.intro-revealed) .section__title { animation-play-state: 
 .hero__dot.is-active { width: 22px; background: #fff; }
 @media (max-width: 640px) { .hero__arrow, .hero__arrow:hover { width: 28px; height: 44px; font-size: 40px; } }
 @media (prefers-reduced-motion: reduce) { .hero__slide { transition: opacity .4s; transform: none !important; } }
+
+/* Hero slider: arrows sit next to the dots at the bottom; phones swipe, so no arrows there */
+.hero__nav { position: absolute; left: 50%; bottom: 14px; z-index: 3; transform: translateX(-50%); display: flex; align-items: center; gap: 14px; }
+.hero__nav .hero__dots { position: static; transform: none; left: auto; right: auto; bottom: auto; }
+.hero__nav .hero__arrow, .hero__nav .hero__arrow:hover { position: static; transform: none; top: auto; left: auto; right: auto; width: 28px; height: 32px; font-size: 34px; display: flex; align-items: center; justify-content: center; padding: 0 0 3px; }
+@media (max-width: 768px) { .hero__nav .hero__arrow { display: none; } .hero__nav { bottom: 12px; } }
