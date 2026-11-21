@@ -3311,3 +3311,23 @@ html.intro-running:not(.intro-revealed) .section__title { animation-play-state: 
 .life-prods__item img { width: 36px; height: 45px; object-fit: cover; border-radius: 4px; }
 .life-prods__name { flex: 1; min-width: 0; font-weight: 600; }
 .life-prods__item button { border: 1px solid #ddd; background: #fff; border-radius: 4px; width: 28px; height: 28px; cursor: pointer; }
+
+/* Lifestyle trang chủ: hàng ảnh tràn hết bề ngang màn hình, thấy rõ ~4 bộ, 2 mép mờ dần để gợi ý còn nữa */
+.section--life { overflow-x: clip; }
+.life-row-wrap { width: 100vw; margin-left: calc(50% - 50vw); padding: 0; }
+.life-row {
+  padding: 0 6vw 12px; scroll-padding-inline: 6vw; scroll-snap-type: x proximity;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+}
+.life-row .life-card { flex: 0 0 calc((88vw - 3 * var(--space-4)) / 4); }
+@media (max-width: 900px) { .life-row .life-card { flex: 0 0 calc((88vw - 2 * var(--space-3)) / 3); } }
+@media (max-width: 600px) {
+  .life-row { padding: 0 8vw 12px; scroll-padding-inline: 8vw; }
+  .life-row .life-card { flex: 0 0 62vw; }
+}
+@media (hover: hover) and (min-width: 901px) {
+  .life-row-wrap { padding-left: 0; padding-right: 0; }
+  .life-arrow--prev { left: 1.5vw; }
+  .life-arrow--next { right: 1.5vw; }
+}
