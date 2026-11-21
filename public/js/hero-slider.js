@@ -44,12 +44,12 @@
     if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.2) go(root, current(root) + (dx < 0 ? 1 : -1));
   }, { passive: true });
 
-  // one timer for the whole session; the 3s countdown restarts after every change (auto or manual)
+  // one timer for the whole session; the countdown (data-interval, 5s) restarts after every change (auto or manual)
   setInterval(function () {
     var root = slider();
     if (!root || document.hidden) return;
     if (document.documentElement.classList.contains('intro-running')) { last = Date.now(); return; } // wait for the intro video
-    var interval = Number(root.getAttribute('data-interval')) || 3000;
+    var interval = Number(root.getAttribute('data-interval')) || 5000;
     if (!last) last = Date.now();
     if (Date.now() - last >= interval) go(root, current(root) + 1);
   }, 250);

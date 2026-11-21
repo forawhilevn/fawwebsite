@@ -3477,3 +3477,17 @@ html.intro-running:not(.intro-revealed) .section__title { animation-play-state: 
   .hero__arrow--next { right: 8px; }
   .hero__dots { bottom: 12px; }
 }
+
+/* Hero slider (like tomlux.vn): slow cross-fade + gentle scale 0.98 -> 1 over 1.6s, plain arrows, pill dot */
+.hero--slider { background: #0a0a0a; }
+.hero__slide { opacity: 0; transform: scale(0.98); visibility: visible; pointer-events: none; transition: opacity 1.6s ease, transform 1.6s ease; }
+.hero__slide.is-active { opacity: 1; transform: scale(1); pointer-events: auto; transition: opacity 1.6s ease, transform 1.6s ease; }
+.hero__arrow, .hero__arrow:hover {
+  width: 36px; height: 56px; padding: 0; border: 0 !important; border-radius: 0; background: none !important; box-shadow: none;
+  -webkit-backdrop-filter: none; backdrop-filter: none; color: #fff; font-size: 52px; line-height: 1; text-shadow: 0 2px 12px rgba(0,0,0,0.6); opacity: 0.85;
+}
+.hero__arrow:hover { opacity: 1; }
+.hero__dot { width: 8px; height: 8px; border: 0; border-radius: 999px; background: rgba(255,255,255,0.5); transform: none !important; transition: width .4s ease, background .4s ease; }
+.hero__dot.is-active { width: 22px; background: #fff; }
+@media (max-width: 640px) { .hero__arrow, .hero__arrow:hover { width: 28px; height: 44px; font-size: 40px; } }
+@media (prefers-reduced-motion: reduce) { .hero__slide { transition: opacity .4s; transform: none !important; } }

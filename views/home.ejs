@@ -11,7 +11,7 @@
 <main>
   <% if (heroBanners.length > 0) { %>
   <% var heroSlides = heroBanners.slice(0, 5); %>
-  <section class="hero hero--slider<%= heroSlides[0].image_mobile_url ? ' hero--has-mobile' : '' %>" data-hero-slider data-interval="3000">
+  <section class="hero hero--slider<%= heroSlides[0].image_mobile_url ? ' hero--has-mobile' : '' %>" data-hero-slider data-interval="5000">
     <% heroSlides.forEach(function (b, i) { %>
     <div class="hero__slide<%= i === 0 ? ' is-active' : '' %>" data-hero-slide<%= i === 0 ? '' : ' aria-hidden="true"' %>>
       <picture>
