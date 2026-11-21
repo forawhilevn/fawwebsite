@@ -17,6 +17,7 @@ router.get('/shop/:categorySlug', shopController.showShop);
 router.get('/product/:slug', productController.showProduct);
 
 router.get('/archive', pagesController.showArchive);
+router.get('/lifestyle', pagesController.showLifestyle);
 router.get('/stores', storesController.showStores);
 router.get('/p/:slug', pageController.showCustom);
 router.get('/about', pagesController.showAbout);

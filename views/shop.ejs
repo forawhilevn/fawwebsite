@@ -23,10 +23,19 @@
       <div class="product-grid-wrap">
         <div class="container">
           <div class="product-grid">
-            <% products.forEach(function(product) { %>
-              <%- include('partials/product-card', { product: product }) %>
+            <% products.forEach(function(product, idx) { %>
+              <% if (idx < shopLimit) { %>
+                <%- include('partials/product-card', { product: product }) %>
+              <% } else { %>
+                <div class="product-grid__more" data-home-extra hidden><%- include('partials/product-card', { product: product }) %></div>
+              <% } %>
             <% }); %>
           </div>
+          <% if (products.length > shopLimit) { %>
+          <div class="home-more-wrap">
+            <button type="button" class="home-more" data-home-more data-step="<%= shopLimit %>"><%= t('home.loadMore') %></button>
+          </div>
+          <% } %>
         </div>
       </div>
     <% } %>

@@ -112,5 +112,11 @@
   "checkout.zoneRequired": "Please choose a delivery area.",
   "checkout.codeInvalid": "Invalid code or requirements not met.",
   "cart.nextPromo": "Add {amount} more to get: {offer}",
-  "stores.viewPhotos": "View photos"
+  "stores.viewPhotos": "View photos",
+  "nav.gallery": "Gallery",
+  "life.empty": "No photos yet.",
+  "life.products": "Products in this set",
+  "life.viewProducts": "View products",
+  "life.viewAll": "View all",
+  "life.soldOut": "SOLD OUT"
 }

@@ -3,6 +3,8 @@
   var navPath = typeof currentPath === 'string' ? currentPath : '/';
   function navActive(base) { return navPath === base || navPath.indexOf(base + '/') === 0; }
   var shopActive = navActive('/shop') || navActive('/product');
+  var galleryActive = navActive('/lifestyle') || navActive('/archive');
+  var lifeLabel = (typeof lifeTitle !== 'undefined' && lifeTitle) ? lifeTitle : 'Lifestyle';
 %>
 <% if (typeof siteClosedPreview !== 'undefined' && siteClosedPreview) { %>
 <div class="closed-bar">Website đang ĐÓNG với khách — chỉ admin xem được trang này · <a href="/admin/cai-dat">Mở lại</a></div>
@@ -25,7 +27,16 @@
 
     <nav class="site-header__nav">
       <a href="<%= pfx %>/shop" class="<%= shopActive ? 'is-active' : '' %>"><%= t('nav.shop') %></a>
-      <a href="<%= pfx %>/archive" class="<%= navActive('/archive') ? 'is-active' : '' %>"><%= t('nav.lookbook') %></a>
+      <div class="nav-dd<%= galleryActive ? ' is-current' : '' %>" data-nav-dd>
+        <button type="button" class="nav-dd__btn<%= galleryActive ? ' is-active' : '' %>" data-nav-dd-btn aria-expanded="false" aria-haspopup="true">
+          <%= t('nav.gallery') %>
+          <svg class="nav-dd__chev" width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M1.5 3.5 5 7l3.5-3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="nav-dd__menu" data-nav-dd-menu>
+          <a href="<%= pfx %>/lifestyle" class="<%= navActive('/lifestyle') ? 'is-active' : '' %>"><%= lifeLabel %></a>
+          <a href="<%= pfx %>/archive" class="<%= navActive('/archive') ? 'is-active' : '' %>"><%= t('nav.lookbook') %></a>
+        </div>
+      </div>
       <a href="<%= pfx %>/stores" class="<%= navActive('/stores') ? 'is-active' : '' %>"><%= t('nav.stores') %></a>
       <a href="<%= pfx %>/about" class="<%= navActive('/about') ? 'is-active' : '' %>"><%= t('nav.about') %></a>
     </nav>
@@ -44,7 +55,16 @@
 
   <nav class="site-header__mobile-nav" id="mobileNav" data-mobile-nav>
     <a href="<%= pfx %>/shop" class="<%= shopActive ? 'is-active' : '' %>"><%= t('nav.shop') %></a>
-    <a href="<%= pfx %>/archive" class="<%= navActive('/archive') ? 'is-active' : '' %>"><%= t('nav.lookbook') %></a>
+    <div class="mnav-dd<%= galleryActive ? ' is-open is-current' : '' %>" data-mnav-dd>
+      <button type="button" class="mnav-dd__btn<%= galleryActive ? ' is-active' : '' %>" data-mnav-dd-btn aria-expanded="<%= galleryActive ? 'true' : 'false' %>">
+        <%= t('nav.gallery') %>
+        <svg class="nav-dd__chev" width="12" height="12" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M1.5 3.5 5 7l3.5-3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="mnav-dd__list">
+        <a href="<%= pfx %>/lifestyle" class="<%= navActive('/lifestyle') ? 'is-active' : '' %>"><%= lifeLabel %></a>
+        <a href="<%= pfx %>/archive" class="<%= navActive('/archive') ? 'is-active' : '' %>"><%= t('nav.lookbook') %></a>
+      </div>
+    </div>
     <a href="<%= pfx %>/stores" class="<%= navActive('/stores') ? 'is-active' : '' %>"><%= t('nav.stores') %></a>
     <a href="<%= pfx %>/about" class="<%= navActive('/about') ? 'is-active' : '' %>"><%= t('nav.about') %></a>
   </nav>

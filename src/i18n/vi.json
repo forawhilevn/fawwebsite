@@ -112,5 +112,11 @@
   "checkout.zoneRequired": "Vui lòng chọn khu vực giao hàng.",
   "checkout.codeInvalid": "Mã không hợp lệ hoặc chưa đủ điều kiện.",
   "cart.nextPromo": "Mua thêm {amount} để được: {offer}",
-  "stores.viewPhotos": "Xem ảnh"
+  "stores.viewPhotos": "Xem ảnh",
+  "nav.gallery": "Hình ảnh",
+  "life.empty": "Chưa có hình ảnh nào.",
+  "life.products": "Sản phẩm trong bộ ảnh",
+  "life.viewProducts": "Xem sản phẩm",
+  "life.viewAll": "Xem tất cả",
+  "life.soldOut": "SOLD OUT"
 }

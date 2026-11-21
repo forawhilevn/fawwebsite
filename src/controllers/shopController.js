@@ -32,7 +32,8 @@ async function showShop(req, res, next) {
       title: `${res.locals.t('shop.title')} — FOR A WHILE`,
       bodyClass: 'page-shop',
       products: withStatus.map((p) => localizeProduct(p, locale)),
-      activeCategory: category ? localizeCategory(category, locale) : null
+      activeCategory: category ? localizeCategory(category, locale) : null,
+      shopLimit: 9
     });
   } catch (err) {
     next(err);

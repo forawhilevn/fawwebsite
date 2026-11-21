@@ -64,6 +64,7 @@
   // Mobile header hamburger menu
   // Lifestyle: thumbnails open a pop up with the other photos of that set
   var lifeModal = null;
+  var LIFE_EN = function () { return document.documentElement.lang === 'en'; };
   function lifeBuild() {
     if (lifeModal) return lifeModal;
     var m = document.createElement('div');
@@ -72,12 +73,23 @@
     m.innerHTML =
       '<div class="life-modal__backdrop" data-life-close></div>' +
       '<div class="life-modal__box" role="dialog" aria-modal="true">' +
-        '<div class="life-modal__head"><button type="button" class="life-modal__back" data-life-close aria-label="Back">&lsaquo;</button><h3 class="life-modal__title"></h3>' +
-        '<a class="life-modal__product" hidden></a>' +
-        '<button type="button" class="life-modal__close" data-life-close aria-label="Close">&times;</button></div>' +
+        '<div class="life-modal__head">' +
+          '<button type="button" class="life-modal__back" data-life-close aria-label="Back">&lsaquo;</button>' +
+          '<h3 class="life-modal__title"></h3>' +
+          '<button type="button" class="life-modal__prodbtn" data-sheet-open hidden></button>' +
+          '<button type="button" class="life-modal__close" data-life-close aria-label="Close">&times;</button>' +
+        '</div>' +
         '<div class="life-modal__scroll" data-lenis-prevent>' +
           '<div class="life-modal__info"><p class="life-modal__desc" hidden></p><p class="life-modal__credit" hidden></p></div>' +
           '<div class="life-modal__grid"></div></div>' +
+        '<aside class="life-modal__side" data-lenis-prevent hidden>' +
+          '<h4 class="life-modal__side-title"></h4><div class="life-plist" data-plist></div></aside>' +
+      '</div>' +
+      '<div class="life-sheet" hidden>' +
+        '<div class="life-sheet__shade" data-sheet-close></div>' +
+        '<div class="life-sheet__panel" data-lenis-prevent>' +
+          '<div class="life-sheet__head"><span class="life-sheet__title"></span><button type="button" class="life-sheet__x" data-sheet-close aria-label="Close">&times;</button></div>' +
+          '<div class="life-plist" data-plist></div></div>' +
       '</div>' +
       '<div class="life-zoom" hidden>' +
         '<button type="button" class="life-zoom__btn life-zoom__close" data-zoom-close aria-label="Close">&times;</button>' +
@@ -87,19 +99,44 @@
         '<img class="life-zoom__img" alt="" draggable="false" />' +
       '</div>';
     m.setAttribute('data-lenis-prevent', '');
+    // the pop up never scrolls the page behind it: wheel over the empty areas drives the photos column
     m.addEventListener('wheel', function (e) {
-      if (m.querySelector('.life-zoom').hidden === false) { e.preventDefault(); return; }
+      if (!m.querySelector('.life-zoom').hidden) { e.preventDefault(); return; }
       var sc = m.querySelector('.life-modal__scroll');
-      if (!sc.contains(e.target)) { sc.scrollTop += e.deltaY; }
+      var side = m.querySelector('.life-modal__side');
+      var sheet = m.querySelector('.life-sheet__panel');
+      if (sc.contains(e.target) || side.contains(e.target) || sheet.contains(e.target)) return;
       e.preventDefault();
-      if (sc.contains(e.target)) sc.scrollTop += e.deltaY;
+      sc.scrollTop += e.deltaY;
     }, { passive: false });
     m.addEventListener('touchmove', function (e) {
-      if (!m.querySelector('.life-modal__scroll').contains(e.target)) e.preventDefault();
+      var sc = m.querySelector('.life-modal__scroll');
+      var sheet = m.querySelector('.life-sheet__panel');
+      if (!sc.contains(e.target) && !sheet.contains(e.target)) e.preventDefault();
     }, { passive: false });
     document.body.appendChild(m);
     lifeModal = m;
     return m;
+  }
+  function lifeFillProducts(m, list) {
+    Array.prototype.forEach.call(m.querySelectorAll('[data-plist]'), function (box) {
+      box.innerHTML = '';
+      list.forEach(function (p) {
+        var a = document.createElement('a');
+        a.className = 'life-prod';
+        a.href = p.url;
+        var imgWrap = document.createElement('span'); imgWrap.className = 'life-prod__img';
+        if (p.image) { var im = document.createElement('img'); im.src = p.image; im.alt = p.name || ''; im.loading = 'lazy'; imgWrap.appendChild(im); }
+        if (p.soldOut) { var so = document.createElement('span'); so.className = 'life-prod__soldout'; so.textContent = 'SOLD OUT'; imgWrap.appendChild(so); }
+        var info = document.createElement('span'); info.className = 'life-prod__info';
+        var nm = document.createElement('span'); nm.className = 'life-prod__name'; nm.textContent = p.name || '';
+        var pr = document.createElement('span'); pr.className = 'life-prod__price'; pr.textContent = p.price || '';
+        info.appendChild(nm); info.appendChild(pr);
+        if (p.was) { var w = document.createElement('span'); w.className = 'life-prod__was'; w.textContent = p.was; info.appendChild(w); }
+        a.appendChild(imgWrap); a.appendChild(info);
+        box.appendChild(a);
+      });
+    });
   }
   var lifeImages = [];
   var lifeIndex = 0;
@@ -115,6 +152,8 @@
     if (!lifeModal) return;
     lifeModal.hidden = true;
     lifeModal.querySelector('.life-zoom').hidden = true;
+    lifeModal.querySelector('.life-sheet').hidden = true;
+    lifeModal.classList.remove('sheet-open');
     document.documentElement.classList.remove('life-open');
   }
   document.addEventListener('click', function (e) {
@@ -127,12 +166,18 @@
       var m = lifeBuild();
       lifeImages = data.images || [];
       m.querySelector('.life-modal__title').textContent = data.title || '';
-      var pa = m.querySelector('.life-modal__product');
-      if (data.product && data.product.url) {
-        pa.href = data.product.url;
-        pa.textContent = (document.documentElement.lang === 'en' ? 'View product' : 'Xem sản phẩm') + ' →';
-        pa.hidden = false;
-      } else { pa.hidden = true; }
+      var prods = Array.isArray(data.products) ? data.products : [];
+      var ptitle = LIFE_EN() ? 'Products in this set' : 'Sản phẩm trong bộ ảnh';
+      m.querySelector('.life-modal__side-title').textContent = ptitle;
+      m.querySelector('.life-sheet__title').textContent = ptitle;
+      var pbtn = m.querySelector('.life-modal__prodbtn');
+      pbtn.textContent = (LIFE_EN() ? 'View products' : 'Xem sản phẩm') + ' (' + prods.length + ')';
+      pbtn.hidden = !prods.length;
+      m.querySelector('.life-modal__side').hidden = !prods.length;
+      m.querySelector('.life-sheet').hidden = true;
+      m.classList.remove('sheet-open');
+      m.classList.toggle('has-products', prods.length > 0);
+      lifeFillProducts(m, prods);
       var descEl = m.querySelector('.life-modal__desc');
       descEl.textContent = data.desc || '';
       descEl.hidden = !data.desc;
@@ -178,23 +223,58 @@
     var img = t.closest('[data-life-img]');
     if (img) { lifeZoomShow(Number(img.getAttribute('data-life-img'))); return; }
     if (t.closest('.life-zoom__img')) { lifeZoomShow(lifeIndex + 1); return; }
-    if (t.closest('.life-modal__product') || t.closest('[data-life-close]')) lifeClose();
+    if (t.closest('[data-sheet-open]')) { lifeModal.querySelector('.life-sheet').hidden = false; lifeModal.classList.add('sheet-open'); return; }
+    if (t.closest('[data-sheet-close]')) { lifeModal.querySelector('.life-sheet').hidden = true; lifeModal.classList.remove('sheet-open'); return; }
+    if (t.closest('.life-prod') || t.closest('[data-life-close]')) lifeClose();
   });
   document.addEventListener('keydown', function (e) {
     if (!lifeModal || lifeModal.hidden) return;
     var z = lifeModal.querySelector('.life-zoom');
-    if (e.key === 'Escape') { if (!z.hidden) z.hidden = true; else lifeClose(); }
+    if (e.key === 'Escape') {
+      var sh = lifeModal.querySelector('.life-sheet');
+      if (!z.hidden) z.hidden = true; else if (!sh.hidden) { sh.hidden = true; lifeModal.classList.remove('sheet-open'); } else lifeClose();
+    }
     else if (!z.hidden && e.key === 'ArrowRight') lifeZoomShow(lifeIndex + 1);
     else if (!z.hidden && e.key === 'ArrowLeft') lifeZoomShow(lifeIndex - 1);
   });
   // page changes (Barba) close the pop up
   window.addEventListener('popstate', lifeClose);
 
+  // header dropdown "Hình ảnh" (desktop) and its accordion (mobile menu)
+  function closeNavDd() {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-nav-dd].is-open'), function (d) {
+      d.classList.remove('is-open');
+      var b = d.querySelector('[data-nav-dd-btn]'); if (b) b.setAttribute('aria-expanded', 'false');
+    });
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    if (!t || !t.closest) return;
+    var btn = t.closest('[data-nav-dd-btn]');
+    if (btn) {
+      var dd = btn.closest('[data-nav-dd]');
+      var open = !dd.classList.contains('is-open');
+      closeNavDd();
+      dd.classList.toggle('is-open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      return;
+    }
+    var mbtn = t.closest('[data-mnav-dd-btn]');
+    if (mbtn) {
+      var md = mbtn.closest('[data-mnav-dd]');
+      var mo = md.classList.toggle('is-open');
+      mbtn.setAttribute('aria-expanded', mo ? 'true' : 'false');
+      return;
+    }
+    if (!t.closest('[data-nav-dd]') || t.closest('[data-nav-dd-menu] a')) closeNavDd();
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeNavDd(); });
+
   // home: "Xem thêm" reveals the next batch of products
   document.addEventListener('click', function (e) {
     var btn = e.target.closest && e.target.closest('[data-home-more]');
     if (!btn) return;
-    var step = parseInt(btn.getAttribute('data-step'), 10) || 8;
+    var step = parseInt(btn.getAttribute('data-step'), 10) || 9;
     var hidden = Array.prototype.slice.call(document.querySelectorAll('[data-home-extra][hidden]'));
     hidden.slice(0, step).forEach(function (box) {
       var card = box.querySelector('.product-card');

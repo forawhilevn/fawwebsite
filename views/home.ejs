@@ -58,6 +58,7 @@
     <div class="container">
       <div class="section__heading">
         <h2 class="section__title"><%= lifeTitle %></h2>
+        <a class="life-viewall" href="<%= locale === 'en' ? '/en' : '' %>/lifestyle"><%= t('life.viewAll') %> →</a>
       </div>
       <div class="life-row-wrap">
         <button type="button" class="life-arrow life-arrow--prev" data-life-scroll="-1" aria-label="Prev">&lsaquo;</button>

@@ -11,9 +11,9 @@ function removeFile(url) {
   if (url && url.indexOf('/images/uploads/lifestyle/') === 0) storage.remove(url);
 }
 function clean(v, n) { return String(v || '').trim().slice(0, n) || null; }
-function productIdOf(v) {
-  const n = Number(v);
-  return Number.isInteger(n) && n > 0 ? n : null;
+function idsOf(v) {
+  const arr = Array.isArray(v) ? v : (v === undefined || v === '' ? [] : [v]);
+  return arr.map(Number).filter((n) => Number.isInteger(n) && n > 0);
 }
 
 async function list(req, res, next) {
@@ -69,7 +69,7 @@ async function editForm(req, res, next) {
   try {
     const set = await lifestyle.getSet(Number(req.params.id));
     if (!set) return res.redirect('/admin/lifestyle');
-    const products = await db('products').select('id', 'name_vi').orderBy('name_vi');
+    const products = await db('products').select('id', 'name_vi', 'cover_image_url').orderBy('name_vi');
     res.render('admin/lifestyle-form', { title: 'Sửa Lifestyle - FAW Admin', set, products, saved: req.query.ok === '1' });
   } catch (err) { next(err); }
 }
@@ -98,7 +98,6 @@ async function update(req, res, next) {
       desc_vi: String(req.body.descVi || '').trim().slice(0, 2000) || null,
       desc_en: String(req.body.descEn || '').trim().slice(0, 2000) || null,
       credit: String(req.body.credit || '').trim().slice(0, 500) || null,
-      product_id: productIdOf(req.body.productId),
       is_active: req.body.isActive === 'on'
     };
     if (thumb) {
@@ -106,6 +105,7 @@ async function update(req, res, next) {
       removeFile(set.thumb_url);
     }
     await db('lifestyle_sets').where({ id: set.id }).update(patch);
+    await lifestyle.setProducts(set.id, idsOf(req.body.productIds));
     await saveImages(set, files.images);
     res.redirect('/admin/lifestyle/' + set.id + '/sua?ok=1');
   } catch (err) { next(err); }
@@ -161,6 +161,7 @@ async function deleteSet(req, res, next) {
     const set = await lifestyle.getSet(Number(req.params.id));
     if (set) {
       await db('lifestyle_images').where({ set_id: set.id }).del();
+      await db('lifestyle_set_products').where({ set_id: set.id }).del();
       await db('lifestyle_sets').where({ id: set.id }).del();
       removeFile(set.thumb_url);
       set.images.forEach((i) => removeFile(i.image_url));

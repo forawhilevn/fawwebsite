@@ -28,11 +28,32 @@
         <label>Credit (người chụp, người vẽ, Instagram...)</label>
         <textarea name="credit" rows="2" maxlength="500" placeholder="Ví dụ: Photo: @ten_nguoi_chup · Art: @ten_nguoi_ve"><%= set.credit || '' %></textarea>
         <p class="admin-hint">Chữ bắt đầu bằng @ sẽ tự thành link tới Instagram người đó.</p>
-        <label>Sản phẩm liên kết (nút "Xem sản phẩm" trong pop up)</label>
-        <select name="productId">
-          <option value="">— Không gắn —</option>
-          <% products.forEach(function (p) { %><option value="<%= p.id %>" <%= set.product_id === p.id ? 'selected' : '' %>><%= p.name_vi %></option><% }); %>
-        </select>
+        <label>Sản phẩm trong bộ ảnh (hiện bên phải trong pop up trên máy tính, nút "Xem sản phẩm" trên điện thoại)</label>
+        <%
+          var pById = {};
+          products.forEach(function (p) { pById[p.id] = p; });
+          var chosen = (set.productIds || []).filter(function (id) { return pById[id]; });
+        %>
+        <div class="life-prods" data-life-prods>
+          <div class="life-prods__list" data-prods-list>
+            <% chosen.forEach(function (id) { var p = pById[id]; %>
+              <div class="life-prods__item" data-pid="<%= id %>">
+                <input type="hidden" name="productIds" value="<%= id %>" />
+                <img src="<%= p.cover_image_url || '/images/logo/logo-mark.png' %>" alt="" />
+                <span class="life-prods__name"><%= p.name_vi %></span>
+                <button type="button" data-p-up title="Lên">▲</button>
+                <button type="button" data-p-down title="Xuống">▼</button>
+                <button type="button" data-p-del title="Bỏ">×</button>
+              </div>
+            <% }); %>
+          </div>
+          <p class="admin-hint" data-prods-empty <%= chosen.length ? 'hidden' : '' %>>Chưa chọn sản phẩm nào.</p>
+          <select data-prods-add>
+            <option value="">+ Thêm sản phẩm...</option>
+            <% products.forEach(function (p) { %><option value="<%= p.id %>" data-name="<%= p.name_vi %>" data-img="<%= p.cover_image_url || '' %>"><%= p.name_vi %></option><% }); %>
+          </select>
+          <p class="admin-hint">Chọn nhiều sản phẩm; dùng ▲ ▼ để đổi thứ tự hiển thị. Nhớ bấm "Lưu".</p>
+        </div>
         <label>Ảnh thumb hiện tại (ảnh ngoài trang chủ)</label>
         <img src="<%= set.thumb_url %>" alt="" style="width:120px; border-radius:6px; display:block; margin-bottom:8px;" />
         <label>Đổi ảnh thumb (không bắt buộc)</label>
@@ -68,6 +89,44 @@
     </form>
   </main>
 </div>
+<script>
+(function () {
+  var box = document.querySelector('[data-life-prods]');
+  if (!box) return;
+  var list = box.querySelector('[data-prods-list]');
+  var sel = box.querySelector('[data-prods-add]');
+  var empty = box.querySelector('[data-prods-empty]');
+  function sync() { empty.hidden = list.children.length > 0; }
+  sel.addEventListener('change', function () {
+    var opt = sel.options[sel.selectedIndex];
+    if (!opt || !opt.value) return;
+    if (list.querySelector('[data-pid="' + opt.value + '"]')) { sel.value = ''; return; }
+    var row = document.createElement('div');
+    row.className = 'life-prods__item';
+    row.setAttribute('data-pid', opt.value);
+    var hid = document.createElement('input'); hid.type = 'hidden'; hid.name = 'productIds'; hid.value = opt.value;
+    var im = document.createElement('img'); im.alt = ''; im.src = opt.getAttribute('data-img') || '/images/logo/logo-mark.png';
+    var nm = document.createElement('span'); nm.className = 'life-prods__name'; nm.textContent = opt.getAttribute('data-name');
+    row.appendChild(hid); row.appendChild(im); row.appendChild(nm);
+    [['data-p-up', '▲', 'Lên'], ['data-p-down', '▼', 'Xuống'], ['data-p-del', '×', 'Bỏ']].forEach(function (b) {
+      var btn = document.createElement('button'); btn.type = 'button'; btn.setAttribute(b[0], ''); btn.title = b[2]; btn.textContent = b[1];
+      row.appendChild(btn);
+    });
+    list.appendChild(row);
+    sel.value = '';
+    sync();
+  });
+  list.addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (!b) return;
+    var row = b.closest('.life-prods__item');
+    if (b.hasAttribute('data-p-del')) row.remove();
+    else if (b.hasAttribute('data-p-up') && row.previousElementSibling) list.insertBefore(row, row.previousElementSibling);
+    else if (b.hasAttribute('data-p-down') && row.nextElementSibling) list.insertBefore(row.nextElementSibling, row);
+    sync();
+  });
+})();
+</script>
 <script>
 // "Xoá" buttons post their own tiny form, so the big form can stay a single one
 document.addEventListener('click', function (e) {

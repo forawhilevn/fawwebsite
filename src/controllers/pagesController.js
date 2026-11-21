@@ -1,5 +1,6 @@
 const lookbookLibrary = require('../services/lookbookLibrary');
 const pageController = require('./pageController');
+const lifestyle = require('../services/lifestyle');
 
 async function showArchive(req, res, next) {
   try {
@@ -15,6 +16,19 @@ async function showArchive(req, res, next) {
       title: `Lookbook — FOR A WHILE`,
       bodyClass: 'page-archive',
       items
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function showLifestyle(req, res, next) {
+  try {
+    const sets = await lifestyle.listPublic(res.locals.locale);
+    res.render('lifestyle', {
+      title: (res.locals.lifeTitle || 'Lifestyle') + ' — FOR A WHILE',
+      bodyClass: 'page-lifestyle',
+      sets
     });
   } catch (err) {
     next(err);
@@ -57,6 +71,7 @@ function showContact(req, res) {
 
 module.exports = {
   showArchive,
+  showLifestyle,
   showAbout,
   showShippingPolicy,
   showReturnPolicy,

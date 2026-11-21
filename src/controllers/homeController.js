@@ -22,7 +22,7 @@ async function showHome(req, res, next) {
       heroBanners: heroBanners.map((b) => localizeBanner(b, locale)),
       newArrivals: await stock.attachStatus(newArrivals.map((p) => localizeProduct(p, locale))),
       lifestyleSets,
-      homeLimit: 8
+      homeLimit: 9
     });
   } catch (err) {
     next(err);

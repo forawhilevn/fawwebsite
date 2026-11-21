@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="<%= locale %>">
+<head>
+<%- include('partials/head') %>
+</head>
+<body class="<%= bodyClass %>" data-barba="wrapper">
+<%- include('partials/preloader') %>
+<div data-barba="container" data-barba-namespace="lifestyle">
+<%- include('partials/header') %>
+
+<main>
+  <div class="page-shell page-shell--light">
+    <div class="container">
+      <h1 class="page-title"><%= lifeTitle %></h1>
+      <% if (sets.length === 0) { %>
+        <p><%= t('life.empty') %></p>
+      <% } else { %>
+        <div class="life-page-grid">
+          <% sets.forEach(function(set) { %>
+            <%- include('partials/lifestyle-card', { set: set }) %>
+          <% }); %>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>
+</div>
+<%- include('partials/scripts') %>
+</body>
+</html>
