@@ -3497,3 +3497,13 @@ html.intro-running:not(.intro-revealed) .section__title { animation-play-state: 
 .hero__nav .hero__dots { position: static; transform: none; left: auto; right: auto; bottom: auto; }
 .hero__nav .hero__arrow, .hero__nav .hero__arrow:hover { position: static; transform: none; top: auto; left: auto; right: auto; width: 28px; height: 32px; font-size: 34px; display: flex; align-items: center; justify-content: center; padding: 0 0 3px; }
 @media (max-width: 768px) { .hero__nav .hero__arrow { display: none; } .hero__nav { bottom: 12px; } }
+
+/* Order confirmation: details box in the site's dark glass style instead of the white block */
+.order-confirmation__details {
+  max-width: 560px; margin-left: auto; margin-right: auto; padding: 18px 20px; border-radius: 14px;
+  background: rgba(150,150,156,0.12); border: 1px solid rgba(255,255,255,0.18); color: #fff;
+  -webkit-backdrop-filter: blur(14px) saturate(160%); backdrop-filter: blur(14px) saturate(160%);
+}
+.order-confirmation__details div { gap: 16px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.12); }
+.order-confirmation__details div:last-child { border-bottom: 0; padding-bottom: 2px; font-weight: 700; }
+.order-confirmation__details div > span:last-child:not(:first-child) { text-align: right; }
