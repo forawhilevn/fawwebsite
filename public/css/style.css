@@ -3370,3 +3370,22 @@ html.intro-running:not(.intro-revealed) .section__title { animation-play-state: 
   background: rgba(20,20,22,0.5) !important; border: 1px solid rgba(255,255,255,0.28) !important; text-shadow: none !important; font-size: 30px !important;
   -webkit-backdrop-filter: blur(12px) saturate(160%); backdrop-filter: blur(12px) saturate(160%); box-shadow: 0 4px 16px rgba(0,0,0,0.35);
 }
+
+/* Lifestyle pop-up (tablet/phone): full-width frosted strip across the top, fading out downward, photos slide under it */
+@media (max-width: 900px) {
+  .life-modal__box, .life-modal.has-products .life-modal__box { position: relative; grid-template-rows: minmax(0, 1fr); }
+  .life-modal__head {
+    position: absolute !important; top: 0; left: 0; right: 0; z-index: 5;
+    width: 100% !important; height: auto !important; margin: 0 !important; border-radius: 0 !important;
+    padding: calc(env(safe-area-inset-top, 0px) + 8px) 12px 30px 8px !important;
+    background: linear-gradient(180deg, rgba(12,12,14,0.55) 0%, rgba(12,12,14,0.32) 55%, rgba(12,12,14,0) 100%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(160%) !important; backdrop-filter: blur(16px) saturate(160%) !important;
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 55%, transparent 100%); mask-image: linear-gradient(180deg, #000 0%, #000 55%, transparent 100%);
+  }
+  .life-modal__scroll { grid-row: 1; padding-top: calc(env(safe-area-inset-top, 0px) + 72px) !important; }
+  .life-modal__back {
+    width: 40px !important; height: 40px !important; padding: 0 0 4px !important; border-radius: 0 !important;
+    background: none !important; border: 0 !important; box-shadow: none !important; font-size: 40px !important;
+    -webkit-backdrop-filter: none; backdrop-filter: none; text-shadow: 0 1px 8px rgba(0,0,0,0.6) !important;
+  }
+}
