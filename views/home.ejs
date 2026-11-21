@@ -10,14 +10,26 @@
 
 <main>
   <% if (heroBanners.length > 0) { %>
-  <section class="hero<%= heroBanners[0].image_mobile_url ? ' hero--has-mobile' : '' %>">
-    <picture>
-      <% if (heroBanners[0].image_mobile_url) { %><source media="(max-width: 640px)" srcset="<%= heroBanners[0].image_mobile_url %>" /><% } %>
-      <img class="hero__bg" data-parallax="12" data-reveal data-reveal-slow src="<%= heroBanners[0].image_url %>" alt="" />
-    </picture>
-    <% if (heroBanners[0].title) { %>
-    <div class="hero__content">
-      <h1 class="hero__title" data-reveal data-reveal-slow><%= heroBanners[0].title %></h1>
+  <% var heroSlides = heroBanners.slice(0, 5); %>
+  <section class="hero hero--slider<%= heroSlides[0].image_mobile_url ? ' hero--has-mobile' : '' %>" data-hero-slider data-interval="3000">
+    <% heroSlides.forEach(function (b, i) { %>
+    <div class="hero__slide<%= i === 0 ? ' is-active' : '' %>" data-hero-slide<%= i === 0 ? '' : ' aria-hidden="true"' %>>
+      <picture>
+        <% if (b.image_mobile_url) { %><source media="(max-width: 640px)" srcset="<%= b.image_mobile_url %>" /><% } %>
+        <img class="hero__bg" data-parallax="12"<%= i === 0 ? ' data-reveal data-reveal-slow' : '' %> src="<%= b.image_url %>" alt="" loading="<%= i === 0 ? 'eager' : 'lazy' %>" draggable="false" />
+      </picture>
+      <% if (b.title) { %>
+      <div class="hero__content">
+        <% if (i === 0) { %><h1 class="hero__title" data-reveal data-reveal-slow><%= b.title %></h1><% } else { %><h2 class="hero__title"><%= b.title %></h2><% } %>
+      </div>
+      <% } %>
+    </div>
+    <% }); %>
+    <% if (heroSlides.length > 1) { %>
+    <button type="button" class="hero__arrow hero__arrow--prev" data-hero-step="-1" aria-label="Previous">&lsaquo;</button>
+    <button type="button" class="hero__arrow hero__arrow--next" data-hero-step="1" aria-label="Next">&rsaquo;</button>
+    <div class="hero__dots">
+      <% heroSlides.forEach(function (b, i) { %><button type="button" class="hero__dot<%= i === 0 ? ' is-active' : '' %>" data-hero-dot="<%= i %>" aria-label="Banner <%= i + 1 %>"></button><% }); %>
     </div>
     <% } %>
   </section>

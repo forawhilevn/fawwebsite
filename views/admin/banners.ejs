@@ -14,28 +14,25 @@
     <% if (error) { %><p class="admin-error"><%= error %></p><% } %>
 
     <%
-      var firstActiveId = null;
-      heroBanners.forEach(function (b) { if (firstActiveId === null && b.is_active) firstActiveId = b.id; });
+      var liveIds = [];
+      heroBanners.forEach(function (b) { if (b.is_active && liveIds.length < 5) liveIds.push(b.id); });
     %>
 
     <div class="admin-card">
       <h2 style="margin-top:0; font-size:16px;">Trang chủ — Banner chính (hero)</h2>
       <p style="font-size:13px; color:#71717a; margin-top:-4px;">
         Vị trí: ngay đầu <a href="/" target="_blank">trang chủ</a>, trên danh sách sản phẩm.
-        Trang chủ chỉ hiện <strong>ảnh đầu tiên đang bật</strong> (nhãn đỏ bên dưới). Dùng nút ↑ ↓ để đổi thứ tự.
+        Trang chủ chạy xoay vòng tối đa <strong>5 banner đầu đang bật</strong> (viền đỏ bên dưới), tự chuyển mỗi 3 giây. Dùng nút ↑ ↓ để đổi thứ tự, nút Ẩn để tạm loại một banner khỏi vòng xoay.
         Mỗi banner có ảnh desktop (1920×960) và ảnh mobile (900×1100) riêng; có thể đổi từng ảnh độc lập.
       </p>
-      <div class="hero-tablewrap">
-      <table class="admin-table hero-table">
-        <thead><tr><th>Banner</th><th>Ảnh desktop</th><th>Ảnh mobile</th><th>Thao tác</th></tr></thead>
-        <tbody>
+      <div class="hero-cards">
         <% heroBanners.forEach(function(b, i) {
              var hasMobile = !!b.image_mobile_url;
              var hasDesktop = !!b.image_url && b.image_url !== b.image_mobile_url;
         %>
-          <tr class="<%= b.id === firstActiveId ? 'is-live' : '' %>" style="<%= b.is_active ? '' : 'opacity:.6;' %>">
-            <td class="hero-table__info">
-              <div class="hero-item__status">#<%= i + 1 %> · <%= b.id === firstActiveId ? 'ĐANG HIỂN THỊ' : (b.is_active ? 'Đang bật (chờ)' : 'Đang ẩn') %></div>
+        <section class="hero-card<%= liveIds.indexOf(b.id) !== -1 ? ' is-live' : '' %><%= b.is_active ? '' : ' is-off' %>">
+          <div class="hero-card__col hero-card__info">
+              <div class="hero-item__status">Banner #<%= i + 1 %> · <%= liveIds.indexOf(b.id) !== -1 ? 'TRONG VÒNG XOAY (vị trí ' + (liveIds.indexOf(b.id) + 1) + ')' : (b.is_active ? 'Đang bật nhưng vượt quá 5 banner' : 'Đang ẩn') %></div>
               <form action="/admin/banner/chinh/<%= b.id %>/tieu-de" method="post" class="admin-form" style="margin-top:8px;">
                 <label style="font-size:11px;">Chữ lớn trên ảnh (VI)</label>
                 <input type="text" name="titleVi" value="<%= b.title_vi || '' %>" maxlength="200" placeholder="Để trống = không hiện chữ" />
@@ -44,8 +41,8 @@
                 <p class="admin-hint" style="margin:4px 0;">Để trống và lưu thì không hiện chữ trên ảnh. Chữ tự xuống dòng theo độ rộng.</p>
                 <button type="submit" class="admin-btn admin-btn--outline" style="font-size:11px; padding:4px 10px;">Lưu chữ</button>
               </form>
-            </td>
-            <td class="hero-cell">
+            </div>
+          <div class="hero-card__col hero-cell"><div class="hero-card__label">Ảnh desktop</div>
               <% if (hasDesktop) { %>
                 <img src="<%= b.image_url %>" alt="" class="hero-cell__img hero-cell__img--d" />
               <% } else { %>
@@ -59,8 +56,8 @@
                   <button type="submit" class="link-danger">Xoá ảnh desktop</button>
                 </form>
               <% } %>
-            </td>
-            <td class="hero-cell">
+            </div>
+          <div class="hero-card__col hero-cell"><div class="hero-card__label">Ảnh mobile</div>
               <% if (hasMobile) { %>
                 <img src="<%= b.image_mobile_url %>" alt="" class="hero-cell__img hero-cell__img--m" />
               <% } else { %>
@@ -74,21 +71,19 @@
                   <button type="submit" class="link-danger">Xoá ảnh mobile</button>
                 </form>
               <% } %>
-            </td>
-            <td>
+            </div>
+          <div class="hero-card__col hero-card__act">
               <div class="hero-actions">
                 <form action="/admin/banner/chinh/<%= b.id %>/len" method="post"><button type="submit" class="admin-btn admin-btn--outline" style="font-size:11px; padding:4px 8px;" <%= i === 0 ? 'disabled' : '' %>>↑</button></form>
                 <form action="/admin/banner/chinh/<%= b.id %>/xuong" method="post"><button type="submit" class="admin-btn admin-btn--outline" style="font-size:11px; padding:4px 8px;" <%= i === heroBanners.length - 1 ? 'disabled' : '' %>>↓</button></form>
                 <form action="/admin/banner/chinh/<%= b.id %>/an-hien" method="post"><button type="submit" class="admin-btn admin-btn--outline" style="font-size:11px; padding:4px 8px;"><%= b.is_active ? 'Ẩn' : 'Hiện' %></button></form>
                 <form action="/admin/banner/chinh/<%= b.id %>/xoa" method="post" onsubmit="return confirm('Xoá cả banner này?');"><button type="submit" class="admin-btn admin-btn--danger" style="font-size:11px; padding:4px 8px;">Xoá banner</button></form>
               </div>
-            </td>
-          </tr>
+            </div>
+        </section>
         <% }); %>
-        </tbody>
-      </table>
-      <% if (heroBanners.length === 0) { %><p style="font-size:13px; color:#71717a;">Chưa có banner. Trang chủ sẽ không hiện phần banner đầu trang.</p><% } %>
       </div>
+      <% if (heroBanners.length === 0) { %><p style="font-size:13px; color:#71717a;">Chưa có banner. Trang chủ sẽ không hiện phần banner đầu trang.</p><% } %>
       <form action="/admin/banner/chinh" method="post" enctype="multipart/form-data" class="admin-form upload-box">
         <h3 style="margin:0 0 8px; font-size:14px;">Thêm banner mới</h3>
         <p class="admin-hint">Chỉ cần tải một trong hai ảnh. Thiếu ảnh nào thì ảnh còn lại được dùng cho cả hai.</p>
