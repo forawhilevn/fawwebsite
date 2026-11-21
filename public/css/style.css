@@ -3148,3 +3148,11 @@ html.intro-running:not(.intro-revealed) .section__title { animation-play-state: 
 #preview-hero-d .thumb img { height: auto; aspect-ratio: 2 / 1; object-fit: contain; background: #e4e4e7; }
 #preview-hero-m .thumb img { height: auto; aspect-ratio: 900 / 1100; object-fit: contain; background: #e4e4e7; }
 #preview-hero-m .thumb { width: 180px; }
+
+/* Lifestyle arrows: nằm ngoài khung hình (desktop), khung không đè lên mũi tên */
+@media (hover: hover) and (min-width: 901px) {
+  .life-row-wrap { padding-left: 56px; padding-right: 56px; }
+  .life-arrow { top: 42%; transform: translateY(-50%); z-index: 2; width: 40px; text-shadow: none; }
+  .life-arrow--prev { left: 8px; }
+  .life-arrow--next { right: 8px; }
+}

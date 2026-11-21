@@ -85,6 +85,17 @@
         '<button type="button" class="life-zoom__btn life-zoom__nav life-zoom__nav--next" data-zoom-step="1" aria-label="Next">&rsaquo;</button>' +
         '<img class="life-zoom__img" alt="" draggable="false" />' +
       '</div>';
+    m.setAttribute('data-lenis-prevent', '');
+    m.addEventListener('wheel', function (e) {
+      if (m.querySelector('.life-zoom').hidden === false) { e.preventDefault(); return; }
+      var sc = m.querySelector('.life-modal__scroll');
+      if (!sc.contains(e.target)) { sc.scrollTop += e.deltaY; }
+      e.preventDefault();
+      if (sc.contains(e.target)) sc.scrollTop += e.deltaY;
+    }, { passive: false });
+    m.addEventListener('touchmove', function (e) {
+      if (!m.querySelector('.life-modal__scroll').contains(e.target)) e.preventDefault();
+    }, { passive: false });
     document.body.appendChild(m);
     lifeModal = m;
     return m;
