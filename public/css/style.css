@@ -3354,3 +3354,12 @@ html.intro-running:not(.intro-revealed) .section__title { animation-play-state: 
 .order-confirmation .page-title { line-height: 1.32; }
 .order-confirmation .page-title .oc-line { display: block; }
 .order-confirmation__verify { max-width: 100%; width: fit-content; white-space: nowrap; font-size: clamp(9px, 2.6vw, 14px); padding: 12px 14px; }
+
+/* Lifestyle pop-up: no glass bar, just the back arrow (and the "products" button when there are any) */
+.life-modal__head {
+  background: none !important; background-image: none !important; border: 0 !important; box-shadow: none !important;
+  -webkit-backdrop-filter: none !important; backdrop-filter: none !important; border-radius: 0 !important;
+}
+@media (max-width: 900px) {
+  .life-modal__head { height: 44px; margin: calc(env(safe-area-inset-top, 0px) + 4px) 10px 4px; padding: 0; }
+}
